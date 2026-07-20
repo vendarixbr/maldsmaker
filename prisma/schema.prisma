@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id             String   @id
+  name           String
+  initials       String
+  niche          String
+  whatsapp       String
+  email          String?
+  instagram      String?
+  empresa        String?
+  status         String
+  totalValue     Float    @default(0)
+  lastProject    String
+  origem         String
+  notes          Json
+  services       Json
+  history        Json
+  invoices       Json
+  monthlyRevenue Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Project {
+  id          String   @id
+  clientId    String
+  clientName  String
+  title       String
+  serviceType String
+  dueDate     String
+  priority    String
+  value       Float    @default(0)
+  status      String
+  checklist   Json
+  comments    Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CalendarEvent {
+  id         String   @id
+  title      String
+  type       String
+  clientName String?
+  date       String
+  startTime  String
+  endTime    String
+  location   String
+  value      Float?
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model GlobalNote {
+  id        String   @id
+  title     String?
+  category  String
+  content   String
+  color     String
+  pinned    Boolean  @default(false)
+  createdAt String
+  checklist Json?
+  dbCreated DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AdminMeta {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}

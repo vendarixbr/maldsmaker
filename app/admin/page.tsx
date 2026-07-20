@@ -12,7 +12,7 @@ import { AdminConfiguracoes } from '@/components/admin/AdminConfiguracoes'
 import { Menu } from 'lucide-react'
 
 function AdminShell() {
-  const { activeSection, setSidebarOpen } = useAdmin()
+  const { activeSection, setSidebarOpen, isLoading, isSaving, error } = useAdmin()
 
   const sectionMap: Record<string, React.ReactNode> = {
     dashboard: <AdminDashboard />,
@@ -50,6 +50,19 @@ function AdminShell() {
 
         {/* Page content */}
         <div className="flex-1 p-5 lg:p-7 max-w-[1400px] w-full mx-auto">
+          {(isLoading || isSaving || error) && (
+            <div
+              className="mb-4 px-4 py-3 font-mono-mm text-[10px] tracking-[0.08em]"
+              style={{
+                background: error ? 'rgba(192,57,43,0.12)' : 'rgba(201,168,76,0.08)',
+                border: error ? '1px solid rgba(192,57,43,0.3)' : '1px solid rgba(201,168,76,0.2)',
+                borderRadius: '6px',
+                color: error ? '#F1948A' : '#C9A84C',
+              }}
+            >
+              {error ?? (isLoading ? 'CARREGANDO DADOS DO POSTGRES...' : 'SALVANDO NO POSTGRES...')}
+            </div>
+          )}
           {sectionMap[activeSection] ?? <AdminDashboard />}
         </div>
       </main>

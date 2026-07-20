@@ -29,17 +29,30 @@ export function AdminDashboard() {
   const today = new Date()
   const dateStr = today.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })
 
-  // Derived metrics
+  // Derived metrics — deltas are only shown where they can be computed from real data
   const metrics = useMemo(() => {
     const activeClients = state.clients.filter(c => c.status === 'ATIVO').length
     const activeProjects = state.projects.length
     const pipeline = state.projects.reduce((s, p) => s + p.value, 0)
-    const shootEvents = state.events.filter(e => e.type === 'Shoot').length
+
+    const now = new Date()
+    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const prevMonthKey = `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, '0')}`
+    const shootsThisMonth = state.events.filter(e => e.type === 'Shoot' && e.date.startsWith(currentMonthKey)).length
+    const shootsPrevMonth = state.events.filter(e => e.type === 'Shoot' && e.date.startsWith(prevMonthKey)).length
+    const shootsDelta = shootsThisMonth - shootsPrevMonth
+
     return [
-      { label: 'CLIENTES ATIVOS',         value: String(activeClients),                          delta: '+3',   up: true },
-      { label: 'PROJETOS EM ANDAMENTO',    value: String(activeProjects),                         delta: '+2',   up: true },
-      { label: 'VALOR EM PIPELINE',        value: `R$ ${pipeline.toLocaleString('pt-BR')}`,       delta: '+12%', up: true },
-      { label: 'SHOOTS ESTE MÊS',          value: String(shootEvents),                            delta: '-2',   up: false },
+      { label: 'CLIENTES ATIVOS',         value: String(activeClients) },
+      { label: 'PROJETOS EM ANDAMENTO',    value: String(activeProjects) },
+      { label: 'VALOR EM PIPELINE',        value: `R$ ${pipeline.toLocaleString('pt-BR')}` },
+      {
+        label: 'SHOOTS ESTE MÊS',
+        value: String(shootsThisMonth),
+        delta: shootsDelta === 0 ? undefined : `${shootsDelta > 0 ? '+' : ''}${shootsDelta} vs mês ant.`,
+        up: shootsDelta >= 0,
+      },
     ]
   }, [state.clients, state.projects, state.events])
 
@@ -125,19 +138,21 @@ export function AdminDashboard() {
             <p className="font-display font-bold text-3xl" style={{ color: '#F2F2F2' }}>
               {m.value}
             </p>
-            <div className="flex items-center gap-1">
-              {m.up ? (
-                <TrendingUp size={11} style={{ color: '#1E8449' }} />
-              ) : (
-                <TrendingDown size={11} style={{ color: '#C0392B' }} />
-              )}
-              <span
-                className="font-mono-mm text-[10px]"
-                style={{ color: m.up ? '#1E8449' : '#C0392B' }}
-              >
-                {m.delta}
-              </span>
-            </div>
+            {m.delta && (
+              <div className="flex items-center gap-1">
+                {m.up ? (
+                  <TrendingUp size={11} style={{ color: '#1E8449' }} />
+                ) : (
+                  <TrendingDown size={11} style={{ color: '#C0392B' }} />
+                )}
+                <span
+                  className="font-mono-mm text-[10px]"
+                  style={{ color: m.up ? '#1E8449' : '#C0392B' }}
+                >
+                  {m.delta}
+                </span>
+              </div>
+            )}
           </div>
         ))}
       </div>

@@ -125,7 +125,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }: { message: string; onCo
 /* ------------------------------------------------------------------ */
 
 export function AdminConfiguracoes() {
-  const { state } = useAdmin()
+  const { state, dispatch } = useAdmin()
   const [saved, setSaved] = useState(false)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [cleared, setCleared] = useState(false)
@@ -180,8 +180,8 @@ export function AdminConfiguracoes() {
 
   const handleClear = () => {
     setShowClearConfirm(false)
+    dispatch({ type: 'RESET_ALL' })
     setCleared(true)
-    // In production this would dispatch to reset state; here we show a confirmation message
     setTimeout(() => setCleared(false), 3000)
   }
 

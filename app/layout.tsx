@@ -49,7 +49,7 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${bebasNeue.variable} ${dmSans.variable} ${dmMono.variable} bg-[#0A0A0A]`}
     >
-      <body className="antialiased bg-[#0A0A0A] text-[#F5F5F0]" style={{ fontFamily: 'var(--font-dm-sans), DM Sans, sans-serif' }}>
+      <body className="antialiased bg-[#0A0A0A] text-[#F5F5F0]" style={{ fontFamily: 'var(--font-dm-sans), DM Sans, sans-serif' }} suppressHydrationWarning>
         {children}
       </body>
     </html>

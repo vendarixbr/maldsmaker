@@ -11,8 +11,10 @@ import {
   Settings,
   X,
   ExternalLink,
+  LogOut,
 } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', Icon: LayoutDashboard },
@@ -26,10 +28,17 @@ const navItems = [
 
 export function AdminSidebar() {
   const { activeSection, setActiveSection, sidebarOpen, setSidebarOpen } = useAdmin()
+  const router = useRouter()
 
   const handleNav = (id: string) => {
     setActiveSection(id)
     setSidebarOpen(false)
+  }
+
+  const handleLogout = async () => {
+    await fetch('/api/admin/logout', { method: 'POST' })
+    router.replace('/admin/login')
+    router.refresh()
   }
 
   return (
@@ -124,7 +133,7 @@ export function AdminSidebar() {
           </div>
           <a
             href="/"
-            className="flex items-center gap-2 font-mono-mm text-[10px] tracking-[0.1em] transition-colors"
+            className="flex items-center gap-2 font-mono-mm text-[10px] tracking-[0.1em] transition-colors mb-3"
             style={{ color: '#444' }}
             onMouseEnter={e => (e.currentTarget.style.color = '#666')}
             onMouseLeave={e => (e.currentTarget.style.color = '#444')}
@@ -132,6 +141,16 @@ export function AdminSidebar() {
             <ExternalLink size={11} />
             VER SITE PÚBLICO
           </a>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 font-mono-mm text-[10px] tracking-[0.1em] transition-colors"
+            style={{ color: '#444' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#F1948A')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#444')}
+          >
+            <LogOut size={11} />
+            SAIR
+          </button>
         </div>
       </aside>
     </>

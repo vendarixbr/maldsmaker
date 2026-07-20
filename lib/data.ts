@@ -724,31 +724,3 @@ export const GLOBAL_NOTES: GlobalNote[] = [
   },
 ]
 
-export const RECENT_TRANSACTIONS: Invoice[] = [
-  { id: 'TXN-001', date: '15/01/2025', value: 4400, status: 'RECEBIDO' },
-  { id: 'TXN-002', date: '12/01/2025', value: 3600, status: 'PENDENTE' },
-  { id: 'TXN-003', date: '10/01/2025', value: 2400, status: 'PENDENTE' },
-  { id: 'TXN-004', date: '08/01/2025', value: 1600, status: 'PENDENTE' },
-  { id: 'TXN-005', date: '01/01/2025', value: 1200, status: 'RECEBIDO' },
-  { id: 'TXN-006', date: '20/12/2024', value: 4800, status: 'RECEBIDO' },
-  { id: 'TXN-007', date: '30/11/2024', value: 4800, status: 'RECEBIDO' },
-  { id: 'TXN-008', date: '10/11/2024', value: 2600, status: 'RECEBIDO' },
-]
-
-export const MONTHLY_REVENUE = [
-  { month: 'Ago', value: 8400 },
-  { month: 'Set', value: 11200 },
-  { month: 'Out', value: 16600 },
-  { month: 'Nov', value: 12800 },
-  { month: 'Dez', value: 14200 },
-  { month: 'Jan', value: 14800 },
-]
-
-export const REVENUE_BY_NICHE = [
-  { niche: 'Empresas', value: 26800 },
-  { niche: 'Músicos', value: 37400 },
-  { niche: 'Adegas', value: 9600 },
-  { niche: 'Advogados', value: 5200 },
-  { niche: 'Influencers', value: 7200 },
-  { niche: 'Restaurantes', value: 6400 },
-]

@@ -341,8 +341,8 @@ function ClientDrawer({ clientId, onClose, onEdit }: { clientId: string; onClose
                       <Bar dataKey="value" fill="#C9A84C" radius={[2, 2, 0, 0]} />
                       <Tooltip
                         contentStyle={{ background: '#111', border: 'none', fontSize: 11, fontFamily: 'monospace' }}
-                        formatter={(v: number) => [`R$ ${v.toLocaleString('pt-BR')}`, '']}
-                        labelFormatter={(l: string) => l}
+                        formatter={(v) => [`R$ ${Number(v ?? 0).toLocaleString('pt-BR')}`, '']}
+                        labelFormatter={(l) => String(l ?? '')}
                       />
                     </BarChart>
                   </ResponsiveContainer>

@@ -133,11 +133,11 @@ function NewNoteForm({ onClose }: { onClose: () => void }) {
 function NoteCard({ note }: { note: GlobalNote }) {
   const { dispatch } = useAdmin()
   const cfg = NOTE_COLORS[note.color]
-  const [checkState, setCheckState] = useState(note.checklist ?? [])
+  const checklist = note.checklist ?? []
 
   const toggleCheck = (i: number) => {
-    const updated = checkState.map((item, idx) => idx === i ? { ...item, done: !item.done } : item)
-    setCheckState(updated)
+    const updated = checklist.map((item, idx) => idx === i ? { ...item, done: !item.done } : item)
+    dispatch({ type: 'UPDATE_NOTE', payload: { ...note, checklist: updated } })
   }
 
   return (
@@ -184,9 +184,9 @@ function NoteCard({ note }: { note: GlobalNote }) {
       )}
 
       {/* Checklist */}
-      {checkState.length > 0 && (
+      {checklist.length > 0 && (
         <div className="flex flex-col gap-2">
-          {checkState.map((item, i) => (
+          {checklist.map((item, i) => (
             <button key={i} onClick={() => toggleCheck(i)} className="flex items-center gap-2 text-left">
               <div
                 className="w-4 h-4 rounded flex items-center justify-center shrink-0"

@@ -165,16 +165,33 @@ export function Contato() {
   const [form, setForm] = useState({ nome: '', contato: '', empresa: '', mensagem: '', servico: '' })
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '0px 0px -80px 0px' })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setTimeout(() => { setLoading(false); setSent(true) }, 1200)
+    setError('')
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+
+      if (!response.ok) throw new Error('Falha ao enviar')
+      setSent(true)
+    } catch (err) {
+      console.error(err)
+      setError('Nao foi possivel enviar agora. Tente novamente em instantes.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -293,6 +310,12 @@ export function Contato() {
                 <FloatingField name="empresa" label="Empresa ou projeto"   value={form.empresa} onChange={handleChange} />
                 <FloatingSelect name="servico" label="Tipo de serviço"     value={form.servico} onChange={handleChange} />
                 <FloatingTextarea name="mensagem" label="Conte sobre o que você precisa" value={form.mensagem} onChange={handleChange} />
+
+                {error && (
+                  <p className="font-mono-mm text-[10px] tracking-[0.08em]" style={{ color: '#F1948A' }}>
+                    {error}
+                  </p>
+                )}
 
                 <button
                   type="submit"

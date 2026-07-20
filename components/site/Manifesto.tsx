@@ -5,14 +5,15 @@ import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
 
 const niches = [
-  'ARTISTAS', 'EMPRESAS', 'ADEGAS', 'ADVOGADOS', 'EVENTOS',
-  'INFLUENCERS', 'RESTAURANTES', 'MUSICAIS', 'INSTITUCIONAIS',
+  'ARTISTAS', 'EMPRESAS', 'ADVOGADOS', 'EVENTOS',
+  'INFLUENCERS', 'MUSICAIS', 'INSTITUCIONAIS', 'BARES', 'RESTAURANTES',
 ]
 
 const stats = [
-  { target: 87, suffix: '+', label: 'Projetos' },
-  { target: 50, suffix: '+', label: 'Clientes' },
-  { target: 10, suffix: '+', label: 'Nichos' },
+  { target: 300, suffix: '+', label: 'Projetos' },
+  { target: 100, suffix: '+', label: 'Clientes' },
+  { target: 15, suffix: '', label: 'Nichos' },
+  { target: 30, suffix: 'M+', label: 'Streams' },
 ]
 
 function CountUp({ target, suffix, active }: { target: number; suffix: string; active: boolean }) {
@@ -162,8 +163,8 @@ export function Manifesto() {
               style={{ color: '#A8A89A', fontSize: '17px', fontWeight: 300, lineHeight: 1.8 }}
             >
               A Malds Maker nasceu da necessidade de contar histórias com qualidade real —
-              não a qualidade que cabe no orçamento, mas a que o projeto merece. Atuamos com
-              artistas, empresas, advogados, adegas, influencers, restaurantes. O nicho muda.
+              não apenas a qualidade que cabe no orçamento, mas a que o projeto merece. Atuamos com
+              artistas, empresas, advogados, influencers, bares e restaurantes. O nicho muda.
               O nível não.
             </motion.p>
 
@@ -192,15 +193,17 @@ export function Manifesto() {
               initial={{ opacity: 0, y: 16 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.44 }}
-              className="flex items-stretch pt-4"
+              className="grid grid-cols-2 gap-x-7 gap-y-6 pt-4"
             >
               {stats.map((stat, i) => (
                 <div
                   key={stat.label}
-                  className="flex-1 flex flex-col gap-1.5"
+                  className="flex flex-col gap-1.5"
                   style={{
-                    paddingLeft: i > 0 ? '28px' : '0',
-                    borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.08)' : 'none',
+                    paddingLeft: i % 2 === 1 ? '28px' : '0',
+                    borderLeft: i % 2 === 1 ? '1px solid rgba(255,255,255,0.08)' : 'none',
+                    paddingTop: i >= 2 ? '20px' : '0',
+                    borderTop: i >= 2 ? '1px solid rgba(255,255,255,0.08)' : 'none',
                   }}
                 >
                   <span
