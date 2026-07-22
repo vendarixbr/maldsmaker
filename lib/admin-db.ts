@@ -2,7 +2,6 @@ import { Prisma } from '@prisma/client'
 import { prisma } from './prisma'
 import {
   adminReducer,
-  staticAdminState,
   type AdminAction,
   type AdminState,
 } from './admin-store'
@@ -80,8 +79,6 @@ function toNote(row: DbNote): GlobalNote {
 }
 
 export async function getAdminState(): Promise<AdminState> {
-  await seedIfEmpty()
-
   const [clients, projects, events, notes] = await Promise.all([
     prisma.client.findMany({ orderBy: { createdAt: 'desc' } }),
     prisma.project.findMany({ orderBy: { createdAt: 'desc' } }),
@@ -126,34 +123,6 @@ export async function replaceAdminState(state: AdminState) {
   }
 
   await prisma.$transaction(writes)
-}
-
-async function seedIfEmpty() {
-  const seeded = await prisma.adminMeta.findUnique({ where: { key: 'initial_seed' } })
-  if (seeded) return
-
-  const [clients, projects, events, notes] = await Promise.all([
-    prisma.client.count(),
-    prisma.project.count(),
-    prisma.calendarEvent.count(),
-    prisma.globalNote.count(),
-  ])
-
-  if (clients + projects + events + notes > 0) {
-    await prisma.adminMeta.upsert({
-      where: { key: 'initial_seed' },
-      update: { value: 'existing_data' },
-      create: { key: 'initial_seed', value: 'existing_data' },
-    })
-    return
-  }
-
-  await replaceAdminState(staticAdminState)
-  await prisma.adminMeta.upsert({
-    where: { key: 'initial_seed' },
-    update: { value: 'static_data' },
-    create: { key: 'initial_seed', value: 'static_data' },
-  })
 }
 
 function clientToDb(client: Client) {

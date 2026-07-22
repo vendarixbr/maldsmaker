@@ -17,9 +17,9 @@ const COLUMNS: { status: ProjectStatus; label: string }[] = [
 ]
 
 const PRIORITY_CONFIG: Record<Priority, { color: string; label: string }> = {
-  urgent: { color: '#C0392B', label: 'URGENTE' },
-  normal: { color: '#D4AC0D', label: 'NORMAL' },
-  low:    { color: '#555',    label: 'BAIXA' },
+  urgent: { color: '#F1948A', label: 'URGENTE' },
+  normal: { color: '#F4D03F', label: 'NORMAL' },
+  low:    { color: '#A0A0A0', label: 'BAIXA' },
 }
 
 const SERVICE_TYPES = ['CLIPE MUSICAL', 'INSTITUCIONAL', 'FOTO/VÍDEO', 'CONTEÚDO', 'ENSAIO FOTOGRÁFICO', 'DRONE', 'EVENTO', 'OUTRO']
@@ -407,31 +407,32 @@ function KanbanCard({ project, onClick }: { project: Project; onClick: () => voi
   return (
     <button
       onClick={onClick}
-      className="w-full text-left flex flex-col gap-3 p-3 transition-all"
-      style={{ background: '#131313', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px' }}
-      onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.3)')}
-      onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)')}
+      className="w-full text-left flex flex-col gap-3 p-3.5 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
+      style={{ background: '#131313', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
+      onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)')}
+      onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+      aria-label={`Projeto: ${project.title}, Cliente: ${project.clientName}`}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className="font-display font-medium text-sm leading-snug" style={{ color: '#F2F2F2' }}>{project.title}</p>
-        <span className="font-mono-mm text-[9px] px-1.5 py-0.5 shrink-0" style={{ background: `${pri.color}22`, color: pri.color, borderRadius: '3px' }}>
+        <p className="font-display font-medium text-sm leading-snug text-[#F2F2F2]">{project.title}</p>
+        <span className="font-mono-mm text-[10px] font-semibold px-2 py-0.5 shrink-0" style={{ background: `${pri.color}22`, color: pri.color, borderRadius: '4px' }}>
           {pri.label}
         </span>
       </div>
-      <p className="font-mono-mm text-[10px]" style={{ color: '#555' }}>{project.clientName}</p>
+      <p className="font-mono-mm text-xs text-[#A0A0A0]">{project.clientName}</p>
       {total > 0 && (
         <div>
-          <div className="h-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
-            <div className="h-0.5 rounded-full" style={{ width: `${pct}%`, background: '#C9A84C' }} />
+          <div className="h-1 rounded-full bg-white/10">
+            <div className="h-1 rounded-full transition-all" style={{ width: `${pct}%`, background: '#C9A84C' }} />
           </div>
-          <p className="font-mono-mm text-[9px] mt-1" style={{ color: '#444' }}>{done}/{total} tarefas</p>
+          <p className="font-mono-mm text-[10px] mt-1 text-[#888]">{done}/{total} tarefas</p>
         </div>
       )}
       <div className="flex items-center justify-between">
-        <span className="font-display text-xs font-semibold" style={{ color: '#C9A84C' }}>
+        <span className="font-display text-xs font-bold text-[#C9A84C]">
           {project.value > 0 ? `R$ ${project.value.toLocaleString('pt-BR')}` : '—'}
         </span>
-        <span className="font-mono-mm text-[9px]" style={{ color: '#444' }}>{project.dueDate}</span>
+        <span className="font-mono-mm text-[10px] text-[#A0A0A0]">{project.dueDate}</span>
       </div>
     </button>
   )
@@ -445,44 +446,88 @@ export function AdminProjetos() {
   const { state } = useAdmin()
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
   const [showNewForm, setShowNewForm] = useState(false)
+  const [mobileTab, setMobileTab] = useState<string>('ALL')
 
   const totalPipeline = state.projects.reduce((s, p) => s + p.value, 0)
+
+  const displayedColumns = mobileTab === 'ALL'
+    ? COLUMNS
+    : COLUMNS.filter(c => c.status === mobileTab)
 
   return (
     <div className="flex flex-col gap-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display font-semibold text-2xl" style={{ color: '#F2F2F2' }}>Projetos</h1>
-          <p className="font-mono-mm text-[11px] tracking-[0.08em] mt-1" style={{ color: '#555' }}>
+          <h1 className="font-display font-semibold text-2xl text-[#F2F2F2]">Projetos</h1>
+          <p className="font-mono-mm text-xs tracking-[0.08em] mt-1 text-[#A0A0A0]">
             {state.projects.length} PROJETOS &nbsp;·&nbsp; R$ {totalPipeline.toLocaleString('pt-BR')} EM PIPELINE
           </p>
         </div>
         <button
           onClick={() => setShowNewForm(true)}
-          className="shrink-0 flex items-center gap-2 h-9 px-5 font-mono-mm text-[11px] tracking-[0.1em]"
+          className="shrink-0 flex items-center justify-center gap-2 h-11 px-5 font-mono-mm text-xs tracking-[0.1em] font-semibold rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]"
           style={{ background: '#C9A84C', color: '#080808' }}
         >
-          <Plus size={14} />
+          <Plus size={16} />
           NOVO PROJETO
         </button>
       </div>
 
+      {/* Mobile Column Tabs (< sm) */}
+      <div className="flex sm:hidden gap-1.5 overflow-x-auto pb-1" role="tablist" aria-label="Filtrar coluna de projetos">
+        <button
+          onClick={() => setMobileTab('ALL')}
+          role="tab"
+          aria-selected={mobileTab === 'ALL'}
+          className="h-10 px-3.5 font-mono-mm text-xs tracking-wider rounded-lg font-semibold shrink-0 transition-colors"
+          style={{
+            background: mobileTab === 'ALL' ? '#C9A84C' : '#111111',
+            color: mobileTab === 'ALL' ? '#080808' : '#A0A0A0',
+            border: '1px solid',
+            borderColor: mobileTab === 'ALL' ? '#C9A84C' : 'rgba(255,255,255,0.08)',
+          }}
+        >
+          TODAS ({state.projects.length})
+        </button>
+        {COLUMNS.map(col => {
+          const count = state.projects.filter(p => p.status === col.status).length
+          const active = mobileTab === col.status
+          return (
+            <button
+              key={col.status}
+              onClick={() => setMobileTab(col.status)}
+              role="tab"
+              aria-selected={active}
+              className="h-10 px-3.5 font-mono-mm text-xs tracking-wider rounded-lg font-semibold shrink-0 transition-colors"
+              style={{
+                background: active ? '#C9A84C' : '#111111',
+                color: active ? '#080808' : '#A0A0A0',
+                border: '1px solid',
+                borderColor: active ? '#C9A84C' : 'rgba(255,255,255,0.08)',
+              }}
+            >
+              {col.label} ({count})
+            </button>
+          )
+        })}
+      </div>
+
       {/* Kanban board */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-        {COLUMNS.map(col => {
+        {displayedColumns.map(col => {
           const colProjects = state.projects.filter(p => p.status === col.status)
           return (
             <div key={col.status} className="flex flex-col gap-3">
               {/* Column header */}
               <div
-                className="flex items-center justify-between px-3 py-2"
-                style={{ background: '#0D0D0D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '6px' }}
+                className="flex items-center justify-between px-3.5 py-2.5"
+                style={{ background: '#0D0D0D', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
               >
-                <span className="font-mono-mm text-[10px] tracking-[0.1em]" style={{ color: '#C9A84C' }}>{col.label}</span>
+                <span className="font-mono-mm text-xs tracking-[0.1em] font-semibold" style={{ color: '#C9A84C' }}>{col.label}</span>
                 <span
-                  className="w-5 h-5 flex items-center justify-center font-mono-mm text-[10px] rounded-full"
-                  style={{ background: 'rgba(201,168,76,0.15)', color: '#C9A84C' }}
+                  className="w-6 h-6 flex items-center justify-center font-mono-mm text-xs font-bold rounded-full"
+                  style={{ background: 'rgba(201,168,76,0.2)', color: '#C9A84C' }}
                 >
                   {colProjects.length}
                 </span>
@@ -492,10 +537,10 @@ export function AdminProjetos() {
               <div className="flex flex-col gap-2 min-h-[120px]">
                 {colProjects.length === 0 ? (
                   <div
-                    className="flex-1 flex items-center justify-center h-20 font-mono-mm text-[10px]"
-                    style={{ border: '1px dashed rgba(255,255,255,0.05)', borderRadius: '8px', color: '#333' }}
+                    className="flex-1 flex items-center justify-center h-24 font-mono-mm text-xs text-[#888]"
+                    style={{ border: '1px dashed rgba(255,255,255,0.08)', borderRadius: '8px' }}
                   >
-                    VAZIO
+                    NENHUM PROJETO
                   </div>
                 ) : colProjects.map(p => (
                   <KanbanCard key={p.id} project={p} onClick={() => setSelectedProjectId(p.id)} />

@@ -243,50 +243,57 @@ export function AdminNotas() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display font-semibold text-2xl" style={{ color: '#F2F2F2' }}>Notas</h1>
-          <p className="font-mono-mm text-[11px] tracking-[0.08em] mt-1" style={{ color: '#555' }}>
+          <h1 className="font-display font-semibold text-2xl text-[#F2F2F2]">Notas</h1>
+          <p className="font-mono-mm text-xs tracking-[0.08em] mt-1 text-[#A0A0A0]">
             {state.notes.length} NOTAS &nbsp;·&nbsp; {state.notes.filter(n => n.pinned).length} FIXADAS
           </p>
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="shrink-0 flex items-center gap-2 h-9 px-5 font-mono-mm text-[11px] tracking-[0.1em]"
+          className="shrink-0 flex items-center justify-center gap-2 h-11 px-5 font-mono-mm text-xs tracking-[0.1em] font-semibold rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]"
           style={{ background: '#C9A84C', color: '#080808' }}
         >
-          <Plus size={14} />
+          <Plus size={16} />
           NOVA NOTA
         </button>
       </div>
 
       {/* Search */}
       <div
-        className="flex items-center gap-2 h-10 px-3"
-        style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '6px' }}
+        className="flex items-center gap-2 h-11 px-3.5"
+        style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
       >
-        <Search size={14} style={{ color: '#444' }} />
+        <Search size={16} style={{ color: '#888' }} />
         <input
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Buscar notas..."
-          className="flex-1 bg-transparent outline-none font-display text-sm"
-          style={{ color: '#F2F2F2' }}
+          placeholder="Buscar notas por título ou conteúdo..."
+          className="flex-1 bg-transparent outline-none font-display text-sm text-[#F2F2F2] placeholder-[#777]"
+          aria-label="Buscar notas"
         />
-        {search && <button onClick={() => setSearch('')} style={{ color: '#444' }}><X size={14} /></button>}
+        {search && (
+          <button
+            onClick={() => setSearch('')}
+            className="p-1 rounded text-[#888] hover:text-white focus-visible:ring-2 focus-visible:ring-[#C9A84C] outline-none"
+            aria-label="Limpar busca"
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
       {/* Category filters */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 flex-wrap" role="group" aria-label="Filtro por categoria">
         {CATEGORIES.map(cat => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className="h-8 px-3 font-mono-mm text-[10px] tracking-[0.06em] transition-colors"
+            className="h-10 px-3.5 font-mono-mm text-xs tracking-[0.06em] font-medium transition-colors rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
             style={{
               background: activeCategory === cat ? '#C9A84C' : '#111111',
-              color: activeCategory === cat ? '#080808' : '#555',
+              color: activeCategory === cat ? '#080808' : '#A0A0A0',
               border: '1px solid',
-              borderColor: activeCategory === cat ? '#C9A84C' : 'rgba(255,255,255,0.06)',
-              borderRadius: '6px',
+              borderColor: activeCategory === cat ? '#C9A84C' : 'rgba(255,255,255,0.08)',
             }}
           >
             {cat}
@@ -296,9 +303,9 @@ export function AdminNotas() {
 
       {/* Pinned section */}
       {pinned.length > 0 && (
-        <section>
-          <p className="font-mono-mm text-[10px] tracking-[0.1em] mb-3 flex items-center gap-2" style={{ color: '#C9A84C' }}>
-            <Pin size={11} />
+        <section aria-label="Notas fixadas">
+          <p className="font-mono-mm text-xs tracking-[0.1em] font-semibold mb-3 flex items-center gap-2 text-[#C9A84C]">
+            <Pin size={13} />
             FIXADAS
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -309,9 +316,9 @@ export function AdminNotas() {
 
       {/* All notes */}
       {unpinned.length > 0 && (
-        <section>
+        <section aria-label="Outras notas">
           {pinned.length > 0 && (
-            <p className="font-mono-mm text-[10px] tracking-[0.1em] mb-3" style={{ color: '#555' }}>OUTRAS</p>
+            <p className="font-mono-mm text-xs tracking-[0.1em] font-semibold mb-3 text-[#A0A0A0]">OUTRAS</p>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {unpinned.map(n => <NoteCard key={n.id} note={n} />)}
@@ -320,7 +327,7 @@ export function AdminNotas() {
       )}
 
       {filtered.length === 0 && (
-        <p className="font-mono-mm text-[11px] py-12 text-center" style={{ color: '#333' }}>
+        <p className="font-mono-mm text-xs py-12 text-center text-[#888]">
           Nenhuma nota encontrada.
         </p>
       )}

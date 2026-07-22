@@ -292,19 +292,19 @@ export function AdminAgenda() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display font-semibold text-2xl" style={{ color: '#F2F2F2' }}>Agenda</h1>
-          <p className="font-mono-mm text-[11px] tracking-[0.08em] mt-1" style={{ color: '#555' }}>
+          <h1 className="font-display font-semibold text-2xl text-[#F2F2F2]">Agenda</h1>
+          <p className="font-mono-mm text-xs tracking-[0.08em] mt-1 text-[#A0A0A0]">
             {monthEvents.length} EVENTOS EM {MONTHS[month].toUpperCase()} {year}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex" style={{ border: '1px solid rgba(255,255,255,0.07)', borderRadius: '6px' }}>
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex" style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}>
             {(['month', 'list'] as const).map(v => (
               <button
                 key={v}
                 onClick={() => setView(v)}
-                className="h-9 px-4 font-mono-mm text-[10px] tracking-[0.08em] transition-colors"
-                style={{ background: view === v ? '#C9A84C' : 'transparent', color: view === v ? '#080808' : '#555', borderRadius: '5px' }}
+                className="h-11 px-4 font-mono-mm text-xs tracking-[0.08em] font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
+                style={{ background: view === v ? '#C9A84C' : 'transparent', color: view === v ? '#080808' : '#A0A0A0', borderRadius: '7px' }}
               >
                 {v === 'month' ? 'MÊS' : 'LISTA'}
               </button>
@@ -312,10 +312,10 @@ export function AdminAgenda() {
           </div>
           <button
             onClick={() => { setNewFormDate(undefined); setShowNewForm(true) }}
-            className="flex items-center gap-2 h-9 px-4 font-mono-mm text-[10px] tracking-[0.08em]"
-            style={{ background: '#C9A84C', color: '#080808', borderRadius: '6px' }}
+            className="flex items-center justify-center gap-2 h-11 px-4 font-mono-mm text-xs tracking-[0.08em] font-semibold outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]"
+            style={{ background: '#C9A84C', color: '#080808', borderRadius: '8px' }}
           >
-            <Plus size={12} />
+            <Plus size={16} />
             NOVO EVENTO
           </button>
         </div>
@@ -325,30 +325,32 @@ export function AdminAgenda() {
       <div className="flex items-center gap-4">
         <button
           onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
-          className="w-8 h-8 flex items-center justify-center transition-colors"
-          style={{ border: '1px solid rgba(255,255,255,0.07)', borderRadius: '6px', color: '#777' }}
+          className="w-11 h-11 flex items-center justify-center transition-colors text-[#E0E0E0] hover:text-[#C9A84C] outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
+          style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
+          aria-label="Mês anterior"
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={20} />
         </button>
-        <h2 className="font-display font-semibold text-lg" style={{ color: '#F2F2F2' }}>
+        <h2 className="font-display font-semibold text-lg text-[#F2F2F2]">
           {MONTHS[month]} {year}
         </h2>
         <button
           onClick={() => setCurrentDate(new Date(year, month + 1, 1))}
-          className="w-8 h-8 flex items-center justify-center transition-colors"
-          style={{ border: '1px solid rgba(255,255,255,0.07)', borderRadius: '6px', color: '#777' }}
+          className="w-11 h-11 flex items-center justify-center transition-colors text-[#E0E0E0] hover:text-[#C9A84C] outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
+          style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
+          aria-label="Próximo mês"
         >
-          <ChevronRight size={16} />
+          <ChevronRight size={20} />
         </button>
       </div>
 
       {/* Month view */}
       {view === 'month' && (
-        <div style={{ border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', overflow: 'hidden' }}>
+        <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', overflow: 'hidden' }}>
           <div className="grid grid-cols-7">
             {WEEKDAYS.map(d => (
-              <div key={d} className="h-9 flex items-center justify-center font-mono-mm text-[10px]"
-                style={{ color: '#555', borderBottom: '1px solid rgba(255,255,255,0.05)', background: '#0D0D0D' }}>
+              <div key={d} className="h-10 flex items-center justify-center font-mono-mm text-xs font-semibold text-[#A0A0A0]"
+                style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', background: '#0D0D0D' }}>
                 {d}
               </div>
             ))}
@@ -361,10 +363,10 @@ export function AdminAgenda() {
               return (
                 <div
                   key={idx}
-                  className="min-h-[90px] p-1.5 flex flex-col gap-1 group"
+                  className="min-h-[72px] sm:min-h-[90px] p-1.5 flex flex-col gap-1 group"
                   style={{
-                    borderRight: (idx + 1) % 7 !== 0 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                    borderBottom: idx < calendarDays.length - 7 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                    borderRight: (idx + 1) % 7 !== 0 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                    borderBottom: idx < calendarDays.length - 7 ? '1px solid rgba(255,255,255,0.06)' : 'none',
                     background: day ? 'transparent' : 'rgba(0,0,0,0.2)',
                   }}
                 >
@@ -372,21 +374,20 @@ export function AdminAgenda() {
                     <>
                       <div className="flex items-center justify-between">
                         <span
-                          className="w-6 h-6 flex items-center justify-center font-mono-mm text-[11px] rounded-full"
+                          className="w-6 h-6 flex items-center justify-center font-mono-mm text-xs font-bold rounded-full"
                           style={{
                             background: isToday ? '#C9A84C' : 'transparent',
-                            color: isToday ? '#080808' : '#777',
+                            color: isToday ? '#080808' : '#A0A0A0',
                           }}
                         >
                           {day}
                         </span>
                         <button
                           onClick={() => openNewForDay(day)}
-                          className="w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                          style={{ color: '#C9A84C' }}
-                          aria-label="Adicionar evento"
+                          className="w-6 h-6 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-[#C9A84C] outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C] rounded"
+                          aria-label={`Adicionar evento dia ${day}`}
                         >
-                          <Plus size={11} />
+                          <Plus size={14} />
                         </button>
                       </div>
                       {events.slice(0, 2).map(e => {
@@ -395,8 +396,8 @@ export function AdminAgenda() {
                           <button
                             key={e.id}
                             onClick={() => setSelectedEvent(e)}
-                            className="w-full text-left px-1.5 py-0.5 truncate font-display text-[10px] transition-opacity"
-                            style={{ background: cfg.bg, color: cfg.color, borderRadius: '3px' }}
+                            className="w-full text-left px-1.5 py-1 truncate font-display text-[11px] font-medium transition-opacity outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
+                            style={{ background: cfg.bg, color: cfg.color, borderRadius: '4px' }}
                             onMouseEnter={el => (el.currentTarget.style.opacity = '0.8')}
                             onMouseLeave={el => (el.currentTarget.style.opacity = '1')}
                           >
@@ -405,8 +406,8 @@ export function AdminAgenda() {
                         )
                       })}
                       {events.length > 2 && (
-                        <span className="font-mono-mm text-[9px] px-1.5" style={{ color: '#555' }}>
-                          +{events.length - 2}
+                        <span className="font-mono-mm text-[10px] px-1 font-semibold text-[#A0A0A0]">
+                          +{events.length - 2} mais
                         </span>
                       )}
                     </>
@@ -420,9 +421,9 @@ export function AdminAgenda() {
 
       {/* List view */}
       {view === 'list' && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2.5">
           {monthEvents.length === 0 ? (
-            <p className="font-mono-mm text-[11px] py-8 text-center" style={{ color: '#333' }}>
+            <p className="font-mono-mm text-xs py-8 text-center text-[#888]">
               Nenhum evento este mês.
             </p>
           ) : monthEvents.map(event => {
@@ -434,30 +435,30 @@ export function AdminAgenda() {
               <button
                 key={event.id}
                 onClick={() => setSelectedEvent(event)}
-                className="w-full flex items-center gap-4 p-4 text-left transition-all"
-                style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px' }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.25)')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)')}
+                className="w-full flex items-center gap-3 sm:gap-4 p-4 text-left transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
+                style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.3)')}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
               >
                 <div className="shrink-0 w-12 text-center">
-                  <p className="font-mono-mm text-[10px]" style={{ color: '#555' }}>{dayName}</p>
-                  <p className="font-display font-bold text-xl" style={{ color: '#C9A84C' }}>{dayNum}</p>
+                  <p className="font-mono-mm text-xs text-[#A0A0A0] font-medium">{dayName}</p>
+                  <p className="font-display font-bold text-xl text-[#C9A84C]">{dayNum}</p>
                 </div>
-                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: cfg.dot }} />
+                <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: cfg.dot }} />
                 <div className="flex-1 min-w-0">
-                  <p className="font-display font-medium text-sm" style={{ color: '#F2F2F2' }}>{event.title}</p>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="font-mono-mm text-[10px]" style={{ color: '#555' }}>
+                  <p className="font-display font-medium text-sm text-[#F2F2F2] truncate">{event.title}</p>
+                  <div className="flex items-center gap-3 mt-1 flex-wrap">
+                    <span className="font-mono-mm text-xs text-[#A0A0A0]">
                       {event.startTime}{event.endTime ? ` – ${event.endTime}` : ''}
                     </span>
-                    <span className="font-mono-mm text-[10px]" style={{ color: '#444' }}>{event.location}</span>
+                    <span className="font-mono-mm text-xs text-[#888]">{event.location}</span>
                   </div>
                 </div>
-                <span className="shrink-0 font-mono-mm text-[10px] px-2 py-1" style={{ background: cfg.bg, color: cfg.color, borderRadius: '3px' }}>
+                <span className="shrink-0 font-mono-mm text-[11px] px-2.5 py-1 font-semibold" style={{ background: cfg.bg, color: cfg.color, borderRadius: '4px' }}>
                   {event.type.toUpperCase()}
                 </span>
                 {event.value && (
-                  <span className="shrink-0 font-display font-semibold text-sm" style={{ color: '#C9A84C' }}>
+                  <span className="shrink-0 font-display font-bold text-sm text-[#C9A84C]">
                     R$ {event.value.toLocaleString('pt-BR')}
                   </span>
                 )}

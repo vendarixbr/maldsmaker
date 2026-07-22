@@ -2,6 +2,7 @@
 
 import { AdminProvider, useAdmin } from '@/lib/admin-context'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
+import { AdminMobileNav } from '@/components/admin/AdminMobileNav'
 import { AdminDashboard } from '@/components/admin/AdminDashboard'
 import { AdminCRM } from '@/components/admin/AdminCRM'
 import { AdminProjetos } from '@/components/admin/AdminProjetos'
@@ -32,33 +33,35 @@ function AdminShell() {
       <main className="flex-1 flex flex-col min-h-screen overflow-x-hidden lg:ml-[240px]">
         {/* Mobile topbar */}
         <div
-          className="flex lg:hidden items-center justify-between px-4 h-14 sticky top-0 z-30"
-          style={{ background: '#0D0D0D', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+          className="flex lg:hidden items-center justify-between px-4 h-14 sticky top-0 z-20 shadow-md"
+          style={{ background: '#0D0D0D', borderBottom: '1px solid rgba(255,255,255,0.08)' }}
         >
           <button
             onClick={() => setSidebarOpen(true)}
-            aria-label="Abrir menu"
-            style={{ color: '#F2F2F2' }}
+            aria-label="Abrir menu de navegação"
+            className="w-10 h-10 flex items-center justify-center rounded-lg text-white hover:bg-white/5 active:bg-white/10 outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
           >
             <Menu size={22} />
           </button>
-          <span className="font-mono-mm text-[11px] tracking-[0.12em]" style={{ color: '#C9A84C' }}>
-            MALDS MAKER
+          <span className="font-mono-mm text-xs tracking-[0.14em] font-semibold" style={{ color: '#C9A84C' }}>
+            MALDS MAKER ADMIN
           </span>
-          <div className="w-6" />
+          <div className="w-10" />
         </div>
 
-        {/* Page content */}
-        <div className="flex-1 p-5 lg:p-7 max-w-[1400px] w-full mx-auto">
+        {/* Page content with bottom padding for mobile navigation */}
+        <div className="flex-1 p-4 sm:p-6 lg:p-7 pb-24 lg:pb-7 max-w-[1400px] w-full mx-auto">
           {(isLoading || isSaving || error) && (
             <div
-              className="mb-4 px-4 py-3 font-mono-mm text-[10px] tracking-[0.08em]"
+              className="mb-4 px-4 py-3 font-mono-mm text-xs tracking-[0.08em] flex items-center gap-2"
               style={{
-                background: error ? 'rgba(192,57,43,0.12)' : 'rgba(201,168,76,0.08)',
-                border: error ? '1px solid rgba(192,57,43,0.3)' : '1px solid rgba(201,168,76,0.2)',
-                borderRadius: '6px',
+                background: error ? 'rgba(192,57,43,0.15)' : 'rgba(201,168,76,0.1)',
+                border: error ? '1px solid rgba(192,57,43,0.4)' : '1px solid rgba(201,168,76,0.3)',
+                borderRadius: '8px',
                 color: error ? '#F1948A' : '#C9A84C',
               }}
+              role="status"
+              aria-live="polite"
             >
               {error ?? (isLoading ? 'CARREGANDO DADOS DO POSTGRES...' : 'SALVANDO NO POSTGRES...')}
             </div>
@@ -67,7 +70,8 @@ function AdminShell() {
         </div>
       </main>
 
-
+      {/* Fixed bottom navigation for mobile */}
+      <AdminMobileNav />
     </div>
   )
 }

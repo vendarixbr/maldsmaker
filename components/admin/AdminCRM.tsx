@@ -514,17 +514,17 @@ export function AdminCRM() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display font-semibold text-2xl" style={{ color: '#F2F2F2' }}>Clientes / CRM</h1>
-          <p className="font-mono-mm text-[11px] tracking-[0.08em] mt-1" style={{ color: '#555' }}>
+          <h1 className="font-display font-semibold text-2xl text-[#F2F2F2]">Clientes / CRM</h1>
+          <p className="font-mono-mm text-xs tracking-[0.08em] mt-1 text-[#A0A0A0]">
             {state.clients.filter(c => c.status === 'ATIVO').length} CLIENTES ATIVOS &nbsp;·&nbsp; {state.clients.length} TOTAL
           </p>
         </div>
         <button
           onClick={() => { setEditingClient(null); setShowForm(true) }}
-          className="shrink-0 flex items-center gap-2 h-9 px-5 font-mono-mm text-[11px] tracking-[0.1em]"
+          className="shrink-0 flex items-center justify-center gap-2 h-11 px-5 font-mono-mm text-xs tracking-[0.1em] font-semibold rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]"
           style={{ background: '#C9A84C', color: '#080808' }}
         >
-          <Plus size={14} />
+          <Plus size={16} />
           NOVO CLIENTE
         </button>
       </div>
@@ -532,34 +532,39 @@ export function AdminCRM() {
       {/* Search + filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div
-          className="flex items-center gap-2 flex-1 h-10 px-3"
-          style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '6px' }}
+          className="flex items-center gap-2 flex-1 h-11 px-3.5"
+          style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
         >
-          <Search size={14} style={{ color: '#444' }} />
+          <Search size={16} style={{ color: '#888' }} />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Buscar por nome, nicho, empresa..."
-            className="flex-1 bg-transparent outline-none font-display text-sm"
-            style={{ color: '#F2F2F2' }}
+            className="flex-1 bg-transparent outline-none font-display text-sm text-[#F2F2F2] placeholder-[#777]"
+            aria-label="Buscar clientes"
           />
           {search && (
-            <button onClick={() => setSearch('')} style={{ color: '#444' }}><X size={14} /></button>
+            <button
+              onClick={() => setSearch('')}
+              className="p-1 rounded text-[#888] hover:text-white focus-visible:ring-2 focus-visible:ring-[#C9A84C] outline-none"
+              aria-label="Limpar busca"
+            >
+              <X size={16} />
+            </button>
           )}
         </div>
 
-        <div className="flex gap-1 flex-wrap">
+        <div className="flex gap-1.5 flex-wrap" role="group" aria-label="Filtro de status">
           {ALL_STATUSES.map(s => (
             <button
               key={s}
               onClick={() => setFilterStatus(s)}
-              className="h-10 px-3 font-mono-mm text-[10px] tracking-[0.06em] transition-colors"
+              className="h-11 px-3.5 font-mono-mm text-xs tracking-[0.06em] transition-colors rounded-lg font-medium outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
               style={{
                 background: filterStatus === s ? '#C9A84C' : '#111111',
-                color: filterStatus === s ? '#080808' : '#555',
+                color: filterStatus === s ? '#080808' : '#A0A0A0',
                 border: '1px solid',
-                borderColor: filterStatus === s ? '#C9A84C' : 'rgba(255,255,255,0.06)',
-                borderRadius: '6px',
+                borderColor: filterStatus === s ? '#C9A84C' : 'rgba(255,255,255,0.08)',
               }}
             >
               {s}
@@ -568,13 +573,66 @@ export function AdminCRM() {
         </div>
       </div>
 
-      {/* Client table */}
-      <div className="overflow-x-auto" style={{ border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px' }}>
-        <table className="w-full min-w-[600px]">
+      {/* Mobile Card List View (< md) */}
+      <div className="grid grid-cols-1 gap-3 md:hidden">
+        {filtered.length === 0 ? (
+          <div className="p-8 text-center font-mono-mm text-xs text-[#A0A0A0] bg-[#111111] border border-white/10 rounded-lg">
+            Nenhum cliente encontrado.
+          </div>
+        ) : (
+          filtered.map(c => {
+            const cfg = STATUS_CONFIG[c.status]
+            return (
+              <div
+                key={c.id}
+                onClick={() => setSelectedClientId(c.id)}
+                className="p-4 bg-[#111111] border border-white/10 rounded-xl flex flex-col gap-3 active:bg-white/5 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center font-display font-bold text-sm shrink-0"
+                      style={{ background: '#C9A84C', color: '#080808' }}
+                    >
+                      {c.initials}
+                    </div>
+                    <div>
+                      <h3 className="font-display font-medium text-base text-[#F2F2F2]">{c.name}</h3>
+                      {c.empresa && <p className="font-mono-mm text-xs text-[#A0A0A0]">{c.empresa}</p>}
+                    </div>
+                  </div>
+                  <ChevronRight size={18} className="text-[#888]" />
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+                  <span className="font-mono-mm text-[#A0A0A0]">{c.niche}</span>
+                  <span
+                    className="font-mono-mm text-[10px] px-2 py-0.5 font-semibold tracking-wider"
+                    style={{ background: cfg.bg, color: cfg.color, borderRadius: '4px' }}
+                  >
+                    {c.status}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between text-xs pt-1">
+                  <span className="font-display text-[#E0E0E0]">{c.whatsapp}</span>
+                  <span className="font-display font-bold text-[#C9A84C]">
+                    {c.totalValue > 0 ? `R$ ${c.totalValue.toLocaleString('pt-BR')}` : '—'}
+                  </span>
+                </div>
+              </div>
+            )
+          })
+        )}
+      </div>
+
+      {/* Desktop Client Table View (>= md) */}
+      <div className="hidden md:block overflow-x-auto" style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}>
+        <table className="w-full">
           <thead>
-            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
               {['CLIENTE', 'NICHO', 'CONTATO', 'STATUS', 'VALOR TOTAL', ''].map(h => (
-                <th key={h} className="px-4 h-10 text-left font-mono-mm text-[10px] tracking-[0.08em]" style={{ color: '#555', background: '#0D0D0D' }}>
+                <th key={h} className="px-4 h-11 text-left font-mono-mm text-xs tracking-[0.08em] font-semibold text-[#A0A0A0] bg-[#0D0D0D]">
                   {h}
                 </th>
               ))}
@@ -583,7 +641,7 @@ export function AdminCRM() {
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center font-mono-mm text-[11px]" style={{ color: '#333' }}>
+                <td colSpan={6} className="px-4 py-8 text-center font-mono-mm text-xs text-[#888]">
                   Nenhum cliente encontrado.
                 </td>
               </tr>
@@ -594,7 +652,7 @@ export function AdminCRM() {
                   key={c.id}
                   className="transition-colors"
                   style={{
-                    borderBottom: i < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                    borderBottom: i < filtered.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
                     background: 'transparent',
                   }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#111111')}
@@ -603,42 +661,46 @@ export function AdminCRM() {
                   <td className="px-4 py-3">
                     <button
                       onClick={() => setSelectedClientId(c.id)}
-                      className="flex items-center gap-3 text-left w-full"
+                      className="flex items-center gap-3 text-left w-full outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C] rounded"
                     >
                       <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center font-display font-bold text-xs shrink-0"
+                        className="w-9 h-9 rounded-full flex items-center justify-center font-display font-bold text-xs shrink-0"
                         style={{ background: '#C9A84C', color: '#080808' }}
                       >
                         {c.initials}
                       </div>
                       <div className="min-w-0">
-                        <p className="font-display font-medium text-sm truncate" style={{ color: '#F2F2F2' }}>{c.name}</p>
-                        {c.empresa && <p className="font-mono-mm text-[10px] truncate" style={{ color: '#555' }}>{c.empresa}</p>}
+                        <p className="font-display font-medium text-sm truncate text-[#F2F2F2]">{c.name}</p>
+                        {c.empresa && <p className="font-mono-mm text-xs truncate text-[#A0A0A0]">{c.empresa}</p>}
                       </div>
                     </button>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="font-mono-mm text-[10px] tracking-[0.06em]" style={{ color: '#777' }}>{c.niche}</span>
+                    <span className="font-mono-mm text-xs tracking-[0.06em] text-[#A0A0A0]">{c.niche}</span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="font-display text-sm" style={{ color: '#AAAAAA' }}>{c.whatsapp}</span>
+                    <span className="font-display text-sm text-[#E0E0E0]">{c.whatsapp}</span>
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className="font-mono-mm text-[10px] px-2 py-0.5 tracking-[0.06em]"
-                      style={{ background: cfg.bg, color: cfg.color, borderRadius: '3px' }}
+                      className="font-mono-mm text-xs px-2 py-0.5 tracking-[0.06em] font-semibold"
+                      style={{ background: cfg.bg, color: cfg.color, borderRadius: '4px' }}
                     >
                       {c.status}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="font-display font-semibold text-sm" style={{ color: c.totalValue > 0 ? '#C9A84C' : '#333' }}>
+                    <span className="font-display font-semibold text-sm" style={{ color: c.totalValue > 0 ? '#C9A84C' : '#666' }}>
                       {c.totalValue > 0 ? `R$ ${c.totalValue.toLocaleString('pt-BR')}` : '—'}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <button onClick={() => setSelectedClientId(c.id)} style={{ color: '#444' }}>
-                      <ChevronRight size={16} />
+                    <button
+                      onClick={() => setSelectedClientId(c.id)}
+                      className="p-1 rounded text-[#888] hover:text-[#C9A84C] focus-visible:ring-2 focus-visible:ring-[#C9A84C] outline-none"
+                      aria-label={`Ver detalhes de ${c.name}`}
+                    >
+                      <ChevronRight size={18} />
                     </button>
                   </td>
                 </tr>

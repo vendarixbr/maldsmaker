@@ -12,12 +12,11 @@ import { useAdmin } from '@/lib/admin-context'
 function SettingsSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-4">
-      <p className="font-mono-mm text-[11px] tracking-[0.12em]" style={{ color: '#C9A84C' }}>
+      <h2 className="font-mono-mm text-xs tracking-[0.14em] font-semibold text-[#C9A84C]">
         {title}
-      </p>
+      </h2>
       <div
-        className="p-5 flex flex-col gap-5"
-        style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px' }}
+        className="p-4 sm:p-5 flex flex-col gap-5 bg-[#111111] border border-white/10 rounded-xl"
       >
         {children}
       </div>
@@ -29,10 +28,10 @@ function Field({ label, description, children }: { label: string; description?: 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div className="flex-1">
-        <p className="font-display font-medium text-sm" style={{ color: '#F2F2F2' }}>{label}</p>
-        {description && <p className="font-display text-xs mt-0.5" style={{ color: '#555' }}>{description}</p>}
+        <p className="font-display font-medium text-sm text-[#F2F2F2]">{label}</p>
+        {description && <p className="font-display text-xs mt-0.5 text-[#A0A0A0]">{description}</p>}
       </div>
-      <div className="shrink-0">{children}</div>
+      <div className="shrink-0 w-full sm:w-auto">{children}</div>
     </div>
   )
 }
@@ -43,14 +42,7 @@ function TextInput({ value, onChange, placeholder }: { value: string; onChange: 
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
-      className="h-9 px-3 font-display text-sm outline-none"
-      style={{
-        width: '260px',
-        background: '#161616',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '6px',
-        color: '#F2F2F2',
-      }}
+      className="h-11 px-3.5 w-full sm:w-64 font-display text-sm outline-none bg-[#161616] border border-white/10 rounded-lg text-[#F2F2F2] focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
     />
   )
 }
@@ -59,16 +51,17 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
   return (
     <button
       onClick={() => onChange(!value)}
-      className="relative w-10 h-5 rounded-full transition-colors duration-200"
-      style={{ background: value ? '#C9A84C' : 'rgba(255,255,255,0.1)' }}
-      aria-label="Toggle"
+      role="switch"
+      aria-checked={value}
+      className="relative w-12 h-6 rounded-full transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
+      style={{ background: value ? '#C9A84C' : 'rgba(255,255,255,0.15)' }}
     >
       <div
-        className="absolute top-0.5 w-4 h-4 rounded-full transition-transform duration-200"
+        className="absolute top-1 w-4 h-4 rounded-full transition-transform duration-200"
         style={{
-          left: '2px',
-          background: value ? '#080808' : '#444',
-          transform: value ? 'translateX(20px)' : 'translateX(0)',
+          left: '4px',
+          background: value ? '#080808' : '#888',
+          transform: value ? 'translateX(24px)' : 'translateX(0)',
         }}
       />
     </button>

@@ -128,25 +128,25 @@ export function AdminFinanceiro() {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div>
-        <h1 className="font-display font-semibold text-2xl" style={{ color: '#F2F2F2' }}>Financeiro</h1>
-        <p className="font-mono-mm text-[11px] tracking-[0.08em] mt-1 uppercase" style={{ color: '#555' }}>
+        <h1 className="font-display font-semibold text-2xl text-[#F2F2F2]">Financeiro</h1>
+        <p className="font-mono-mm text-xs tracking-[0.08em] mt-1 uppercase text-[#A0A0A0]">
           VISÃO GERAL · {new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
         </p>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {summaryCards.map(card => (
           <div
             key={card.label}
             className="p-5 flex flex-col gap-2"
-            style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px' }}
+            style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
           >
-            <p className="font-mono-mm text-[10px] tracking-[0.08em]" style={{ color: '#C9A84C' }}>{card.label}</p>
-            <p className="font-display font-bold text-2xl" style={{ color: '#F2F2F2' }}>{card.value}</p>
+            <p className="font-mono-mm text-xs tracking-[0.08em] font-semibold" style={{ color: '#C9A84C' }}>{card.label}</p>
+            <p className="font-display font-bold text-2xl text-[#F2F2F2]">{card.value}</p>
             <div className="flex items-center gap-1">
-              <TrendingUp size={11} style={{ color: card.up ? '#52BE80' : '#F4D03F' }} />
-              <span className="font-mono-mm text-[10px]" style={{ color: card.up ? '#52BE80' : '#F4D03F' }}>
+              <TrendingUp size={13} style={{ color: card.up ? '#52BE80' : '#F4D03F' }} />
+              <span className="font-mono-mm text-xs font-medium" style={{ color: card.up ? '#52BE80' : '#F4D03F' }}>
                 {card.delta}
               </span>
             </div>
@@ -158,14 +158,14 @@ export function AdminFinanceiro() {
       <div className="grid grid-cols-1 lg:grid-cols-[60%_38%] gap-4">
         {/* Area chart — monthly revenue */}
         <div
-          className="p-5"
-          style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px' }}
+          className="p-4 sm:p-5"
+          style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
         >
-          <p className="font-mono-mm text-[11px] tracking-[0.08em] mb-5" style={{ color: '#C9A84C' }}>
+          <p className="font-mono-mm text-xs tracking-[0.08em] font-semibold mb-5" style={{ color: '#C9A84C' }}>
             FATURAMENTO MENSAL{monthlyRevenue.length > 1 ? ` (${monthlyRevenue[0].label.toUpperCase()} – ${monthlyRevenue.at(-1)!.label.toUpperCase()})` : ''}
           </p>
           {monthlyRevenue.length === 0 ? (
-            <p className="font-mono-mm text-[11px] py-14 text-center" style={{ color: '#333' }}>Nenhuma fatura registrada ainda.</p>
+            <p className="font-mono-mm text-xs py-14 text-center text-[#888]">Nenhuma fatura registrada ainda.</p>
           ) : (
           <ResponsiveContainer width="100%" height={180}>
             <AreaChart data={monthlyRevenue} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
@@ -175,9 +175,9 @@ export function AdminFinanceiro() {
                   <stop offset="95%" stopColor="#C9A84C" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="2 4" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="month" tick={{ fill: '#555', fontSize: 10, fontFamily: 'monospace' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: '#555', fontSize: 10, fontFamily: 'monospace' }} axisLine={false} tickLine={false} tickFormatter={v => `R$${(v/1000).toFixed(0)}k`} />
+              <CartesianGrid strokeDasharray="2 4" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="label" tick={{ fill: '#A0A0A0', fontSize: 10, fontFamily: 'monospace' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: '#A0A0A0', fontSize: 10, fontFamily: 'monospace' }} axisLine={false} tickLine={false} tickFormatter={v => `R$${(v/1000).toFixed(0)}k`} />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="value" stroke="#C9A84C" strokeWidth={2} fill="url(#goldGrad)" dot={{ fill: '#C9A84C', r: 3, strokeWidth: 0 }} activeDot={{ r: 5 }} />
             </AreaChart>
@@ -187,15 +187,15 @@ export function AdminFinanceiro() {
 
         {/* Donut — revenue by niche */}
         <div
-          className="p-5 flex flex-col"
-          style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px' }}
+          className="p-4 sm:p-5 flex flex-col"
+          style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
         >
-          <p className="font-mono-mm text-[11px] tracking-[0.08em] mb-4" style={{ color: '#C9A84C' }}>
+          <p className="font-mono-mm text-xs tracking-[0.08em] font-semibold mb-4" style={{ color: '#C9A84C' }}>
             RECEITA POR NICHO
           </p>
           <div className="flex-1 flex items-center justify-center">
             {revenueByNiche.length === 0 ? (
-              <p className="font-mono-mm text-[11px] py-10 text-center" style={{ color: '#333' }}>Sem receita registrada ainda.</p>
+              <p className="font-mono-mm text-xs py-10 text-center text-[#888]">Sem receita registrada ainda.</p>
             ) : (
             <ResponsiveContainer width="100%" height={160}>
               <PieChart>
@@ -225,8 +225,8 @@ export function AdminFinanceiro() {
             {revenueByNiche.map((item, i) => (
               <div key={item.niche} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ background: NICHE_COLORS[i] }} />
-                  <span className="font-mono-mm text-[10px]" style={{ color: '#777' }}>{item.niche}</span>
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ background: NICHE_COLORS[i % NICHE_COLORS.length] }} />
+                  <span className="font-mono-mm text-xs text-[#A0A0A0]">{item.niche}</span>
                 </div>
                 <span className="font-display text-xs font-semibold" style={{ color: '#C9A84C' }}>
                   R$ {item.value.toLocaleString('pt-BR')}
@@ -239,10 +239,10 @@ export function AdminFinanceiro() {
 
       {/* Bar chart — clients top revenue */}
       <div
-        className="p-5"
-        style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px' }}
+        className="p-4 sm:p-5"
+        style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
       >
-        <p className="font-mono-mm text-[11px] tracking-[0.08em] mb-5" style={{ color: '#C9A84C' }}>
+        <p className="font-mono-mm text-xs tracking-[0.08em] font-semibold mb-5" style={{ color: '#C9A84C' }}>
           CLIENTES POR FATURAMENTO
         </p>
         <ResponsiveContainer width="100%" height={140}>
@@ -251,9 +251,9 @@ export function AdminFinanceiro() {
             margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
             barSize={14}
           >
-            <CartesianGrid strokeDasharray="2 4" stroke="rgba(255,255,255,0.04)" vertical={false} />
-            <XAxis dataKey="name" tick={{ fill: '#555', fontSize: 10, fontFamily: 'monospace' }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fill: '#555', fontSize: 10, fontFamily: 'monospace' }} axisLine={false} tickLine={false} tickFormatter={v => `${(v/1000).toFixed(0)}k`} />
+            <CartesianGrid strokeDasharray="2 4" stroke="rgba(255,255,255,0.06)" vertical={false} />
+            <XAxis dataKey="name" tick={{ fill: '#A0A0A0', fontSize: 10, fontFamily: 'monospace' }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fill: '#A0A0A0', fontSize: 10, fontFamily: 'monospace' }} axisLine={false} tickLine={false} tickFormatter={v => `${(v/1000).toFixed(0)}k`} />
             <Tooltip content={<CustomTooltip />} />
             <Bar dataKey="value" fill="#C9A84C" radius={[3, 3, 0, 0]} />
           </BarChart>
@@ -262,21 +262,21 @@ export function AdminFinanceiro() {
 
       {/* Recent transactions */}
       <div
-        className="p-5"
-        style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px' }}
+        className="p-4 sm:p-5"
+        style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
       >
-        <p className="font-mono-mm text-[11px] tracking-[0.08em] mb-4" style={{ color: '#C9A84C' }}>
+        <p className="font-mono-mm text-xs tracking-[0.08em] font-semibold mb-4" style={{ color: '#C9A84C' }}>
           TRANSAÇÕES RECENTES
         </p>
         {recentTransactions.length === 0 ? (
-          <p className="font-mono-mm text-[11px] py-6" style={{ color: '#333' }}>Nenhuma fatura registrada ainda.</p>
+          <p className="font-mono-mm text-xs py-6 text-[#888]">Nenhuma fatura registrada ainda.</p>
         ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[440px]">
+          <table className="w-full min-w-[480px]">
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                 {['ID', 'CLIENTE', 'DATA', 'VALOR', 'STATUS'].map(h => (
-                  <th key={h} className="pb-2 text-left font-mono-mm text-[10px] tracking-[0.08em]" style={{ color: '#444' }}>{h}</th>
+                  <th key={h} className="pb-3 text-left font-mono-mm text-xs tracking-[0.08em] font-semibold text-[#A0A0A0]">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -286,18 +286,18 @@ export function AdminFinanceiro() {
                 return (
                   <tr
                     key={txn.id}
-                    style={{ borderBottom: i < recentTransactions.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}
+                    style={{ borderBottom: i < recentTransactions.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}
                   >
-                    <td className="py-3 font-mono-mm text-[11px]" style={{ color: '#555' }}>{txn.id}</td>
-                    <td className="py-3 font-display text-sm" style={{ color: '#AAAAAA' }}>{txn.clientName}</td>
-                    <td className="py-3 font-display text-sm" style={{ color: '#AAAAAA' }}>{txn.date}</td>
-                    <td className="py-3 font-display font-semibold text-sm" style={{ color: '#C9A84C' }}>
+                    <td className="py-3 font-mono-mm text-xs text-[#A0A0A0]">{txn.id}</td>
+                    <td className="py-3 font-display text-sm text-[#F2F2F2]">{txn.clientName}</td>
+                    <td className="py-3 font-display text-sm text-[#E0E0E0]">{txn.date}</td>
+                    <td className="py-3 font-display font-bold text-sm text-[#C9A84C]">
                       R$ {txn.value.toLocaleString('pt-BR')}
                     </td>
                     <td className="py-3">
                       <span
-                        className="font-mono-mm text-[10px] px-2 py-0.5"
-                        style={{ background: cfg.bg, color: cfg.color, borderRadius: '3px' }}
+                        className="font-mono-mm text-xs font-semibold px-2 py-0.5"
+                        style={{ background: cfg.bg, color: cfg.color, borderRadius: '4px' }}
                       >
                         {txn.status}
                       </span>
