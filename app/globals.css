@@ -315,15 +315,29 @@
   #mm-cursor { display: none; }
 }
 
-/* ─── Admin: restore normal cursor ─── */
+/* ─── Admin & Login: restore normal cursor ─── */
 .admin-page,
 .admin-page *,
-.admin-page a,
-.admin-page button {
+body:has(.admin-page),
+body:has(.admin-page) * {
   cursor: auto !important;
 }
-.admin-page a { cursor: pointer !important; }
-.admin-page button { cursor: pointer !important; }
+.admin-page a,
+.admin-page button,
+body:has(.admin-page) a,
+body:has(.admin-page) button {
+  cursor: pointer !important;
+}
 .admin-page input,
 .admin-page textarea,
-.admin-page select { cursor: text !important; }
+.admin-page select,
+body:has(.admin-page) input,
+body:has(.admin-page) textarea,
+body:has(.admin-page) select {
+  cursor: text !important;
+}
+.admin-page #mm-cursor,
+body:has(.admin-page) #mm-cursor {
+  display: none !important;
+}
+

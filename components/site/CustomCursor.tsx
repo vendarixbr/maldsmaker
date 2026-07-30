@@ -1,11 +1,17 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 
 export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
+
+  const isAdmin = pathname?.startsWith('/admin')
 
   useEffect(() => {
+    if (isAdmin) return
+
     const el = cursorRef.current
     if (!el) return
 
@@ -53,7 +59,10 @@ export function CustomCursor() {
       cancelAnimationFrame(raf)
       observer.disconnect()
     }
-  }, [])
+  }, [isAdmin])
+
+  if (isAdmin) return null
 
   return <div id="mm-cursor" ref={cursorRef} aria-hidden="true" />
 }
+

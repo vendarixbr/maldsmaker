@@ -623,18 +623,23 @@ export const PROJECTS: Project[] = [
   },
 ]
 
+const _now = new Date()
+const _curY = _now.getFullYear()
+const _curM = String(_now.getMonth() + 1).padStart(2, '0')
+
 export const CALENDAR_EVENTS: CalendarEvent[] = [
-  { id: 'e1', title: 'Shoot Clipe MC Vitão', type: 'Shoot', clientName: 'MC Vitão', date: '2025-01-16', startTime: '09:00', endTime: '18:00', location: 'Nauta Estúdio', value: 5600, notes: 'Equipe completa: câmera, luz, direção.' },
-  { id: 'e2', title: 'Captação Restaurante Kaizen', type: 'Shoot', clientName: 'Restaurante Kaizen', date: '2025-01-17', startTime: '10:00', endTime: '14:00', location: 'Externo', value: 1200, notes: 'Levar flash portátil.' },
-  { id: 'e3', title: 'Reunião Giovane Dias — Briefing', type: 'Reunião', clientName: 'Giovane Dias', date: '2025-01-17', startTime: '16:00', endTime: '17:00', location: 'Remoto', notes: 'Google Meet.' },
-  { id: 'e4', title: 'Entrega Ensaio Rafael Moreno', type: 'Entrega', clientName: 'Rafael Moreno', date: '2025-01-18', startTime: '10:00', endTime: '10:30', location: 'Remoto', value: 1800 },
-  { id: 'e5', title: 'Shoot Clipe Giovane Dias', type: 'Shoot', clientName: 'Giovane Dias', date: '2025-01-20', startTime: '08:00', endTime: '16:00', location: 'Externo', value: 3600 },
-  { id: 'e6', title: 'Pack Bianca Ferreira', type: 'Shoot', clientName: 'Bianca Ferreira', date: '2025-01-21', startTime: '13:00', endTime: '17:00', location: 'Nauta Estúdio', value: 1200 },
-  { id: 'e7', title: 'Captação Clínica Espaço Vida', type: 'Shoot', clientName: 'Clínica Espaço Vida', date: '2025-01-22', startTime: '09:00', endTime: '13:00', location: 'Externo', value: 1600 },
-  { id: 'e8', title: 'Reserva Studio — Locação Particular', type: 'Bloqueado', date: '2025-01-19', startTime: '10:00', endTime: '20:00', location: 'Nauta Estúdio', notes: 'Locação avulsa.' },
-  { id: 'e9', title: 'Workshop de Fotografia', type: 'Workshop', date: '2025-01-25', startTime: '09:00', endTime: '18:00', location: 'Nauta Estúdio', value: 800 },
-  { id: 'e10', title: 'Reunião Advocacia Pereira', type: 'Reunião', clientName: 'Advocacia Pereira', date: '2025-01-23', startTime: '15:00', endTime: '16:00', location: 'Externo' },
+  { id: 'e1', title: 'Shoot Clipe MC Vitão', type: 'Shoot', clientName: 'MC Vitão', date: `${_curY}-${_curM}-16`, startTime: '09:00', endTime: '18:00', location: 'Nauta Estúdio', value: 5600, notes: 'Equipe completa: câmera, luz, direção.' },
+  { id: 'e2', title: 'Captação Restaurante Kaizen', type: 'Shoot', clientName: 'Restaurante Kaizen', date: `${_curY}-${_curM}-17`, startTime: '10:00', endTime: '14:00', location: 'Externo', value: 1200, notes: 'Levar flash portátil.' },
+  { id: 'e3', title: 'Reunião Giovane Dias — Briefing', type: 'Reunião', clientName: 'Giovane Dias', date: `${_curY}-${_curM}-17`, startTime: '16:00', endTime: '17:00', location: 'Remoto', notes: 'Google Meet.' },
+  { id: 'e4', title: 'Entrega Ensaio Rafael Moreno', type: 'Entrega', clientName: 'Rafael Moreno', date: `${_curY}-${_curM}-18`, startTime: '10:00', endTime: '10:30', location: 'Remoto', value: 1800 },
+  { id: 'e5', title: 'Shoot Clipe Giovane Dias', type: 'Shoot', clientName: 'Giovane Dias', date: `${_curY}-${_curM}-20`, startTime: '08:00', endTime: '16:00', location: 'Externo', value: 3600 },
+  { id: 'e6', title: 'Pack Bianca Ferreira', type: 'Shoot', clientName: 'Bianca Ferreira', date: `${_curY}-${_curM}-21`, startTime: '13:00', endTime: '17:00', location: 'Nauta Estúdio', value: 1200 },
+  { id: 'e7', title: 'Captação Clínica Espaço Vida', type: 'Shoot', clientName: 'Clínica Espaço Vida', date: `${_curY}-${_curM}-22`, startTime: '09:00', endTime: '13:00', location: 'Externo', value: 1600 },
+  { id: 'e8', title: 'Reserva Studio — Locação Particular', type: 'Bloqueado', date: `${_curY}-${_curM}-19`, startTime: '10:00', endTime: '20:00', location: 'Nauta Estúdio', notes: 'Locação avulsa.' },
+  { id: 'e9', title: 'Workshop de Fotografia', type: 'Workshop', date: `${_curY}-${_curM}-25`, startTime: '09:00', endTime: '18:00', location: 'Nauta Estúdio', value: 800 },
+  { id: 'e10', title: 'Reunião Advocacia Pereira', type: 'Reunião', clientName: 'Advocacia Pereira', date: `${_curY}-${_curM}-23`, startTime: '15:00', endTime: '16:00', location: 'Externo' },
 ]
+
 
 export const GLOBAL_NOTES: GlobalNote[] = [
   {

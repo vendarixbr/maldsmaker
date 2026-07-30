@@ -54,7 +54,7 @@ export function AdminMobileNav() {
       {moreOpen && (
         <div
           className="fixed inset-0 z-40 lg:hidden flex flex-col justify-end"
-          style={{ background: 'rgba(0, 0, 0, 0.75)', backdropFilter: 'blur(4px)' }}
+          style={{ background: 'rgba(0, 0, 0, 0.8)', backdropFilter: 'blur(4px)' }}
           onClick={() => setMoreOpen(false)}
         >
           <div
@@ -64,12 +64,12 @@ export function AdminMobileNav() {
             aria-label="Menu Adicional"
           >
             <div className="flex items-center justify-between pb-2 border-b border-white/10">
-              <span className="font-mono-mm text-xs tracking-[0.14em] text-[#C9A84C] font-semibold">
+              <span className="font-mono-mm text-xs tracking-[0.14em] text-[#E5C158] font-semibold">
                 OUTRAS SEÇÕES
               </span>
               <button
                 onClick={() => setMoreOpen(false)}
-                className="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-white rounded-lg active:bg-white/5 focus-visible:ring-2 focus-visible:ring-[#C9A84C] outline-none"
+                className="w-9 h-9 flex items-center justify-center text-[#CBD5E1] hover:text-white rounded-lg active:bg-white/5 focus-visible:ring-2 focus-visible:ring-[#C9A84C] outline-none"
                 aria-label="Fechar menu"
               >
                 <X size={20} />
@@ -85,9 +85,9 @@ export function AdminMobileNav() {
                     onClick={() => handleNav(id)}
                     className="flex flex-col items-center justify-center gap-2 p-3 rounded-xl min-h-[72px] transition-all border outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
                     style={{
-                      background: active ? 'rgba(201, 168, 76, 0.15)' : '#161616',
-                      borderColor: active ? '#C9A84C' : 'rgba(255, 255, 255, 0.08)',
-                      color: active ? '#C9A84C' : '#E0E0E0',
+                      background: active ? 'rgba(201, 168, 76, 0.2)' : '#161616',
+                      borderColor: active ? '#C9A84C' : 'rgba(255, 255, 255, 0.12)',
+                      color: active ? '#E5C158' : '#CBD5E1',
                     }}
                   >
                     <Icon size={22} />
@@ -123,7 +123,7 @@ export function AdminMobileNav() {
               onClick={() => handleNav(id)}
               className="flex-1 flex flex-col items-center justify-center h-full min-h-[44px] gap-1 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C] rounded-lg"
               aria-current={active ? 'page' : undefined}
-              style={{ color: active ? '#C9A84C' : '#9E9E9E' }}
+              style={{ color: active ? '#E5C158' : '#CBD5E1' }}
             >
               <Icon size={20} className={active ? 'scale-110 transition-transform' : ''} />
               <span className="font-display text-[11px] font-medium tracking-tight">{label}</span>
@@ -137,7 +137,7 @@ export function AdminMobileNav() {
           className="flex-1 flex flex-col items-center justify-center h-full min-h-[44px] gap-1 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C] rounded-lg"
           aria-expanded={moreOpen}
           aria-label="Mais seções"
-          style={{ color: isExtraActive || moreOpen ? '#C9A84C' : '#9E9E9E' }}
+          style={{ color: isExtraActive || moreOpen ? '#E5C158' : '#CBD5E1' }}
         >
           <MoreHorizontal size={20} className={isExtraActive || moreOpen ? 'scale-110' : ''} />
           <span className="font-display text-[11px] font-medium tracking-tight">Mais</span>

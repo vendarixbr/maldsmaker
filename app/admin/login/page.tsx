@@ -39,19 +39,19 @@ export default function AdminLoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4"
+      className="admin-page min-h-screen flex items-center justify-center px-4"
       style={{ background: '#080808' }}
     >
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-[380px] flex flex-col gap-6 px-8 py-10"
-        style={{ background: '#0D0D0D', border: '1px solid rgba(255,255,255,0.06)' }}
+        className="w-full max-w-[380px] flex flex-col gap-6 px-8 py-10 rounded-xl"
+        style={{ background: '#0D0D0D', border: '1px solid rgba(255,255,255,0.14)' }}
       >
         <div className="flex flex-col items-center gap-4">
-          <Image src="/images/logo.png" alt="Malds Maker" width={140} height={38} className="h-8 w-auto object-contain" />
+          <Image src="/images/logo.png" alt="Malds Maker" width={140} height={38} className="h-8 w-auto object-contain" priority />
           <div className="flex items-center gap-2">
-            <Lock size={13} style={{ color: '#C9A84C' }} />
-            <span className="font-mono-mm text-[10px] tracking-[0.14em]" style={{ color: '#888' }}>
+            <Lock size={14} style={{ color: '#E5C158' }} />
+            <span className="font-mono-mm text-[10px] tracking-[0.14em] font-semibold" style={{ color: '#CBD5E1' }}>
               ÁREA RESTRITA
             </span>
           </div>
@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="username" className="font-mono-mm text-[10px] tracking-[0.12em]" style={{ color: '#666' }}>
+            <label htmlFor="username" className="font-mono-mm text-[10px] tracking-[0.12em] font-semibold" style={{ color: '#CBD5E1' }}>
               USUÁRIO
             </label>
             <input
@@ -69,13 +69,13 @@ export default function AdminLoginPage() {
               value={username}
               onChange={e => setUsername(e.target.value)}
               required
-              className="h-11 px-3 font-body text-sm outline-none"
-              style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.08)', color: '#F2F2F2' }}
+              className="h-11 px-3.5 font-body text-sm outline-none rounded-lg focus:border-[#C9A84C]"
+              style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.16)', color: '#F9FAFB' }}
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="password" className="font-mono-mm text-[10px] tracking-[0.12em]" style={{ color: '#666' }}>
+            <label htmlFor="password" className="font-mono-mm text-[10px] tracking-[0.12em] font-semibold" style={{ color: '#CBD5E1' }}>
               SENHA
             </label>
             <input
@@ -86,16 +86,16 @@ export default function AdminLoginPage() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              className="h-11 px-3 font-body text-sm outline-none"
-              style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.08)', color: '#F2F2F2' }}
+              className="h-11 px-3.5 font-body text-sm outline-none rounded-lg focus:border-[#C9A84C]"
+              style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.16)', color: '#F9FAFB' }}
             />
           </div>
         </div>
 
         {error && (
           <p
-            className="font-mono-mm text-[10px] tracking-[0.06em] px-3 py-2"
-            style={{ background: 'rgba(192,57,43,0.12)', border: '1px solid rgba(192,57,43,0.3)', color: '#F1948A' }}
+            className="font-mono-mm text-[10px] tracking-[0.06em] font-semibold px-3 py-2 rounded-md"
+            style={{ background: 'rgba(248,113,113,0.15)', border: '1px solid rgba(248,113,113,0.4)', color: '#F87171' }}
           >
             {error}
           </p>
@@ -104,7 +104,7 @@ export default function AdminLoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="h-11 font-mono-mm text-[11px] tracking-[0.14em] transition-opacity duration-200 disabled:opacity-50"
+          className="h-11 font-mono-mm text-[11px] tracking-[0.14em] font-semibold transition-opacity duration-200 disabled:opacity-50 rounded-lg"
           style={{ background: '#C9A84C', color: '#080808' }}
         >
           {loading ? 'ENTRANDO...' : 'ENTRAR'}

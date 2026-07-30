@@ -34,7 +34,7 @@ function AdminShell() {
         {/* Mobile topbar */}
         <div
           className="flex lg:hidden items-center justify-between px-4 h-14 sticky top-0 z-20 shadow-md"
-          style={{ background: '#0D0D0D', borderBottom: '1px solid rgba(255,255,255,0.08)' }}
+          style={{ background: '#0D0D0D', borderBottom: '1px solid rgba(255,255,255,0.12)' }}
         >
           <button
             onClick={() => setSidebarOpen(true)}
@@ -43,7 +43,7 @@ function AdminShell() {
           >
             <Menu size={22} />
           </button>
-          <span className="font-mono-mm text-xs tracking-[0.14em] font-semibold" style={{ color: '#C9A84C' }}>
+          <span className="font-mono-mm text-xs tracking-[0.14em] font-semibold" style={{ color: '#E5C158' }}>
             MALDS MAKER ADMIN
           </span>
           <div className="w-10" />
@@ -53,12 +53,12 @@ function AdminShell() {
         <div className="flex-1 p-4 sm:p-6 lg:p-7 pb-24 lg:pb-7 max-w-[1400px] w-full mx-auto">
           {(isLoading || isSaving || error) && (
             <div
-              className="mb-4 px-4 py-3 font-mono-mm text-xs tracking-[0.08em] flex items-center gap-2"
+              className="mb-4 px-4 py-3 font-mono-mm text-xs tracking-[0.08em] flex items-center gap-2 font-semibold"
               style={{
-                background: error ? 'rgba(192,57,43,0.15)' : 'rgba(201,168,76,0.1)',
-                border: error ? '1px solid rgba(192,57,43,0.4)' : '1px solid rgba(201,168,76,0.3)',
+                background: error ? 'rgba(248,113,113,0.15)' : 'rgba(201,168,76,0.15)',
+                border: error ? '1px solid rgba(248,113,113,0.4)' : '1px solid rgba(201,168,76,0.4)',
                 borderRadius: '8px',
-                color: error ? '#F1948A' : '#C9A84C',
+                color: error ? '#F87171' : '#E5C158',
               }}
               role="status"
               aria-live="polite"

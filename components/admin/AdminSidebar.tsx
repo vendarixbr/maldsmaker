@@ -47,26 +47,38 @@ export function AdminSidebar() {
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 lg:hidden transition-opacity duration-200"
-          style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(3px)' }}
+          style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
         />
       )}
 
-      {/* Sidebar — hidden off-screen on mobile, always visible on lg+ */}
+      {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full z-50 flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
+        className={`fixed top-0 left-0 h-full z-50 flex flex-col transition-transform duration-300 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:translate-x-0`}
         style={{
           width: '240px',
           background: '#0D0D0D',
-          borderRight: '1px solid rgba(255,255,255,0.08)',
+          borderRight: '1px solid rgba(255,255,255,0.12)',
         }}
         aria-label="Navegação Principal Admin"
       >
         {/* Top — logo + close */}
-        <div className="flex items-center justify-between px-5 h-16 shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <div
+          className="flex items-center justify-between px-5 h-16 shrink-0"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.12)' }}
+        >
           <div className="flex items-center gap-3">
-            <Image src="/images/logo.png" alt="Malds Maker Logo" width={110} height={30} className="h-6 w-auto object-contain" priority />
+            <Image
+              src="/images/logo.png"
+              alt="Malds Maker Logo"
+              width={110}
+              height={30}
+              className="h-6 w-auto object-contain"
+              priority
+            />
           </div>
           <button
             className="lg:hidden text-gray-300 hover:text-white p-2 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#C9A84C] outline-none"
@@ -78,7 +90,10 @@ export function AdminSidebar() {
         </div>
 
         {/* User Profile Info */}
-        <div className="px-5 py-4 flex items-center gap-3 shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <div
+          className="px-5 py-4 flex items-center gap-3 shrink-0"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.12)' }}
+        >
           <div
             className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-display font-bold text-sm"
             style={{ background: '#C9A84C', color: '#080808' }}
@@ -87,10 +102,10 @@ export function AdminSidebar() {
             LM
           </div>
           <div>
-            <p className="font-display font-medium text-sm text-[#F2F2F2]">
+            <p className="font-display font-semibold text-sm text-[#FFFFFF]">
               Leonardo M.
             </p>
-            <p className="font-mono-mm text-[10px] tracking-[0.12em] font-semibold text-[#A0A0A0]">
+            <p className="font-mono-mm text-[10px] tracking-[0.12em] font-semibold text-[#CBD5E1]">
               ADMINISTRADOR
             </p>
           </div>
@@ -107,9 +122,9 @@ export function AdminSidebar() {
                 aria-current={active ? 'page' : undefined}
                 className="w-full flex items-center gap-3 px-5 h-12 transition-colors duration-150 text-left outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C] focus-visible:ring-inset"
                 style={{
-                  background: active ? '#191919' : 'transparent',
+                  background: active ? '#1C1C1C' : 'transparent',
                   borderLeft: active ? '3px solid #C9A84C' : '3px solid transparent',
-                  color: active ? '#C9A84C' : '#AAAAAA',
+                  color: active ? '#E5C158' : '#D1D5DB',
                 }}
                 onMouseEnter={e => {
                   if (!active) (e.currentTarget as HTMLButtonElement).style.background = '#161616'
@@ -118,7 +133,7 @@ export function AdminSidebar() {
                   if (!active) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
                 }}
               >
-                <Icon size={19} aria-hidden="true" />
+                <Icon size={19} aria-hidden="true" style={{ color: active ? '#E5C158' : '#CBD5E1' }} />
                 <span className="font-display font-medium text-sm">{label}</span>
               </button>
             )
@@ -126,25 +141,25 @@ export function AdminSidebar() {
         </nav>
 
         {/* Footer actions */}
-        <div className="px-5 py-4 shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="px-5 py-4 shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.12)' }}>
           <div className="flex items-center justify-between mb-3">
             <span
-              className="font-mono-mm text-[10px] tracking-[0.1em] px-2 py-1 border font-semibold"
-              style={{ borderColor: 'rgba(201,168,76,0.4)', color: '#C9A84C' }}
+              className="font-mono-mm text-[10px] tracking-[0.1em] px-2.5 py-1 border font-semibold rounded"
+              style={{ borderColor: 'rgba(201,168,76,0.5)', color: '#E5C158', background: 'rgba(201,168,76,0.08)' }}
             >
               DA RUA PRA RUA
             </span>
           </div>
           <a
             href="/"
-            className="flex items-center gap-2 font-mono-mm text-[11px] tracking-[0.08em] transition-colors py-2 text-[#AAAAAA] hover:text-[#C9A84C] focus-visible:ring-2 focus-visible:ring-[#C9A84C] outline-none rounded"
+            className="flex items-center gap-2 font-mono-mm text-[11px] tracking-[0.08em] transition-colors py-2 text-[#D1D5DB] hover:text-[#E5C158] focus-visible:ring-2 focus-visible:ring-[#C9A84C] outline-none rounded"
           >
             <ExternalLink size={14} aria-hidden="true" />
             VER SITE PÚBLICO
           </a>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 font-mono-mm text-[11px] tracking-[0.08em] transition-colors py-2 text-[#AAAAAA] hover:text-red-400 focus-visible:ring-2 focus-visible:ring-red-400 outline-none rounded mt-1"
+            className="w-full flex items-center gap-2 font-mono-mm text-[11px] tracking-[0.08em] transition-colors py-2 text-[#D1D5DB] hover:text-red-400 focus-visible:ring-2 focus-visible:ring-red-400 outline-none rounded mt-1"
           >
             <LogOut size={14} aria-hidden="true" />
             SAIR DA CONTA

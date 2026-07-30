@@ -12,11 +12,11 @@ import { useAdmin } from '@/lib/admin-context'
 function SettingsSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-mono-mm text-xs tracking-[0.14em] font-semibold text-[#C9A84C]">
+      <h2 className="font-mono-mm text-xs tracking-[0.14em] font-semibold text-[#E5C158]">
         {title}
       </h2>
       <div
-        className="p-4 sm:p-5 flex flex-col gap-5 bg-[#111111] border border-white/10 rounded-xl"
+        className="p-4 sm:p-5 flex flex-col gap-5 bg-[#111111] border border-[rgba(255,255,255,0.14)] rounded-xl"
       >
         {children}
       </div>
@@ -28,8 +28,8 @@ function Field({ label, description, children }: { label: string; description?: 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div className="flex-1">
-        <p className="font-display font-medium text-sm text-[#F2F2F2]">{label}</p>
-        {description && <p className="font-display text-xs mt-0.5 text-[#A0A0A0]">{description}</p>}
+        <p className="font-display font-semibold text-sm text-[#FFFFFF]">{label}</p>
+        {description && <p className="font-display text-xs mt-0.5 text-[#CBD5E1]">{description}</p>}
       </div>
       <div className="shrink-0 w-full sm:w-auto">{children}</div>
     </div>
@@ -42,7 +42,7 @@ function TextInput({ value, onChange, placeholder }: { value: string; onChange: 
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
-      className="h-11 px-3.5 w-full sm:w-64 font-display text-sm outline-none bg-[#161616] border border-white/10 rounded-lg text-[#F2F2F2] focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
+      className="h-11 px-3.5 w-full sm:w-64 font-display text-sm outline-none bg-[#161616] border border-[rgba(255,255,255,0.16)] rounded-lg text-[#F9FAFB] focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
     />
   )
 }
@@ -54,13 +54,13 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
       role="switch"
       aria-checked={value}
       className="relative w-12 h-6 rounded-full transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
-      style={{ background: value ? '#C9A84C' : 'rgba(255,255,255,0.15)' }}
+      style={{ background: value ? '#C9A84C' : 'rgba(255,255,255,0.2)' }}
     >
       <div
         className="absolute top-1 w-4 h-4 rounded-full transition-transform duration-200"
         style={{
           left: '4px',
-          background: value ? '#080808' : '#888',
+          background: value ? '#080808' : '#CBD5E1',
           transform: value ? 'translateX(24px)' : 'translateX(0)',
         }}
       />
@@ -75,35 +75,35 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
 function ConfirmDialog({ message, onConfirm, onCancel }: { message: string; onConfirm: () => void; onCancel: () => void }) {
   return (
     <>
-      <div className="fixed inset-0 z-40" style={{ background: 'rgba(0,0,0,0.7)' }} onClick={onCancel} />
+      <div className="fixed inset-0 z-40" style={{ background: 'rgba(0,0,0,0.75)' }} onClick={onCancel} />
       <div
         className="fixed top-1/2 left-1/2 z-50 flex flex-col gap-5 p-6"
         style={{
           width: 'min(400px, 95vw)',
           transform: 'translate(-50%, -50%)',
           background: '#0F0F0F',
-          border: '1px solid rgba(192,57,43,0.4)',
+          border: '1px solid rgba(248,113,113,0.5)',
           borderRadius: '12px',
         }}
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(192,57,43,0.15)' }}>
-            <AlertTriangle size={18} style={{ color: '#F1948A' }} />
+          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(248,113,113,0.2)' }}>
+            <AlertTriangle size={18} style={{ color: '#F87171' }} />
           </div>
-          <p className="font-display text-sm" style={{ color: '#F2F2F2', lineHeight: 1.5 }}>{message}</p>
+          <p className="font-display font-medium text-sm" style={{ color: '#FFFFFF', lineHeight: 1.5 }}>{message}</p>
         </div>
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 h-9 font-mono-mm text-[10px] tracking-[0.08em]"
-            style={{ border: '1px solid rgba(255,255,255,0.1)', color: '#777', borderRadius: '6px' }}
+            className="flex-1 h-10 font-mono-mm text-xs tracking-[0.08em] font-semibold"
+            style={{ border: '1px solid rgba(255,255,255,0.2)', color: '#CBD5E1', borderRadius: '6px' }}
           >
             CANCELAR
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 h-9 font-mono-mm text-[10px] tracking-[0.08em]"
-            style={{ background: 'rgba(192,57,43,0.8)', color: '#fff', borderRadius: '6px' }}
+            className="flex-1 h-10 font-mono-mm text-xs tracking-[0.08em] font-semibold"
+            style={{ background: '#DC2626', color: '#fff', borderRadius: '6px' }}
           >
             CONFIRMAR
           </button>
@@ -114,7 +114,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }: { message: string; onCo
 }
 
 /* ------------------------------------------------------------------ */
-/*  Main                                                                */
+/*  Main Component                                                      */
 /* ------------------------------------------------------------------ */
 
 export function AdminConfiguracoes() {
@@ -183,172 +183,120 @@ export function AdminConfiguracoes() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-semibold text-2xl" style={{ color: '#F2F2F2' }}>Configurações</h1>
-          <p className="font-mono-mm text-[11px] tracking-[0.08em] mt-1" style={{ color: '#555' }}>MALDS MAKER ADMIN</p>
+          <h1 className="font-display font-semibold text-2xl text-[#FFFFFF]">Configurações</h1>
+          <p className="font-mono-mm text-xs tracking-[0.08em] mt-1 font-semibold text-[#E5C158]">MALDS MAKER ADMIN</p>
         </div>
         <button
           onClick={handleSave}
-          className="flex items-center gap-2 h-9 px-5 font-mono-mm text-[11px] tracking-[0.1em] transition-all"
-          style={{ background: saved ? '#1E8449' : '#C9A84C', color: '#080808', borderRadius: '6px' }}
+          className="flex items-center gap-2 h-11 px-5 font-mono-mm text-xs tracking-[0.1em] font-semibold transition-all rounded-lg"
+          style={{ background: saved ? '#4ADE80' : '#C9A84C', color: '#080808' }}
         >
-          {saved ? <Check size={14} /> : <Save size={14} />}
+          {saved ? <Check size={16} /> : <Save size={16} />}
           {saved ? 'SALVO' : 'SALVAR'}
         </button>
       </div>
 
       {cleared && (
-        <div className="p-4 flex items-center gap-3" style={{ background: 'rgba(30,132,73,0.1)', border: '1px solid rgba(30,132,73,0.3)', borderRadius: '8px' }}>
-          <Check size={14} style={{ color: '#52BE80' }} />
-          <p className="font-mono-mm text-[11px]" style={{ color: '#52BE80' }}>Dados limpos com sucesso.</p>
+        <div className="p-4 flex items-center gap-3 bg-[rgba(74,222,128,0.15)] border border-[rgba(74,222,128,0.4)] rounded-lg text-[#4ADE80]">
+          <Check size={18} />
+          <span className="font-mono-mm text-xs font-semibold">Dados resetados com sucesso!</span>
         </div>
       )}
 
-      {/* Profile */}
-      <SettingsSection title="PERFIL">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center font-display font-bold text-xl shrink-0" style={{ background: '#C9A84C', color: '#080808' }}>
-            LM
-          </div>
-          <div>
-            <p className="font-display font-semibold text-base" style={{ color: '#F2F2F2' }}>{nome}</p>
-            <p className="font-mono-mm text-[11px] mt-0.5" style={{ color: '#555' }}>Fundador & Diretor Criativo</p>
-          </div>
-        </div>
-        <div className="h-px" style={{ background: 'rgba(255,255,255,0.05)' }} />
-        <Field label="Nome" description="Exibido no painel admin">
+      {/* Perfil */}
+      <SettingsSection title="PERFIL DO PRODUTOR">
+        <Field label="Nome Completo">
           <TextInput value={nome} onChange={setNome} />
         </Field>
-        <Field label="E-mail" description="Para notificações e alertas">
+        <Field label="E-mail de Contato">
           <TextInput value={email} onChange={setEmail} />
         </Field>
-        <Field label="WhatsApp" description="Usado nos formulários do site">
+        <Field label="WhatsApp Profissional">
           <TextInput value={whatsapp} onChange={setWhatsapp} />
         </Field>
-      </SettingsSection>
-
-      {/* Empresa */}
-      <SettingsSection title="EMPRESA">
-        <Field label="Nome da empresa">
+        <Field label="Nome Comercial / Produtora">
           <TextInput value={empresa} onChange={setEmpresa} />
         </Field>
         <Field label="CNPJ">
           <TextInput value={cnpj} onChange={setCnpj} />
         </Field>
-        <Field label="Cidade / Estado">
+        <Field label="Cidade / Base">
           <TextInput value={cidade} onChange={setCidade} />
         </Field>
-        <Field label="Instagram">
+        <Field label="Instagram Profissional">
           <TextInput value={instagram} onChange={setInstagram} />
         </Field>
       </SettingsSection>
 
-      {/* Nauta Studio */}
-      <SettingsSection title="NAUTA ESTÚDIO">
-        <Field label="Capacidade máxima" description="Pessoas por sessão">
+      {/* Nauta Estúdio */}
+      <SettingsSection title="PARÂMETROS NAUTA ESTÚDIO">
+        <Field label="Capacidade Máxima de Pessoas" description="Recomendado para segurança do espaço">
           <TextInput value={capacidade} onChange={setCapacidade} />
         </Field>
-        <Field label="Valor diária completa">
+        <Field label="Valor Diária Completa (10h)" description="Preço base para locações avulsas">
           <TextInput value={valorDiaria} onChange={setValorDiaria} />
         </Field>
-        <Field label="Valor meio período">
+        <Field label="Valor Meio Período (5h)">
           <TextInput value={valorMeio} onChange={setValorMeio} />
         </Field>
-        <Field label="Aceita locação avulsa" description="Sem produção Malds">
+        <Field label="Aceitar Locação Avulsa" description="Permite reservas externas no calendário">
           <Toggle value={locacaoAvulsa} onChange={setLocacaoAvulsa} />
         </Field>
       </SettingsSection>
 
-      {/* Notificações */}
-      <SettingsSection title="NOTIFICAÇÕES">
-        <Field label="Notificação de novo lead" description="Ao receber contato pelo site">
-          <Toggle value={notifLead} onChange={setNotifLead} />
-        </Field>
-        <Field label="Lembrete de shoot" description="24h antes do agendamento">
-          <Toggle value={notifShoot} onChange={setNotifShoot} />
-        </Field>
-        <Field label="Alerta de pagamento pendente" description="7 dias após vencimento">
-          <Toggle value={notifPagamento} onChange={setNotifPagamento} />
-        </Field>
-        <Field label="Resumo semanal" description="Relatório de projetos e finanças">
-          <Toggle value={notifResumo} onChange={setNotifResumo} />
-        </Field>
-      </SettingsSection>
-
       {/* Da Rua pra Rua */}
-      <SettingsSection title="DA RUA PRA RUA">
-        <Field label="Exibir seção no site" description="Mostra a iniciativa na página pública">
+      <SettingsSection title="PROJETO DA RUA PRA RUA">
+        <Field label="Exibir Seção no Site Público" description="Mostra a área de iniciativa periférica">
           <Toggle value={drprExibir} onChange={setDrprExibir} />
         </Field>
-        <Field label="Receber inscrições via site" description="Formulário de candidatura aberto">
+        <Field label="Inscrições Abertas" description="Permite envio de novos briefs por artistas">
           <Toggle value={drprInscrições} onChange={setDrprInscrições} />
         </Field>
-        <Field label="Vagas disponíveis">
+        <Field label="Vagas Disponíveis este Mês">
           <TextInput value={drprVagas} onChange={setDrprVagas} />
         </Field>
       </SettingsSection>
 
-      {/* Branding */}
-      <SettingsSection title="BRANDING">
-        <div className="flex flex-col gap-3">
-          <p className="font-display text-sm" style={{ color: '#777' }}>Logo atual</p>
-          <div
-            className="flex items-center justify-center p-6"
-            style={{ background: '#080808', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '8px' }}
-          >
-            <Image src="/images/logo.png" alt="Malds Maker Logo" width={180} height={50} className="h-10 w-auto object-contain opacity-80" />
-          </div>
-          <button
-            className="self-start h-8 px-4 font-mono-mm text-[10px] tracking-[0.08em] transition-colors"
-            style={{ border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#777' }}
-            onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)')}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
-          >
-            TROCAR LOGO
-          </button>
-        </div>
+      {/* Notificações */}
+      <SettingsSection title="PREFERÊNCIAS DE NOTIFICAÇÃO">
+        <Field label="Novo Lead / Formulário Contato">
+          <Toggle value={notifLead} onChange={setNotifLead} />
+        </Field>
+        <Field label="Lembrete de Shoot (24h antes)">
+          <Toggle value={notifShoot} onChange={setNotifShoot} />
+        </Field>
+        <Field label="Confirmação de Pagamento">
+          <Toggle value={notifPagamento} onChange={setNotifPagamento} />
+        </Field>
+        <Field label="Resumo Semanal no E-mail">
+          <Toggle value={notifResumo} onChange={setNotifResumo} />
+        </Field>
       </SettingsSection>
 
-      {/* Dados */}
-      <SettingsSection title="DADOS">
-        <Field label="Resumo" description="Estado atual do sistema">
-          <div className="flex flex-col items-end gap-1">
-            <span className="font-mono-mm text-[10px]" style={{ color: '#C9A84C' }}>{state.clients.length} clientes</span>
-            <span className="font-mono-mm text-[10px]" style={{ color: '#C9A84C' }}>{state.projects.length} projetos</span>
-            <span className="font-mono-mm text-[10px]" style={{ color: '#C9A84C' }}>{state.events.length} eventos</span>
-          </div>
-        </Field>
-        <Field label="Exportar dados" description="Baixar backup completo em JSON">
+      {/* Backup & Dados */}
+      <SettingsSection title="BACKUP E DADOS DA PLATAFORMA">
+        <Field label="Exportar Backup JSON" description="Baixa todos os clientes, projetos, eventos e notas">
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 h-9 px-4 font-mono-mm text-[10px] tracking-[0.08em] transition-colors"
-            style={{ border: '1px solid rgba(255,255,255,0.1)', color: '#777', borderRadius: '6px' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(201,168,76,0.3)'; e.currentTarget.style.color = '#C9A84C' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#777' }}
+            className="flex items-center gap-2 h-10 px-4 font-mono-mm text-xs tracking-[0.08em] font-semibold bg-[#161616] border border-[rgba(255,255,255,0.16)] hover:border-[#C9A84C] text-[#F3F4F6] hover:text-[#E5C158] transition-all rounded-lg"
           >
-            <Download size={12} />
-            EXPORTAR JSON
+            <Download size={15} />
+            EXPORTAR
           </button>
         </Field>
-      </SettingsSection>
-
-      {/* Danger zone */}
-      <SettingsSection title="ZONA DE PERIGO">
-        <Field label="Limpar todos os dados" description="Remove clientes, projetos e eventos (irreversível)">
+        <Field label="Resetar Todos os Dados" description="Apaga todos os registros atuais do sistema">
           <button
             onClick={() => setShowClearConfirm(true)}
-            className="h-9 px-4 font-mono-mm text-[10px] tracking-[0.08em] transition-colors"
-            style={{ border: '1px solid rgba(192,57,43,0.4)', color: '#F1948A', borderRadius: '6px' }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(192,57,43,0.1)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            className="h-10 px-4 font-mono-mm text-xs tracking-[0.08em] font-semibold bg-[rgba(248,113,113,0.15)] border border-[rgba(248,113,113,0.4)] text-[#F87171] hover:bg-[#DC2626] hover:text-white transition-all rounded-lg"
           >
-            LIMPAR DADOS
+            RESETAR TUDO
           </button>
         </Field>
       </SettingsSection>
 
       {showClearConfirm && (
         <ConfirmDialog
-          message="Tem certeza que deseja limpar todos os dados? Esta ação é irreversível e removerá todos os clientes, projetos, eventos e notas."
+          message="Tem certeza que deseja apagar TODOS os clientes, projetos, eventos e notas? Esta ação não pode ser desfeita."
           onConfirm={handleClear}
           onCancel={() => setShowClearConfirm(false)}
         />
