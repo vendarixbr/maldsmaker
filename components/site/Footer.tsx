@@ -1,16 +1,15 @@
 'use client'
 
-import Image from 'next/image'
 import { AtSign, Phone, Play } from 'lucide-react'
+import { SiteImage } from '@/components/site/SiteImage'
 
 const navLinks = [
   { label: 'Sobre',          href: '#sobre'     },
   { label: 'Serviços',       href: '#servicos'  },
   { label: 'Nauta Estúdio',  href: '#nauta'     },
   { label: 'Portfólio',      href: '#portfolio' },
-  { label: 'Da Rua Pra Rua', href: '#darua'     },
   { label: 'Contato',        href: '#contato'   },
-  { label: 'Reservar Horário', href: 'https://wa.me/5515999999999' },
+  { label: 'Reservar Horário', href: 'https://wa.me/5515997307171' },
 ]
 
 const serviceLinks = [
@@ -24,7 +23,7 @@ const serviceLinks = [
 
 const socials = [
   { Icon: AtSign, href: 'https://instagram.com/maldsmaker', label: 'Instagram' },
-  { Icon: Phone,  href: 'https://wa.me/5515999999999',     label: 'WhatsApp'  },
+  { Icon: Phone,  href: 'https://wa.me/5515997307171',     label: 'WhatsApp'  },
   { Icon: Play,   href: 'https://youtube.com/@maldsmaker', label: 'YouTube'   },
 ]
 
@@ -45,8 +44,8 @@ export function Footer() {
           {/* Col 1 — Brand */}
           <div className="flex flex-col gap-4">
             <a href="#hero" className="block self-start" style={{ lineHeight: 0 }}>
-              <Image
-                src="/images/logo.png"
+              <SiteImage
+                imageKey="logo"
                 alt="Malds Maker"
                 width={240}
                 height={80}
@@ -170,17 +169,28 @@ export function Footer() {
           <p className="font-mono-mm text-[10px] tracking-[0.1em]" style={{ color: '#2e2e2e' }}>
             PRODUÇÃO AUDIOVISUAL · FOTOGRAFIA · SOROCABA, SP
           </p>
-          <a
-            href="https://wa.me/5515999999999"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-mono-mm text-[10px] tracking-[0.1em] transition-colors duration-200"
-            style={{ color: '#3a3a3a' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#C9A84C')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#3a3a3a')}
-          >
-            (15) 99XXX-XXXX
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="mailto:malldsmaker@gmail.com"
+              className="font-mono-mm text-[10px] tracking-[0.1em] transition-colors duration-200"
+              style={{ color: '#3a3a3a' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#C9A84C')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#3a3a3a')}
+            >
+              malldsmaker@gmail.com
+            </a>
+            <a
+              href="https://wa.me/5515997307171"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono-mm text-[10px] tracking-[0.1em] transition-colors duration-200"
+              style={{ color: '#3a3a3a' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#C9A84C')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#3a3a3a')}
+            >
+              (15) 99730-7171
+            </a>
+          </div>
         </div>
       </div>
     </footer>

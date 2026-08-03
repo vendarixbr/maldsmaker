@@ -13,6 +13,7 @@ import {
   Settings,
   LogOut,
   X,
+  Images,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -26,6 +27,7 @@ const mainTabs = [
 const extraTabs = [
   { id: 'notas', label: 'Notas', Icon: NotebookPen },
   { id: 'financeiro', label: 'Financeiro', Icon: BarChart2 },
+  { id: 'imagens', label: 'Imagens', Icon: Images },
   { id: 'configuracoes', label: 'Configurações', Icon: Settings },
 ]
 

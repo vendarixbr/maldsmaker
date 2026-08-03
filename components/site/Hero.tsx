@@ -1,18 +1,18 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Image from 'next/image'
+import { SiteImage } from '@/components/site/SiteImage'
 
 const MARQUEE_TEXT =
-  'PRODUÇÃO AUDIOVISUAL ◆ FOTOGRAFIA PROFISSIONAL ◆ NAUTA ESTÚDIO 480M² ◆ VÍDEOS PARA EMPRESAS ◆ TRÁFEGO PAGO ◆ REBRANDING ◆ EVENTOS AO VIVO ◆ ARTISTAS INDEPENDENTES ◆ DA RUA PRA RUA ◆ '
+  'PRODUÇÃO AUDIOVISUAL ◆ FOTOGRAFIA PROFISSIONAL ◆ NAUTA ESTÚDIO 480M² ◆ VÍDEOS PARA EMPRESAS ◆ TRÁFEGO PAGO ◆ REBRANDING ◆ EVENTOS AO VIVO ◆ ARTISTAS INDEPENDENTES ◆ '
 
 const thumbnails = [
-  { label: 'DIREÇÃO CRIATIVA', img: '/images/portfolio-1.png' },
-  { label: 'CAPTAÇÃO',         img: '/images/portfolio-2.png' },
-  { label: 'CLIPE MUSICAL',   img: '/images/portfolio-3.png' },
-  { label: 'INSTITUCIONAL',   img: '/images/portfolio-4.png' },
-  { label: 'ENSAIO',           img: '/images/portfolio-5.png' },
-  { label: 'NAUTA ESTÚDIO',   img: '/images/portfolio-6.png' },
+  { label: 'DIREÇÃO CRIATIVA', imageKey: 'portfolio-territorio-mc-vitao' },
+  { label: 'CAPTAÇÃO',         imageKey: 'portfolio-adega-sao-roque' },
+  { label: 'CLIPE MUSICAL',   imageKey: 'portfolio-ensaio-rafael' },
+  { label: 'INSTITUCIONAL',   imageKey: 'portfolio-show-kaizen' },
+  { label: 'ENSAIO',           imageKey: 'portfolio-campanha-kaizen' },
+  { label: 'NAUTA ESTÚDIO',   imageKey: 'portfolio-ep-ana-beatriz' },
 ]
 
 const headlineWords = [
@@ -138,7 +138,7 @@ export function Hero() {
                   VER PORTFÓLIO
                 </a>
                 <a
-                  href="https://wa.me/5515999999999"
+                  href="https://wa.me/5515997307171"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 font-mono-mm text-[11px] tracking-[0.12em] uppercase transition-all duration-250"
@@ -184,8 +184,8 @@ export function Hero() {
                     border: '1px solid rgba(201,168,76,0.12)',
                   }}
                 >
-                  <Image
-                    src={thumb.img}
+                  <SiteImage
+                    imageKey={thumb.imageKey}
                     alt={thumb.label}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-[1.06]"

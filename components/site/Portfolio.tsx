@@ -3,23 +3,23 @@
 import { useState, useRef } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { Play } from 'lucide-react'
-import Image from 'next/image'
+import { SiteImage } from '@/components/site/SiteImage'
 
 const FILTERS = ['TODOS', 'MÚSICA', 'EMPRESAS', 'EVENTOS', 'ENSAIOS', 'CLIPES', 'INSTITUCIONAL', 'AO VIVO']
 
 const ITEMS = [
-  { id: 1,  title: 'Território — MC Vitão',           category: 'CLIPES',       height: 'tall',   img: '/images/portfolio-1.png', isVideo: true  },
-  { id: 2,  title: 'Adega São Roque Institucional',   category: 'INSTITUCIONAL', height: 'normal', img: '/images/portfolio-2.png', isVideo: false },
-  { id: 3,  title: 'Ensaio Rafael Moreno',            category: 'ENSAIOS',      height: 'short',  img: '/images/portfolio-3.png', isVideo: false },
-  { id: 4,  title: 'Show Kaizen Music Festival',      category: 'AO VIVO',      height: 'tall',   img: '/images/portfolio-4.png', isVideo: true  },
-  { id: 5,  title: 'Campanha Verão Kaizen',           category: 'EMPRESAS',     height: 'normal', img: '/images/portfolio-5.png', isVideo: false },
-  { id: 6,  title: 'EP Visual Ana Beatriz Lima',      category: 'MÚSICA',       height: 'short',  img: '/images/portfolio-6.png', isVideo: true  },
-  { id: 7,  title: 'Lançamento Horizonte',            category: 'INSTITUCIONAL', height: 'normal', img: '/images/portfolio-7.png', isVideo: false },
-  { id: 8,  title: 'Madrugada — Rafael Moreno',       category: 'CLIPES',       height: 'tall',   img: '/images/portfolio-8.png', isVideo: true  },
-  { id: 9,  title: 'Workshop Fotografia',             category: 'EVENTOS',      height: 'short',  img: '/images/portfolio-1.png', isVideo: false },
-  { id: 10, title: 'Bianca Ferreira — Pack Dez',      category: 'ENSAIOS',      height: 'normal', img: '/images/portfolio-3.png', isVideo: false },
-  { id: 11, title: 'Conference Advocacia Pereira',    category: 'AO VIVO',      height: 'short',  img: '/images/portfolio-4.png', isVideo: true  },
-  { id: 12, title: 'Giovane Dias — Amanhã',           category: 'MÚSICA',       height: 'normal', img: '/images/portfolio-6.png', isVideo: true  },
+  { id: 1,  title: 'Território — MC Vitão',           category: 'CLIPES',       height: 'tall',   imageKey: 'portfolio-territorio-mc-vitao',    isVideo: true  },
+  { id: 2,  title: 'Adega São Roque Institucional',   category: 'INSTITUCIONAL', height: 'normal', imageKey: 'portfolio-adega-sao-roque',        isVideo: false },
+  { id: 3,  title: 'Ensaio Rafael Moreno',            category: 'ENSAIOS',      height: 'short',  imageKey: 'portfolio-ensaio-rafael',           isVideo: false },
+  { id: 4,  title: 'Show Kaizen Music Festival',      category: 'AO VIVO',      height: 'tall',   imageKey: 'portfolio-show-kaizen',             isVideo: true  },
+  { id: 5,  title: 'Campanha Verão Kaizen',           category: 'EMPRESAS',     height: 'normal', imageKey: 'portfolio-campanha-kaizen',         isVideo: false },
+  { id: 6,  title: 'EP Visual Ana Beatriz Lima',      category: 'MÚSICA',       height: 'short',  imageKey: 'portfolio-ep-ana-beatriz',          isVideo: true  },
+  { id: 7,  title: 'Lançamento Horizonte',            category: 'INSTITUCIONAL', height: 'normal', imageKey: 'portfolio-lancamento-horizonte',   isVideo: false },
+  { id: 8,  title: 'Madrugada — Rafael Moreno',       category: 'CLIPES',       height: 'tall',   imageKey: 'portfolio-madrugada-rafael',        isVideo: true  },
+  { id: 9,  title: 'Workshop Fotografia',             category: 'EVENTOS',      height: 'short',  imageKey: 'portfolio-territorio-mc-vitao',     isVideo: false },
+  { id: 10, title: 'Bianca Ferreira — Pack Dez',      category: 'ENSAIOS',      height: 'normal', imageKey: 'portfolio-ensaio-rafael',           isVideo: false },
+  { id: 11, title: 'Conference Advocacia Pereira',    category: 'AO VIVO',      height: 'short',  imageKey: 'portfolio-show-kaizen',             isVideo: true  },
+  { id: 12, title: 'Giovane Dias — Amanhã',           category: 'MÚSICA',       height: 'normal', imageKey: 'portfolio-ep-ana-beatriz',          isVideo: true  },
 ]
 
 const HEIGHTS: Record<string, string> = {
@@ -123,8 +123,8 @@ export function Portfolio() {
                   cursor: 'none',
                 }}
               >
-                <Image
-                  src={item.img}
+                <SiteImage
+                  imageKey={item.imageKey}
                   alt={item.title}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"

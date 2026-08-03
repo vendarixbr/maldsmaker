@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Camera } from 'lucide-react'
-import Image from 'next/image'
+import { SiteImage } from '@/components/site/SiteImage'
 
 const specs = [
   { label: 'ÁREA TOTAL',   value: '480 m²'       },
@@ -126,7 +126,7 @@ export function Nauta() {
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ delay: 0.68 }}
-              href="https://wa.me/5515999999999?text=Quero%20reservar%20o%20Nauta%20Estúdio!"
+              href="https://wa.me/5515997307171?text=Quero%20reservar%20o%20Nauta%20Estúdio!"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 font-mono-mm text-[11px] tracking-[0.14em] uppercase transition-colors duration-200"
@@ -151,8 +151,8 @@ export function Nauta() {
               className="relative col-span-2 group overflow-hidden"
               style={{ aspectRatio: '16/7', border: '1px solid rgba(255,255,255,0.06)' }}
             >
-              <Image
-                src="/images/nauta-studio.png"
+              <SiteImage
+                imageKey="nauta-studio"
                 alt="Nauta Estúdio — 480m² em Sorocaba"
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
@@ -171,17 +171,17 @@ export function Nauta() {
 
             {/* Sub cells */}
             {[
-              { label: 'CHROMA KEY 14M', img: '/images/portfolio-5.png' },
-              { label: 'CAMARIM',        img: '/images/portfolio-2.png' },
-              { label: 'ILUMINAÇÃO',     img: '/images/portfolio-7.png' },
+              { label: 'CHROMA KEY 14M', imageKey: 'portfolio-campanha-kaizen' },
+              { label: 'CAMARIM',        imageKey: 'portfolio-adega-sao-roque' },
+              { label: 'ILUMINAÇÃO',     imageKey: 'portfolio-lancamento-horizonte' },
             ].map((cell) => (
               <div
                 key={cell.label}
                 className="relative group overflow-hidden"
                 style={{ aspectRatio: '4/3', border: '1px solid rgba(255,255,255,0.06)' }}
               >
-                <Image
-                  src={cell.img}
+                <SiteImage
+                  imageKey={cell.imageKey}
                   alt={cell.label}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"

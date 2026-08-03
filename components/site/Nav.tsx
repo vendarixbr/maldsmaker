@@ -3,14 +3,13 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
-import Image from 'next/image'
+import { SiteImage } from '@/components/site/SiteImage'
 
 const navLinks = [
   { label: 'Sobre', href: '#sobre' },
   { label: 'Serviços', href: '#servicos' },
   { label: 'Nauta Estúdio', href: '#nauta' },
   { label: 'Portfólio', href: '#portfolio' },
-  { label: 'Da Rua Pra Rua', href: '#darua' },
   { label: 'Contato', href: '#contato' },
 ]
 
@@ -47,8 +46,8 @@ export function Nav() {
 
             {/* Logo */}
             <a href="#hero" className="flex-shrink-0 block" style={{ lineHeight: 0 }}>
-              <Image
-                src="/images/logo.png"
+              <SiteImage
+                imageKey="logo"
                 alt="Malds Maker"
                 width={200}
                 height={64}
@@ -121,8 +120,8 @@ export function Nav() {
             {/* Top bar */}
             <div className="site-container flex items-center justify-between h-16 flex-shrink-0">
               <a href="#hero" onClick={() => setOpen(false)} className="block" style={{ lineHeight: 0 }}>
-                <Image
-                  src="/images/logo.png"
+                <SiteImage
+                  imageKey="logo"
                   alt="Malds Maker"
                   width={160}
                   height={52}

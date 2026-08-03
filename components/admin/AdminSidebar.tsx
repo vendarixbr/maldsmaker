@@ -12,8 +12,9 @@ import {
   X,
   ExternalLink,
   LogOut,
+  Images,
 } from 'lucide-react'
-import Image from 'next/image'
+import { SiteImage } from '@/components/site/SiteImage'
 import { useRouter } from 'next/navigation'
 
 const navItems = [
@@ -23,6 +24,7 @@ const navItems = [
   { id: 'agenda', label: 'Agenda', Icon: Calendar },
   { id: 'notas', label: 'Notas', Icon: NotebookPen },
   { id: 'financeiro', label: 'Financeiro', Icon: BarChart2 },
+  { id: 'imagens', label: 'Imagens do Site', Icon: Images },
   { id: 'configuracoes', label: 'Configurações', Icon: Settings },
 ]
 
@@ -71,8 +73,8 @@ export function AdminSidebar() {
           style={{ borderBottom: '1px solid rgba(255,255,255,0.12)' }}
         >
           <div className="flex items-center gap-3">
-            <Image
-              src="/images/logo.png"
+            <SiteImage
+              imageKey="logo"
               alt="Malds Maker Logo"
               width={110}
               height={30}

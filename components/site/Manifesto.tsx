@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import Image from 'next/image'
+import { SiteImage } from '@/components/site/SiteImage'
 
 const niches = [
   'ARTISTAS', 'EMPRESAS', 'ADVOGADOS', 'EVENTOS',
@@ -125,8 +125,8 @@ export function Manifesto() {
                 border: '1px solid rgba(201,168,76,0.2)',
               }}
             >
-              <Image
-                src="/images/leonardo-claquete.png"
+              <SiteImage
+                imageKey="leonardo-claquete"
                 alt="Leonardo Maldonado — Diretor Criativo da Malds Maker"
                 fill
                 className="object-cover"

@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Phone, AtSign, MapPin } from 'lucide-react'
+import { Phone, AtSign, Mail, MapPin } from 'lucide-react'
 
 const serviceOptions = [
   'Produção Audiovisual',
@@ -11,7 +11,6 @@ const serviceOptions = [
   'Tráfego Pago',
   'Rebranding',
   'Estratégia Digital',
-  'Da Rua pra Rua',
   'Outro',
 ]
 
@@ -188,7 +187,7 @@ export function Contato() {
       setSent(true)
     } catch (err) {
       console.error(err)
-      setError('Nao foi possivel enviar agora. Tente novamente em instantes.')
+      setError('Não foi possível enviar agora. Tente novamente em instantes.')
     } finally {
       setLoading(false)
     }
@@ -232,7 +231,8 @@ export function Contato() {
             {/* Contact links */}
             <div className="flex flex-col gap-4">
               {[
-                { icon: Phone,  href: 'https://wa.me/5515999999999',          text: '(15) 99XXX-XXXX' },
+                { icon: Phone,  href: 'https://wa.me/5515997307171',         text: '(15) 99730-7171' },
+                { icon: Mail,   href: 'mailto:malldsmaker@gmail.com',         text: 'malldsmaker@gmail.com' },
                 { icon: AtSign, href: 'https://instagram.com/maldsmaker',     text: '@maldsmaker' },
                 { icon: MapPin, href: '#',                                    text: 'Sorocaba, SP — Brasil' },
               ].map(({ icon: Icon, href, text }) => (
@@ -263,7 +263,7 @@ export function Contato() {
 
             {/* WhatsApp highlight CTA */}
             <a
-              href="https://wa.me/5515999999999?text=Olá,%20quero%20chamar%20no%20WhatsApp!"
+              href="https://wa.me/5515997307171?text=Olá,%20quero%20chamar%20no%20WhatsApp!"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 font-display uppercase tracking-widest transition-all duration-200"

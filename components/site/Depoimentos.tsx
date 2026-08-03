@@ -4,32 +4,38 @@ import { useRef, useCallback, useEffect, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import useEmblaCarousel from 'embla-carousel-react'
+import { SiteImage } from '@/components/site/SiteImage'
 
 const testimonials = [
   {
     quote: 'O lançamento do empreendimento foi um sucesso enorme. O vídeo produzido pela Malds Maker foi decisivo para as vendas. Parceiros de altíssimo nível.',
     name: 'Construtora Horizonte',
     niche: 'EMPRESA',
+    imageKey: 'avatar-construtora',
   },
   {
     quote: 'A Malds Maker entregou um clipe que superou tudo que eu imaginava. Leonardo entende a alma do artista e coloca isso na câmera com perfeição.',
     name: 'Rafael Moreno',
     niche: 'ARTISTA MUSICAL',
+    imageKey: 'avatar-rafael',
   },
   {
     quote: 'Contratamos para o vídeo institucional da adega e o resultado foi impactante. Profissionalismo do início ao fim, com um olhar que valoriza o produto.',
     name: 'Adega São Roque',
     niche: 'ADEGA',
+    imageKey: 'avatar-adega',
   },
   {
     quote: 'Recomendo para qualquer advogado que queira construir uma imagem sólida nas redes. Sério, competente e criativo. O resultado fala por si.',
     name: 'Dr. Thiago Alves',
     niche: 'ADVOGADO',
+    imageKey: 'avatar-thiago',
   },
   {
     quote: 'Meu conteúdo mudou completamente depois que comecei a trabalhar com a Malds Maker. O engajamento aumentou e minha audiência percebeu a diferença de qualidade.',
     name: 'Bianca Ferreira',
     niche: 'INFLUENCER',
+    imageKey: 'avatar-bianca',
   },
 ]
 
@@ -144,9 +150,20 @@ export function Depoimentos() {
                     {t.quote}
                   </p>
 
-                  {/* Divider + name */}
-                  <div className="flex items-center gap-5">
-                    <div className="h-px w-9 shrink-0" style={{ background: '#C9A84C' }} />
+                  {/* Avatar + name */}
+                  <div className="flex items-center gap-4">
+                    <div
+                      className="relative w-11 h-11 rounded-full overflow-hidden shrink-0"
+                      style={{ border: '1px solid rgba(201,168,76,0.4)' }}
+                    >
+                      <SiteImage
+                        imageKey={t.imageKey}
+                        alt={t.name}
+                        fill
+                        className="object-cover"
+                        sizes="44px"
+                      />
+                    </div>
                     <div>
                       <p
                         className="font-display uppercase"
