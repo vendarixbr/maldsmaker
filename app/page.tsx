@@ -5,7 +5,6 @@ import { Servicos } from '@/components/site/Servicos'
 import { Nauta } from '@/components/site/Nauta'
 import { Portfolio } from '@/components/site/Portfolio'
 import { NichosBanner } from '@/components/site/NichosBanner'
-import { DaRuaPraRua } from '@/components/site/DaRuaPraRua'
 import { Depoimentos } from '@/components/site/Depoimentos'
 import { Contato } from '@/components/site/Contato'
 import { Footer } from '@/components/site/Footer'
@@ -26,7 +25,6 @@ export default function Home() {
         <NichosBanner />
         <Nauta />
         <Portfolio />
-        <DaRuaPraRua />
         <Depoimentos />
         <Contato />
         <Footer />

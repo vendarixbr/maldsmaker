@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     const contact = body.contato?.trim()
 
     if (!name || !contact) {
-      return NextResponse.json({ error: 'Nome e contato sao obrigatorios.' }, { status: 400 })
+      return NextResponse.json({ error: 'Nome e contato são obrigatórios.' }, { status: 400 })
     }
 
     const now = new Date()
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
         id: `history-${Date.now()}`,
         date: createdAt,
         type: 'phone',
-        title: 'Lead recebido pelo formulario do site',
+        title: 'Lead recebido pelo formulário do site',
         notes: [service, message].filter(Boolean).join(' - '),
       }],
       invoices: [],
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Failed to create contact lead', error)
     return NextResponse.json(
-      { error: 'Nao foi possivel enviar a mensagem.' },
+      { error: 'Não foi possível enviar a mensagem.' },
       { status: 500 }
     )
   }

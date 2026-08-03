@@ -9,6 +9,7 @@ import { AdminProjetos } from '@/components/admin/AdminProjetos'
 import { AdminAgenda } from '@/components/admin/AdminAgenda'
 import { AdminNotas } from '@/components/admin/AdminNotas'
 import { AdminFinanceiro } from '@/components/admin/AdminFinanceiro'
+import { AdminImagens } from '@/components/admin/AdminImagens'
 import { AdminConfiguracoes } from '@/components/admin/AdminConfiguracoes'
 import { Menu } from 'lucide-react'
 
@@ -22,6 +23,7 @@ function AdminShell() {
     agenda: <AdminAgenda />,
     notas: <AdminNotas />,
     financeiro: <AdminFinanceiro />,
+    imagens: <AdminImagens />,
     configuracoes: <AdminConfiguracoes />,
   }
 
