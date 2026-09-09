@@ -1,13 +1,20 @@
 import {
   CALENDAR_EVENTS,
   CLIENTS,
+  EXPENSES,
   GLOBAL_NOTES,
+  PORTFOLIO_ITEMS,
   PROJECTS,
+  TESTIMONIALS,
   type CalendarEvent,
   type Client,
+  type Expense,
   type GlobalNote,
+  type Invoice,
   type Note,
+  type PortfolioItem,
   type Project,
+  type Testimonial,
 } from './data'
 
 export interface AdminState {
@@ -15,6 +22,9 @@ export interface AdminState {
   projects: Project[]
   events: CalendarEvent[]
   notes: GlobalNote[]
+  expenses: Expense[]
+  portfolio: PortfolioItem[]
+  testimonials: Testimonial[]
 }
 
 export type AdminAction =
@@ -36,12 +46,27 @@ export type AdminAction =
   | { type: 'PIN_NOTE'; id: string }
   | { type: 'ADD_CLIENT_NOTE'; clientId: string; note: Note }
   | { type: 'DELETE_CLIENT_NOTE'; clientId: string; noteId: string }
+  | { type: 'ADD_INVOICE'; clientId: string; invoice: Invoice }
+  | { type: 'UPDATE_INVOICE'; clientId: string; invoice: Invoice }
+  | { type: 'DELETE_INVOICE'; clientId: string; invoiceId: string }
+  | { type: 'ADD_EXPENSE'; payload: Expense }
+  | { type: 'UPDATE_EXPENSE'; payload: Expense }
+  | { type: 'DELETE_EXPENSE'; id: string }
+  | { type: 'ADD_PORTFOLIO'; payload: PortfolioItem }
+  | { type: 'UPDATE_PORTFOLIO'; payload: PortfolioItem }
+  | { type: 'DELETE_PORTFOLIO'; id: string }
+  | { type: 'ADD_TESTIMONIAL'; payload: Testimonial }
+  | { type: 'UPDATE_TESTIMONIAL'; payload: Testimonial }
+  | { type: 'DELETE_TESTIMONIAL'; id: string }
 
 export const emptyAdminState: AdminState = {
   clients: [],
   projects: [],
   events: [],
   notes: [],
+  expenses: [],
+  portfolio: [],
+  testimonials: [],
 }
 
 export const staticAdminState: AdminState = {
@@ -49,12 +74,15 @@ export const staticAdminState: AdminState = {
   projects: PROJECTS,
   events: CALENDAR_EVENTS,
   notes: GLOBAL_NOTES,
+  expenses: EXPENSES,
+  portfolio: PORTFOLIO_ITEMS,
+  testimonials: TESTIMONIALS,
 }
 
 export function adminReducer(state: AdminState, action: AdminAction): AdminState {
   switch (action.type) {
     case 'HYDRATE':
-      return action.payload
+      return normalizeState({ ...emptyAdminState, ...action.payload })
     case 'RESET_ALL':
       return emptyAdminState
     case 'ADD_CLIENT':
@@ -127,7 +155,85 @@ export function adminReducer(state: AdminState, action: AdminAction): AdminState
             : c
         ),
       }
+    case 'ADD_INVOICE':
+      return {
+        ...state,
+        clients: state.clients.map(c =>
+          c.id === action.clientId
+            ? recalcClientTotals({ ...c, invoices: [action.invoice, ...c.invoices] })
+            : c
+        ),
+      }
+    case 'UPDATE_INVOICE':
+      return {
+        ...state,
+        clients: state.clients.map(c =>
+          c.id === action.clientId
+            ? recalcClientTotals({
+                ...c,
+                invoices: c.invoices.map(inv => (inv.id === action.invoice.id ? action.invoice : inv)),
+              })
+            : c
+        ),
+      }
+    case 'DELETE_INVOICE':
+      return {
+        ...state,
+        clients: state.clients.map(c =>
+          c.id === action.clientId
+            ? recalcClientTotals({ ...c, invoices: c.invoices.filter(inv => inv.id !== action.invoiceId) })
+            : c
+        ),
+      }
+    case 'ADD_EXPENSE':
+      return { ...state, expenses: [action.payload, ...state.expenses] }
+    case 'UPDATE_EXPENSE':
+      return {
+        ...state,
+        expenses: state.expenses.map(e => (e.id === action.payload.id ? action.payload : e)),
+      }
+    case 'DELETE_EXPENSE':
+      return { ...state, expenses: state.expenses.filter(e => e.id !== action.id) }
+    case 'ADD_PORTFOLIO':
+      return { ...state, portfolio: [...state.portfolio, action.payload] }
+    case 'UPDATE_PORTFOLIO':
+      return {
+        ...state,
+        portfolio: state.portfolio.map(p => (p.id === action.payload.id ? action.payload : p)),
+      }
+    case 'DELETE_PORTFOLIO':
+      return { ...state, portfolio: state.portfolio.filter(p => p.id !== action.id) }
+    case 'ADD_TESTIMONIAL':
+      return { ...state, testimonials: [...state.testimonials, action.payload] }
+    case 'UPDATE_TESTIMONIAL':
+      return {
+        ...state,
+        testimonials: state.testimonials.map(t => (t.id === action.payload.id ? action.payload : t)),
+      }
+    case 'DELETE_TESTIMONIAL':
+      return { ...state, testimonials: state.testimonials.filter(t => t.id !== action.id) }
     default:
       return state
   }
+}
+
+function recalcClientTotals(client: Client): Client {
+  const valid = client.invoices.filter(i => i.status !== 'CANCELADO')
+  return { ...client, totalValue: valid.reduce((s, i) => s + i.value, 0) }
+}
+
+function normalizeState(s: AdminState): AdminState {
+  return {
+    clients: s.clients ?? [],
+    projects: s.projects ?? [],
+    events: s.events ?? [],
+    notes: s.notes ?? [],
+    expenses: (s as Partial<AdminState>).expenses ?? [],
+    portfolio: (s as Partial<AdminState>).portfolio ?? [],
+    testimonials: (s as Partial<AdminState>).testimonials ?? [],
+  }
+}
+
+export function withDefaults(s: Partial<AdminState>): AdminState {
+  return normalizeState({ ...emptyAdminState, ...s })
 }

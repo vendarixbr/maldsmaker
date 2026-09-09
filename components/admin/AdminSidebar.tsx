@@ -13,6 +13,8 @@ import {
   ExternalLink,
   LogOut,
   Images,
+  LayoutGrid,
+  MessageSquareQuote,
 } from 'lucide-react'
 import { SiteImage } from '@/components/site/SiteImage'
 import { useRouter } from 'next/navigation'
@@ -24,6 +26,8 @@ const navItems = [
   { id: 'agenda', label: 'Agenda', Icon: Calendar },
   { id: 'notas', label: 'Notas', Icon: NotebookPen },
   { id: 'financeiro', label: 'Financeiro', Icon: BarChart2 },
+  { id: 'portfolio', label: 'Portfólio Site', Icon: LayoutGrid },
+  { id: 'depoimentos', label: 'Depoimentos', Icon: MessageSquareQuote },
   { id: 'imagens', label: 'Imagens do Site', Icon: Images },
   { id: 'configuracoes', label: 'Configurações', Icon: Settings },
 ]

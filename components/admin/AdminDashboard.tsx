@@ -34,6 +34,10 @@ export function AdminDashboard() {
     const activeProjects = state.projects.length
     const pipeline = state.projects.reduce((s, p) => s + p.value, 0)
 
+    const totalRecebido = state.clients.flatMap(c => c.invoices).filter(i => i.status === 'RECEBIDO').reduce((s, i) => s + i.value, 0)
+    const totalCustos = (state.expenses ?? []).filter(e => e.status === 'PAGO').reduce((s, e) => s + e.value, 0)
+    const lucro = totalRecebido - totalCustos
+
     const now = new Date()
     const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
     const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
@@ -42,18 +46,26 @@ export function AdminDashboard() {
     const shootsPrevMonth = state.events.filter(e => e.type === 'Shoot' && e.date.startsWith(prevMonthKey)).length
     const shootsDelta = shootsThisMonth - shootsPrevMonth
 
-    return [
-      { label: 'CLIENTES ATIVOS',         value: String(activeClients) },
-      { label: 'PROJETOS EM ANDAMENTO',    value: String(activeProjects) },
-      { label: 'VALOR EM PIPELINE',        value: `R$ ${pipeline.toLocaleString('pt-BR')}` },
-      {
-        label: 'SHOOTS ESTE MÊS',
-        value: String(shootsThisMonth),
-        delta: shootsDelta === 0 ? undefined : `${shootsDelta > 0 ? '+' : ''}${shootsDelta} vs mês ant.`,
-        up: shootsDelta >= 0,
-      },
-    ]
-  }, [state.clients, state.projects, state.events])
+    return {
+      cards: [
+        { label: 'CLIENTES ATIVOS',         value: String(activeClients) },
+        { label: 'PROJETOS EM ANDAMENTO',    value: String(activeProjects) },
+        { label: 'VALOR EM PIPELINE',        value: `R$ ${pipeline.toLocaleString('pt-BR')}` },
+        {
+          label: 'SHOOTS ESTE MÊS',
+          value: String(shootsThisMonth),
+          delta: shootsDelta === 0 ? undefined : `${shootsDelta > 0 ? '+' : ''}${shootsDelta} vs mês ant.`,
+          up: shootsDelta >= 0,
+        },
+      ],
+      financeiro: [
+        { label: 'RECEBIDO', value: `R$ ${totalRecebido.toLocaleString('pt-BR')}`, color: '#4ADE80' },
+        { label: 'CUSTOS PAGOS', value: `R$ ${totalCustos.toLocaleString('pt-BR')}`, color: '#F87171' },
+        { label: 'LUCRO LÍQUIDO', value: `R$ ${lucro.toLocaleString('pt-BR')}`, color: lucro >= 0 ? '#E5C158' : '#F87171' },
+        { label: 'PIPELINE', value: `R$ ${pipeline.toLocaleString('pt-BR')}`, color: '#5DADE2' },
+      ],
+    }
+  }, [state.clients, state.projects, state.events, state.expenses])
 
   // Upcoming events
   const upcomingEvents = useMemo(() => {
@@ -125,7 +137,7 @@ export function AdminDashboard() {
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {metrics.map(m => (
+        {metrics.cards.map(m => (
           <div
             key={m.label}
             className="flex flex-col gap-2 p-5"
@@ -154,6 +166,32 @@ export function AdminDashboard() {
             )}
           </div>
         ))}
+      </div>
+
+      {/* Financeiro strip — atualiza junto com o Financeiro */}
+      <div
+        className="p-4 sm:p-5 flex flex-col gap-3"
+        style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.35)', borderRadius: '8px' }}
+      >
+        <div className="flex items-center justify-between">
+          <p className="font-mono-mm text-xs tracking-[0.12em] font-semibold" style={{ color: '#E5C158' }}>
+            FINANCEIRO — RESUMO
+          </p>
+          <button
+            onClick={() => setActiveSection('financeiro')}
+            className="font-mono-mm text-xs text-[#CBD5E1] hover:text-[#E5C158] transition-colors p-1.5 rounded focus-visible:ring-2 focus-visible:ring-[#C9A84C] outline-none"
+          >
+            GERENCIAR →
+          </button>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {metrics.financeiro.map(f => (
+            <div key={f.label} className="p-3.5 rounded-lg" style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <p className="font-mono-mm text-[10px] tracking-[0.1em] text-[#CBD5E1] font-semibold">{f.label}</p>
+              <p className="font-display font-bold text-lg mt-1" style={{ color: f.color }}>{f.value}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Main split view */}

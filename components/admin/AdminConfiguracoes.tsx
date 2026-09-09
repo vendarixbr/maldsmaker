@@ -96,6 +96,9 @@ export function AdminConfiguracoes() {
       projects: state.projects,
       events: state.events,
       notes: state.notes,
+      expenses: state.expenses ?? [],
+      portfolio: state.portfolio ?? [],
+      testimonials: state.testimonials ?? [],
     }
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)

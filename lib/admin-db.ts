@@ -5,7 +5,7 @@ import {
   type AdminAction,
   type AdminState,
 } from './admin-store'
-import type { CalendarEvent, Client, GlobalNote, Project } from './data'
+import { PORTFOLIO_ITEMS, TESTIMONIALS, type CalendarEvent, type Client, type Expense, type GlobalNote, type PortfolioItem, type Project, type Testimonial } from './data'
 
 type DbClient = Awaited<ReturnType<typeof prisma.client.findMany>>[number]
 type DbProject = Awaited<ReturnType<typeof prisma.project.findMany>>[number]
@@ -78,6 +78,50 @@ function toNote(row: DbNote): GlobalNote {
   }
 }
 
+function toExpense(row: { id: string; description: string; category: string; date: string; value: number; status: string }): Expense {
+  return {
+    id: row.id,
+    description: row.description,
+    category: row.category,
+    date: row.date,
+    value: row.value,
+    status: row.status as Expense['status'],
+  }
+}
+
+function toPortfolio(row: { id: string; title: string; category: string; imageKey: string; imageUrl: string | null; isVideo: boolean; sortOrder: number }): PortfolioItem {
+  return {
+    id: row.id,
+    title: row.title,
+    category: row.category,
+    imageKey: row.imageKey,
+    imageUrl: row.imageUrl ?? undefined,
+    isVideo: row.isVideo,
+    sortOrder: row.sortOrder,
+  }
+}
+
+function toTestimonial(row: { id: string; name: string; niche: string; quote: string; instagram: string | null; imageKey: string; sortOrder: number }): Testimonial {
+  return {
+    id: row.id,
+    name: row.name,
+    niche: row.niche,
+    quote: row.quote,
+    instagram: row.instagram ?? undefined,
+    imageKey: row.imageKey,
+    sortOrder: row.sortOrder,
+  }
+}
+
+async function safeFind<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await fn()
+  } catch (error) {
+    console.warn('Tabela nova ainda não migrada, usando fallback.', error)
+    return fallback
+  }
+}
+
 export async function getAdminState(): Promise<AdminState> {
   const [clients, projects, events, notes] = await Promise.all([
     prisma.client.findMany({ orderBy: { createdAt: 'desc' } }),
@@ -86,12 +130,46 @@ export async function getAdminState(): Promise<AdminState> {
     prisma.globalNote.findMany({ orderBy: { dbCreated: 'desc' } }),
   ])
 
+  const expenses = await safeFind(
+    () => prisma.expense.findMany({ orderBy: { date: 'desc' } }),
+    []
+  )
+  const portfolio = await safeFind(
+    () => prisma.portfolioItem.findMany({ orderBy: { sortOrder: 'asc' } }),
+    []
+  )
+  const testimonials = await safeFind(
+    () => prisma.testimonial.findMany({ orderBy: { sortOrder: 'asc' } }),
+    []
+  )
+
   return {
     clients: clients.map(toClient),
     projects: projects.map(toProject),
     events: events.map(toEvent),
     notes: notes.map(toNote),
+    expenses: expenses.map(toExpense),
+    portfolio: portfolio.length ? portfolio.map(toPortfolio) : PORTFOLIO_ITEMS,
+    testimonials: testimonials.length ? testimonials.map(toTestimonial) : TESTIMONIALS,
   }
+}
+
+export async function getPublicPortfolio(): Promise<PortfolioItem[]> {
+  const items = await safeFind(
+    () => prisma.portfolioItem.findMany({ orderBy: { sortOrder: 'asc' } }),
+    []
+  )
+  if (items.length) return items.map(toPortfolio)
+  return PORTFOLIO_ITEMS
+}
+
+export async function getPublicTestimonials(): Promise<Testimonial[]> {
+  const items = await safeFind(
+    () => prisma.testimonial.findMany({ orderBy: { sortOrder: 'asc' } }),
+    []
+  )
+  if (items.length) return items.map(toTestimonial)
+  return TESTIMONIALS
 }
 
 export async function applyAdminAction(action: AdminAction): Promise<AdminState> {
@@ -123,6 +201,34 @@ export async function replaceAdminState(state: AdminState) {
   }
 
   await prisma.$transaction(writes)
+
+  // Tabelas novas — separadas para não quebrar se a migração ainda não rodou
+  try {
+    await prisma.expense.deleteMany()
+    if (state.expenses.length) {
+      await prisma.expense.createMany({ data: state.expenses.map(expenseToDb) })
+    }
+  } catch (error) {
+    console.warn('Skip expenses persist (tabela ausente). Rode `prisma db push`.', error)
+  }
+
+  try {
+    await prisma.portfolioItem.deleteMany()
+    if (state.portfolio.length) {
+      await prisma.portfolioItem.createMany({ data: state.portfolio.map(portfolioToDb) })
+    }
+  } catch (error) {
+    console.warn('Skip portfolio persist (tabela ausente).', error)
+  }
+
+  try {
+    await prisma.testimonial.deleteMany()
+    if (state.testimonials.length) {
+      await prisma.testimonial.createMany({ data: state.testimonials.map(testimonialToDb) })
+    }
+  } catch (error) {
+    console.warn('Skip testimonials persist (tabela ausente).', error)
+  }
 }
 
 function clientToDb(client: Client) {
@@ -188,5 +294,40 @@ function noteToDb(note: GlobalNote) {
     pinned: note.pinned,
     createdAt: note.createdAt,
     checklist: note.checklist ? note.checklist as unknown as Prisma.InputJsonValue : Prisma.JsonNull,
+  }
+}
+
+function expenseToDb(expense: Expense) {
+  return {
+    id: expense.id,
+    description: expense.description,
+    category: expense.category,
+    date: expense.date,
+    value: expense.value,
+    status: expense.status,
+  }
+}
+
+function portfolioToDb(item: PortfolioItem) {
+  return {
+    id: item.id,
+    title: item.title,
+    category: item.category,
+    imageKey: item.imageKey,
+    imageUrl: item.imageUrl ?? null,
+    isVideo: item.isVideo,
+    sortOrder: item.sortOrder ?? 0,
+  }
+}
+
+function testimonialToDb(item: Testimonial) {
+  return {
+    id: item.id,
+    name: item.name,
+    niche: item.niche,
+    quote: item.quote,
+    instagram: item.instagram ?? null,
+    imageKey: item.imageKey,
+    sortOrder: item.sortOrder ?? 0,
   }
 }

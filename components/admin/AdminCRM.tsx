@@ -207,18 +207,24 @@ function ClientForm({ initial, onSave, onClose }: ClientFormProps) {
 /* ------------------------------------------------------------------ */
 
 function ClientSheet({ client, onClose, onEdit }: { client: Client; onClose: () => void; onEdit: () => void }) {
-  const { dispatch } = useAdmin()
+  const { dispatch, state } = useAdmin()
   const [activeTab, setActiveTab] = useState<'info' | 'history' | 'notes' | 'invoices'>('info')
   const [noteContent, setNoteContent] = useState('')
   const [noteCategory, setNoteCategory] = useState('CLIENTE')
+  const [invValue, setInvValue] = useState('')
+  const [invDate, setInvDate] = useState('')
+  const [invStatus, setInvStatus] = useState<'RECEBIDO' | 'PENDENTE'>('RECEBIDO')
 
-  const cfg = STATUS_CONFIG[client.status]
+  // Usa sempre a versão mais recente do cliente vinda do state (para atualizar após dispatch)
+  const liveClient: Client = state.clients.find(c => c.id === client.id) ?? client
+
+  const cfg = STATUS_CONFIG[liveClient.status as ClientStatus]
 
   const handleAddNote = () => {
     if (!noteContent.trim()) return
     dispatch({
       type: 'ADD_CLIENT_NOTE',
-      clientId: client.id,
+      clientId: liveClient.id,
       note: {
         id: Date.now().toString(),
         category: noteCategory,
@@ -245,11 +251,11 @@ function ClientSheet({ client, onClose, onEdit }: { client: Client; onClose: () 
               className="w-12 h-12 rounded-full flex items-center justify-center font-display font-bold text-lg shrink-0"
               style={{ background: '#C9A84C', color: '#080808' }}
             >
-              {client.initials}
+              {liveClient.initials}
             </div>
             <div>
-              <h2 className="font-display font-semibold text-lg text-[#FFFFFF]">{client.name}</h2>
-              <span className="font-mono-mm text-[10px] text-[#CBD5E1]">{client.niche}</span>
+              <h2 className="font-display font-semibold text-lg text-[#FFFFFF]">{liveClient.name}</h2>
+              <span className="font-mono-mm text-[10px] text-[#CBD5E1]">{liveClient.niche}</span>
             </div>
           </div>
 
@@ -280,9 +286,9 @@ function ClientSheet({ client, onClose, onEdit }: { client: Client; onClose: () 
               }}
             >
               {tab === 'info' && 'INFO'}
-              {tab === 'history' && `HISTÓRICO (${client.history.length})`}
-              {tab === 'notes' && `NOTAS (${client.notes.length})`}
-              {tab === 'invoices' && `FATURAS (${client.invoices.length})`}
+              {tab === 'history' && `HISTÓRICO (${liveClient.history.length})`}
+              {tab === 'notes' && `NOTAS (${liveClient.notes.length})`}
+              {tab === 'invoices' && `FATURAS (${liveClient.invoices.length})`}
             </button>
           ))}
         </div>
@@ -295,15 +301,15 @@ function ClientSheet({ client, onClose, onEdit }: { client: Client; onClose: () 
               <div className="flex items-center justify-between p-3 rounded-lg" style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <span className="font-mono-mm text-[10px] tracking-[0.08em] text-[#CBD5E1]">STATUS DE CONTRATO</span>
                 <span className="font-mono-mm text-[10px] px-2.5 py-1 font-semibold" style={{ background: cfg.bg, color: cfg.color, borderRadius: '4px' }}>
-                  {client.status}
+                  {liveClient.status}
                 </span>
               </div>
 
               <div className="flex flex-col gap-2 p-4 rounded-lg" style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.08)' }}>
                 {[
-                  { Icon: Phone, label: 'WHATSAPP', val: client.whatsapp, href: `https://wa.me/${client.whatsapp.replace(/\D/g, '')}` },
-                  ...(client.email ? [{ Icon: Mail, label: 'E-MAIL', val: client.email, href: `mailto:${client.email}` }] : []),
-                  ...(client.instagram ? [{ Icon: AtSign, label: 'INSTAGRAM', val: client.instagram, href: `https://instagram.com/${client.instagram.replace('@', '')}` }] : []),
+                  { Icon: Phone, label: 'WHATSAPP', val: liveClient.whatsapp, href: `https://wa.me/${liveClient.whatsapp.replace(/\D/g, '')}` },
+                  ...(liveClient.email ? [{ Icon: Mail, label: 'E-MAIL', val: liveClient.email, href: `mailto:${liveClient.email}` }] : []),
+                  ...(liveClient.instagram ? [{ Icon: AtSign, label: 'INSTAGRAM', val: liveClient.instagram, href: `https://instagram.com/${liveClient.instagram.replace('@', '')}` }] : []),
                 ].map(({ Icon, label, val, href }) => (
                   <a
                     key={label}
@@ -324,19 +330,19 @@ function ClientSheet({ client, onClose, onEdit }: { client: Client; onClose: () 
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3.5 rounded-lg" style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.08)' }}>
                   <p className="font-mono-mm text-[10px] tracking-[0.1em] text-[#CBD5E1]">FATURAMENTO TOTAL</p>
-                  <p className="font-display font-bold text-lg text-[#E5C158] mt-1">R$ {client.totalValue.toLocaleString('pt-BR')}</p>
+                  <p className="font-display font-bold text-lg text-[#E5C158] mt-1">R$ {liveClient.totalValue.toLocaleString('pt-BR')}</p>
                 </div>
                 <div className="p-3.5 rounded-lg" style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.08)' }}>
                   <p className="font-mono-mm text-[10px] tracking-[0.1em] text-[#CBD5E1]">ORIGEM</p>
-                  <p className="font-display font-semibold text-sm text-[#F3F4F6] mt-1">{client.origem}</p>
+                  <p className="font-display font-semibold text-sm text-[#F3F4F6] mt-1">{liveClient.origem}</p>
                 </div>
               </div>
 
-              {client.monthlyRevenue.length > 0 && (
+              {liveClient.monthlyRevenue.length > 0 && (
                 <div className="p-4 rounded-lg" style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.08)' }}>
                   <p className="font-mono-mm text-[10px] tracking-[0.1em] mb-3 text-[#CBD5E1]">FATURAMENTO MENSAL</p>
                   <ResponsiveContainer width="100%" height={100}>
-                    <BarChart data={client.monthlyRevenue}>
+                    <BarChart data={liveClient.monthlyRevenue}>
                       <Bar dataKey="value" fill="#C9A84C" radius={[2, 2, 0, 0]} />
                       <Tooltip contentStyle={{ background: '#0F0F0F', borderColor: 'rgba(255,255,255,0.1)', fontSize: 11 }} formatter={(v: any) => [`R$ ${v}`, 'Valor']} />
                     </BarChart>
@@ -346,7 +352,7 @@ function ClientSheet({ client, onClose, onEdit }: { client: Client; onClose: () 
 
               <div className="p-4 rounded-lg" style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <p className="font-mono-mm text-[10px] tracking-[0.1em] mb-1 text-[#CBD5E1]">ÚLTIMO PROJETO</p>
-                <p className="font-display text-sm font-medium text-[#F3F4F6]">{client.lastProject}</p>
+                <p className="font-display text-sm font-medium text-[#F3F4F6]">{liveClient.lastProject}</p>
               </div>
             </div>
           )}
@@ -354,9 +360,9 @@ function ClientSheet({ client, onClose, onEdit }: { client: Client; onClose: () 
           {/* TAB: HISTORY */}
           {activeTab === 'history' && (
             <div className="flex flex-col gap-3">
-              {client.history.length === 0 ? (
+              {liveClient.history.length === 0 ? (
                 <p className="font-mono-mm text-xs text-[#CBD5E1] py-8 text-center">Nenhum histórico registrado.</p>
-              ) : client.history.map(item => {
+              ) : liveClient.history.map(item => {
                 const IconComp = HISTORY_ICONS[item.type] ?? FileText
                 return (
                   <div key={item.id} className="p-4 rounded-lg flex items-start gap-3 bg-[#161616] border border-[rgba(255,255,255,0.08)]">
@@ -407,7 +413,7 @@ function ClientSheet({ client, onClose, onEdit }: { client: Client; onClose: () 
                 </div>
               </div>
 
-              {client.notes.map(n => (
+              {liveClient.notes.map(n => (
                 <div key={n.id} className="p-4 rounded-lg bg-[#161616] border border-[rgba(255,255,255,0.08)] flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <span className="font-mono-mm text-[10px] px-2 py-0.5 bg-[rgba(201,168,76,0.15)] text-[#E5C158] rounded font-semibold">
@@ -416,7 +422,7 @@ function ClientSheet({ client, onClose, onEdit }: { client: Client; onClose: () 
                     <div className="flex items-center gap-2">
                       <span className="font-mono-mm text-[10px] text-[#CBD5E1]">{n.createdAt}</span>
                       <button
-                        onClick={() => dispatch({ type: 'DELETE_CLIENT_NOTE', clientId: client.id, noteId: n.id })}
+                        onClick={() => dispatch({ type: 'DELETE_CLIENT_NOTE', clientId: liveClient.id, noteId: n.id })}
                         className="text-[#CBD5E1] hover:text-red-400 transition-colors"
                       >
                         <Trash2 size={12} />
@@ -432,25 +438,82 @@ function ClientSheet({ client, onClose, onEdit }: { client: Client; onClose: () 
           {/* TAB: INVOICES */}
           {activeTab === 'invoices' && (
             <div className="flex flex-col gap-3">
-              {client.invoices.length === 0 ? (
+              <div className="flex flex-col gap-2 p-3 rounded-lg bg-[#161616] border border-[rgba(255,255,255,0.08)]">
+                <p className="font-mono-mm text-[10px] font-semibold text-[#E5C158]">NOVA FATURA / RECEITA</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="number" min="0" step="0.01" value={invValue} onChange={e => setInvValue(e.target.value)} placeholder="Valor R$"
+                    className="h-9 px-3 font-display text-sm outline-none bg-[#0F0F0F] border border-[rgba(255,255,255,0.1)] rounded text-[#F3F4F6]"
+                  />
+                  <input
+                    type="date" value={invDate} onChange={e => setInvDate(e.target.value)}
+                    className="h-9 px-3 font-display text-sm outline-none bg-[#0F0F0F] border border-[rgba(255,255,255,0.1)] rounded text-[#F3F4F6]"
+                  />
+                </div>
+                <div className="flex items-center justify-between pt-1">
+                  <div className="flex gap-2">
+                    {(['RECEBIDO', 'PENDENTE'] as const).map(s => (
+                      <button key={s} type="button" onClick={() => setInvStatus(s)}
+                        className="px-2.5 py-1 font-mono-mm text-[10px] font-semibold rounded"
+                        style={{ background: invStatus === s ? '#C9A84C' : 'transparent', color: invStatus === s ? '#080808' : '#CBD5E1', border: '1px solid rgba(255,255,255,0.15)' }}>
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => {
+                      const v = parseFloat(invValue) || 0
+                      if (v <= 0) return
+                      dispatch({
+                        type: 'ADD_INVOICE',
+                        clientId: liveClient.id,
+                        invoice: {
+                          id: `INV-${Date.now().toString().slice(-6)}`,
+                          date: invDate ? new Date(invDate + 'T12:00:00').toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR'),
+                          value: v,
+                          status: invStatus,
+                        },
+                      })
+                      setInvValue(''); setInvDate(''); setInvStatus('RECEBIDO')
+                    }}
+                    disabled={!(parseFloat(invValue) > 0)}
+                    className="px-3 py-1.5 font-mono-mm text-[10px] font-semibold bg-[#C9A84C] text-[#080808] rounded disabled:opacity-40"
+                  >
+                    ADICIONAR
+                  </button>
+                </div>
+              </div>
+
+              {liveClient.invoices.length === 0 ? (
                 <p className="font-mono-mm text-xs text-[#CBD5E1] py-8 text-center">Nenhuma fatura registrada.</p>
-              ) : client.invoices.map(inv => (
+              ) : liveClient.invoices.map(inv => (
                 <div key={inv.id} className="p-4 rounded-lg flex items-center justify-between bg-[#161616] border border-[rgba(255,255,255,0.08)]">
                   <div>
                     <p className="font-mono-mm text-xs font-semibold text-[#FFFFFF]">{inv.id}</p>
                     <p className="font-mono-mm text-[10px] text-[#CBD5E1] mt-0.5">{inv.date}</p>
                   </div>
-                  <div className="text-right">
-                    <p className="font-display font-bold text-sm text-[#E5C158]">R$ {inv.value.toLocaleString('pt-BR')}</p>
-                    <span
-                      className="inline-block font-mono-mm text-[9px] px-2 py-0.5 rounded font-semibold mt-1"
-                      style={{
-                        background: inv.status === 'RECEBIDO' ? 'rgba(74,222,128,0.15)' : 'rgba(250,204,21,0.15)',
-                        color: inv.status === 'RECEBIDO' ? '#4ADE80' : '#FACC15',
-                      }}
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <p className="font-display font-bold text-sm text-[#E5C158]">R$ {inv.value.toLocaleString('pt-BR')}</p>
+                      <button
+                        onClick={() => dispatch({ type: 'UPDATE_INVOICE', clientId: liveClient.id, invoice: { ...inv, status: inv.status === 'RECEBIDO' ? 'PENDENTE' : 'RECEBIDO' } })}
+                        className="inline-block font-mono-mm text-[9px] px-2 py-0.5 rounded font-semibold mt-1"
+                        style={{
+                          background: inv.status === 'RECEBIDO' ? 'rgba(74,222,128,0.15)' : 'rgba(250,204,21,0.15)',
+                          color: inv.status === 'RECEBIDO' ? '#4ADE80' : '#FACC15',
+                        }}
+                        title="Clique para alternar recebido/pendente"
+                      >
+                        {inv.status}
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => dispatch({ type: 'DELETE_INVOICE', clientId: liveClient.id, invoiceId: inv.id })}
+                      className="text-[#CBD5E1] hover:text-red-400 transition-colors"
+                      title="Excluir fatura"
                     >
-                      {inv.status}
-                    </span>
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
               ))}
@@ -459,7 +522,7 @@ function ClientSheet({ client, onClose, onEdit }: { client: Client; onClose: () 
 
           <div className="mt-auto pt-4 border-t border-[rgba(255,255,255,0.12)]">
             <button
-              onClick={() => { dispatch({ type: 'DELETE_CLIENT', id: client.id }); onClose() }}
+              onClick={() => { dispatch({ type: 'DELETE_CLIENT', id: liveClient.id }); onClose() }}
               className="flex items-center gap-2 font-mono-mm text-[11px] text-red-400 hover:text-red-300 font-semibold"
             >
               <Trash2 size={14} />

@@ -57,6 +57,35 @@ export interface Invoice {
   status: 'RECEBIDO' | 'PENDENTE' | 'CANCELADO'
 }
 
+export interface Expense {
+  id: string
+  description: string
+  category: string
+  date: string
+  value: number
+  status: 'PAGO' | 'PENDENTE' | 'CANCELADO'
+}
+
+export interface PortfolioItem {
+  id: string
+  title: string
+  category: string
+  imageKey: string
+  imageUrl?: string
+  isVideo: boolean
+  sortOrder: number
+}
+
+export interface Testimonial {
+  id: string
+  name: string
+  niche: string
+  quote: string
+  instagram?: string
+  imageKey: string
+  sortOrder: number
+}
+
 export interface Project {
   id: string
   clientId: string
@@ -726,6 +755,67 @@ export const GLOBAL_NOTES: GlobalNote[] = [
     color: 'blue',
     pinned: false,
     createdAt: '11/01/2025',
+  },
+]
+
+export const EXPENSES: Expense[] = []
+
+export const PORTFOLIO_ITEMS: PortfolioItem[] = [
+  { id: 'pf1', title: 'Território — MC Vitão', category: 'CLIPES', imageKey: 'portfolio-territorio-mc-vitao', isVideo: true, sortOrder: 1 },
+  { id: 'pf2', title: 'Adega São Roque Institucional', category: 'INSTITUCIONAL', imageKey: 'portfolio-adega-sao-roque', isVideo: false, sortOrder: 2 },
+  { id: 'pf3', title: 'Ensaio Rafael Moreno', category: 'ENSAIOS', imageKey: 'portfolio-ensaio-rafael', isVideo: false, sortOrder: 3 },
+  { id: 'pf4', title: 'Show Kaizen Music Festival', category: 'AO VIVO', imageKey: 'portfolio-show-kaizen', isVideo: true, sortOrder: 4 },
+  { id: 'pf5', title: 'Campanha Verão Kaizen', category: 'EMPRESAS', imageKey: 'portfolio-campanha-kaizen', isVideo: false, sortOrder: 5 },
+  { id: 'pf6', title: 'EP Visual Ana Beatriz Lima', category: 'MÚSICA', imageKey: 'portfolio-ep-ana-beatriz', isVideo: true, sortOrder: 6 },
+  { id: 'pf7', title: 'Lançamento Horizonte', category: 'INSTITUCIONAL', imageKey: 'portfolio-lancamento-horizonte', isVideo: false, sortOrder: 7 },
+  { id: 'pf8', title: 'Madrugada — Rafael Moreno', category: 'CLIPES', imageKey: 'portfolio-madrugada-rafael', isVideo: true, sortOrder: 8 },
+]
+
+export const TESTIMONIALS: Testimonial[] = [
+  {
+    id: 't1',
+    name: 'SHOWTIME | Eventos',
+    niche: 'EVENTOS',
+    quote: 'Um dia de gravação vira uma semana de conteúdo! — bastidor, cortes pros stories, teaser do próximo. Isso é o que segura o engajamento das redes bem depois que o evento já acabou. Além de outros conteúdos mais humanizados para reels, em que a Mald\'s apenas roteiriza e edita; Essa possibilidade de serviços híbridos dão uma dinâmica ótima pra nossa parceria!',
+    instagram: 'https://www.instagram.com/showtimeproducoes',
+    imageKey: 'avatar-showtime',
+    sortOrder: 1,
+  },
+  {
+    id: 't2',
+    name: 'Clínica Dominique',
+    niche: 'SAÚDE / ESTÉTICA',
+    quote: 'Sabe o que eu mais gostei? Não foi só chegar e gravar. Teve todo um cuidado antes — pensaram no roteiro, estudaram o que tava bombando em áudio, em formato, pra não postar qualquer coisa. Isso fez toda diferença. Depois começou a chegar gente nova que nunca tinha ouvido falar da clínica, achou a gente sozinha, sem eu ter gastado um real com anúncio. Foi tudo no orgânico mesmo, o que pra mim foi surreal.',
+    instagram: 'https://www.instagram.com/clinicadominique',
+    imageKey: 'avatar-dominique',
+    sortOrder: 2,
+  },
+  {
+    id: 't3',
+    name: 'Diego Wantowsky | Corretor de imóveis',
+    niche: 'IMOBILIÁRIO',
+    quote: 'Eu vivia postando foto parada e ficava só pra quem já me seguia. Depois que comecei a gravar vídeo com edição boa, as coisas mudaram; Hoje chego em gente que nunca tinha me visto, sem pagar um real de anúncio. Virou meu principal jeito de captar cliente, sem brincadeira.',
+    instagram: 'https://www.instagram.com/diegowantowsky',
+    imageKey: 'avatar-diego',
+    sortOrder: 3,
+  },
+  {
+    id: 't4',
+    name: 'QUEST | Concessionária',
+    niche: 'AUTOMOTIVO',
+    quote: 'A gente sempre soube que precisava de vídeo, mas nunca sabia fazer certo pra cada rede. Resolvemos isso e hoje temos reels curto pro Instagram, versão mais longa pro YouTube, cada coisa no seu lugar. Presença digital aumentou muito a autoridade da minha empresa.',
+    instagram: 'https://www.instagram.com/questmultimarcas',
+    imageKey: 'avatar-construtora',
+    sortOrder: 4,
+  },
+  {
+    id: 't5',
+    name: 'Mundo Dos Eletrônicos',
+    niche: 'VAREJO / ELETRÔNICOS',
+    quote: 'O problema não era o produto, era como eu mostrava ele. Comecei a fazer um tipo de vídeo que prendia até o final, não só passava reto igual os outros. Isso mudou o alcance do perfil inteiro, não só do produto que tava no vídeo.',
+    instagram: 'https://www.instagram.com/mundo_eletronicos',
+    imageKey: 'avatar-mundo-eletronicos',
+    sortOrder: 5,
   },
 ]
 

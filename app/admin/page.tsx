@@ -10,6 +10,8 @@ import { AdminAgenda } from '@/components/admin/AdminAgenda'
 import { AdminNotas } from '@/components/admin/AdminNotas'
 import { AdminFinanceiro } from '@/components/admin/AdminFinanceiro'
 import { AdminImagens } from '@/components/admin/AdminImagens'
+import { AdminPortfolio } from '@/components/admin/AdminPortfolio'
+import { AdminDepoimentos } from '@/components/admin/AdminDepoimentos'
 import { AdminConfiguracoes } from '@/components/admin/AdminConfiguracoes'
 import { Menu } from 'lucide-react'
 
@@ -23,6 +25,8 @@ function AdminShell() {
     agenda: <AdminAgenda />,
     notas: <AdminNotas />,
     financeiro: <AdminFinanceiro />,
+    portfolio: <AdminPortfolio />,
+    depoimentos: <AdminDepoimentos />,
     imagens: <AdminImagens />,
     configuracoes: <AdminConfiguracoes />,
   }

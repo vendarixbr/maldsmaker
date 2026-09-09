@@ -78,3 +78,38 @@ model AdminMeta {
   value     String
   updatedAt DateTime @updatedAt
 }
+
+model Expense {
+  id          String   @id
+  description String
+  category    String   @default("GERAL")
+  date        String
+  value       Float    @default(0)
+  status      String   @default("PAGO")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PortfolioItem {
+  id        String   @id
+  title     String
+  category  String
+  imageKey  String   @default("")
+  imageUrl  String?
+  isVideo   Boolean  @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id
+  name      String
+  niche     String   @default("")
+  quote     String
+  instagram String?
+  imageKey  String   @default("")
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

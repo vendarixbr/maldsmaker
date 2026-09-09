@@ -1,26 +1,12 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { Play } from 'lucide-react'
 import { SiteImage } from '@/components/site/SiteImage'
+import { PORTFOLIO_ITEMS, type PortfolioItem } from '@/lib/data'
 
 const FILTERS = ['TODOS', 'MÚSICA', 'EMPRESAS', 'EVENTOS', 'ENSAIOS', 'CLIPES', 'INSTITUCIONAL', 'AO VIVO']
-
-const ITEMS = [
-  { id: 1,  title: 'Território — MC Vitão',           category: 'CLIPES',       height: 'tall',   imageKey: 'portfolio-territorio-mc-vitao',    isVideo: true  },
-  { id: 2,  title: 'Adega São Roque Institucional',   category: 'INSTITUCIONAL', height: 'normal', imageKey: 'portfolio-adega-sao-roque',        isVideo: false },
-  { id: 3,  title: 'Ensaio Rafael Moreno',            category: 'ENSAIOS',      height: 'short',  imageKey: 'portfolio-ensaio-rafael',           isVideo: false },
-  { id: 4,  title: 'Show Kaizen Music Festival',      category: 'AO VIVO',      height: 'tall',   imageKey: 'portfolio-show-kaizen',             isVideo: true  },
-  { id: 5,  title: 'Campanha Verão Kaizen',           category: 'EMPRESAS',     height: 'normal', imageKey: 'portfolio-campanha-kaizen',         isVideo: false },
-  { id: 6,  title: 'EP Visual Ana Beatriz Lima',      category: 'MÚSICA',       height: 'short',  imageKey: 'portfolio-ep-ana-beatriz',          isVideo: true  },
-  { id: 7,  title: 'Lançamento Horizonte',            category: 'INSTITUCIONAL', height: 'normal', imageKey: 'portfolio-lancamento-horizonte',   isVideo: false },
-  { id: 8,  title: 'Madrugada — Rafael Moreno',       category: 'CLIPES',       height: 'tall',   imageKey: 'portfolio-madrugada-rafael',        isVideo: true  },
-  { id: 9,  title: 'Workshop Fotografia',             category: 'EVENTOS',      height: 'short',  imageKey: 'portfolio-territorio-mc-vitao',     isVideo: false },
-  { id: 10, title: 'Bianca Ferreira — Pack Dez',      category: 'ENSAIOS',      height: 'normal', imageKey: 'portfolio-ensaio-rafael',           isVideo: false },
-  { id: 11, title: 'Conference Advocacia Pereira',    category: 'AO VIVO',      height: 'short',  imageKey: 'portfolio-show-kaizen',             isVideo: true  },
-  { id: 12, title: 'Giovane Dias — Amanhã',           category: 'MÚSICA',       height: 'normal', imageKey: 'portfolio-ep-ana-beatriz',          isVideo: true  },
-]
 
 const HEIGHTS: Record<string, string> = {
   tall:   '340px',
@@ -28,13 +14,29 @@ const HEIGHTS: Record<string, string> = {
   short:  '200px',
 }
 
+function heightFor(index: number): string {
+  return ['tall', 'normal', 'short'][index % 3]
+}
+
 export function Portfolio() {
   const [activeFilter, setActiveFilter] = useState('TODOS')
   const [visible, setVisible] = useState(8)
+  const [items, setItems] = useState<PortfolioItem[]>(PORTFOLIO_ITEMS)
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '0px 0px -80px 0px' })
 
-  const filtered = activeFilter === 'TODOS' ? ITEMS : ITEMS.filter(item => item.category === activeFilter)
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/portfolio', { cache: 'no-store' })
+      .then(res => (res.ok ? res.json() : null))
+      .then((data: PortfolioItem[] | null) => {
+        if (!cancelled && Array.isArray(data) && data.length) setItems(data)
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
+
+  const filtered = activeFilter === 'TODOS' ? items : items.filter(item => item.category === activeFilter)
   const displayed = filtered.slice(0, visible)
 
   return (
@@ -116,20 +118,29 @@ export function Portfolio() {
                 transition={{ duration: 0.4, delay: i * 0.04 }}
                 className="relative group break-inside-avoid mb-3 overflow-hidden"
                 style={{
-                  height: HEIGHTS[item.height],
+                  height: HEIGHTS[heightFor(i)],
                   background: '#1a1a1a',
                   border: '1px solid rgba(255,255,255,0.05)',
                   borderRadius: '2px',
                   cursor: 'none',
                 }}
               >
-                <SiteImage
-                  imageKey={item.imageKey}
-                  alt={item.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
+                {item.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={item.imageUrl}
+                    alt={item.title}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                  />
+                ) : (
+                  <SiteImage
+                    imageKey={item.imageKey}
+                    alt={item.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                )}
 
                 {/* Category badge */}
                 <div className="absolute top-3 left-3 z-10">

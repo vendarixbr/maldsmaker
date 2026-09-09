@@ -2,53 +2,33 @@
 
 import { useRef, useCallback, useEffect, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import useEmblaCarousel from 'embla-carousel-react'
 import { SiteImage } from '@/components/site/SiteImage'
-
-const testimonials = [
-  {
-    quote: 'O lançamento do empreendimento foi um sucesso enorme. O vídeo produzido pela Malds Maker foi decisivo para as vendas. Parceiros de altíssimo nível.',
-    name: 'Construtora Horizonte',
-    niche: 'EMPRESA',
-    imageKey: 'avatar-construtora',
-  },
-  {
-    quote: 'A Malds Maker entregou um clipe que superou tudo que eu imaginava. Leonardo entende a alma do artista e coloca isso na câmera com perfeição.',
-    name: 'Rafael Moreno',
-    niche: 'ARTISTA MUSICAL',
-    imageKey: 'avatar-rafael',
-  },
-  {
-    quote: 'Contratamos para o vídeo institucional da adega e o resultado foi impactante. Profissionalismo do início ao fim, com um olhar que valoriza o produto.',
-    name: 'Adega São Roque',
-    niche: 'ADEGA',
-    imageKey: 'avatar-adega',
-  },
-  {
-    quote: 'Recomendo para qualquer advogado que queira construir uma imagem sólida nas redes. Sério, competente e criativo. O resultado fala por si.',
-    name: 'Dr. Thiago Alves',
-    niche: 'ADVOGADO',
-    imageKey: 'avatar-thiago',
-  },
-  {
-    quote: 'Meu conteúdo mudou completamente depois que comecei a trabalhar com a Malds Maker. O engajamento aumentou e minha audiência percebeu a diferença de qualidade.',
-    name: 'Bianca Ferreira',
-    niche: 'INFLUENCER',
-    imageKey: 'avatar-bianca',
-  },
-]
+import { TESTIMONIALS, type Testimonial } from '@/lib/data'
 
 export function Depoimentos() {
   const sectionRef = useRef(null)
   const inView = useInView(sectionRef, { once: true, margin: '0px 0px -80px 0px' })
 
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(TESTIMONIALS)
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' })
 
   const prev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
   const next = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/testimonials', { cache: 'no-store' })
+      .then(res => (res.ok ? res.json() : null))
+      .then((data: Testimonial[] | null) => {
+        if (!cancelled && Array.isArray(data) && data.length) setTestimonials(data)
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
 
   useEffect(() => {
     if (!emblaApi) return
@@ -118,9 +98,9 @@ export function Depoimentos() {
           className="overflow-hidden"
         >
           <div className="flex">
-            {testimonials.map((t, i) => (
+            {testimonials.map((t) => (
               <div
-                key={i}
+                key={t.id}
                 className="flex-shrink-0 w-full"
               >
                 <div
@@ -157,7 +137,7 @@ export function Depoimentos() {
                       style={{ border: '1px solid rgba(201,168,76,0.4)' }}
                     >
                       <SiteImage
-                        imageKey={t.imageKey}
+                        imageKey={t.imageKey || 'avatar-bianca'}
                         alt={t.name}
                         fill
                         className="object-cover"
@@ -177,6 +157,20 @@ export function Depoimentos() {
                       >
                         {t.niche}
                       </p>
+                      {t.instagram && (
+                        <a
+                          href={t.instagram}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 mt-2 h-10 px-5 font-mono-mm text-[10px] tracking-[0.14em] font-semibold transition-all duration-200 self-start"
+                          style={{ border: '1px solid rgba(201,168,76,0.5)', color: '#E5C158', borderRadius: '999px' }}
+                          onMouseEnter={e => { const el = e.currentTarget; el.style.background = '#C9A84C'; el.style.color = '#0A0A0A' }}
+                          onMouseLeave={e => { const el = e.currentTarget; el.style.background = 'transparent'; el.style.color = '#E5C158' }}
+                        >
+                          <ExternalLink size={14} />
+                          VER PERFIL NO INSTAGRAM
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -187,18 +181,18 @@ export function Depoimentos() {
 
         {/* Dots */}
         <div className="flex justify-center gap-2 mt-8">
-          {testimonials.map((_, i) => (
+          {testimonials.map((t) => (
             <button
-              key={i}
-              onClick={() => emblaApi?.scrollTo(i)}
+              key={t.id}
+              onClick={() => emblaApi?.scrollTo(testimonials.findIndex(x => x.id === t.id))}
               className="transition-all duration-300"
               style={{
-                width: selectedIndex === i ? '24px' : '6px',
+                width: selectedIndex === testimonials.findIndex(x => x.id === t.id) ? '24px' : '6px',
                 height: '6px',
                 borderRadius: '3px',
-                background: selectedIndex === i ? '#C9A84C' : 'rgba(255,255,255,0.18)',
+                background: selectedIndex === testimonials.findIndex(x => x.id === t.id) ? '#C9A84C' : 'rgba(255,255,255,0.18)',
               }}
-              aria-label={`Depoimento ${i + 1}`}
+              aria-label={`Depoimento ${t.name}`}
             />
           ))}
         </div>
