@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useAdmin } from '@/lib/admin-context'
 import {
   LayoutDashboard,
+  Inbox,
   Users,
   Film,
   Calendar,
@@ -27,6 +28,7 @@ const mainTabs = [
 ]
 
 const extraTabs = [
+  { id: 'leads', label: 'Leads', Icon: Inbox },
   { id: 'notas', label: 'Notas', Icon: NotebookPen },
   { id: 'financeiro', label: 'Financeiro', Icon: BarChart2 },
   { id: 'portfolio', label: 'Portfólio', Icon: LayoutGrid },
@@ -36,9 +38,10 @@ const extraTabs = [
 ]
 
 export function AdminMobileNav() {
-  const { activeSection, setActiveSection } = useAdmin()
+  const { state, activeSection, setActiveSection } = useAdmin()
   const [moreOpen, setMoreOpen] = useState(false)
   const router = useRouter()
+  const pendingLeads = state.clients.filter(c => c.status === 'PROSPECT').length
 
   const handleNav = (id: string) => {
     setActiveSection(id)
@@ -85,11 +88,12 @@ export function AdminMobileNav() {
             <div className="grid grid-cols-3 gap-2 py-2">
               {extraTabs.map(({ id, label, Icon }) => {
                 const active = activeSection === id
+                const count = id === 'leads' ? pendingLeads : 0
                 return (
                   <button
                     key={id}
                     onClick={() => handleNav(id)}
-                    className="flex flex-col items-center justify-center gap-2 p-3 rounded-xl min-h-[72px] transition-all border outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
+                    className="relative flex flex-col items-center justify-center gap-2 p-3 rounded-xl min-h-[72px] transition-all border outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
                     style={{
                       background: active ? 'rgba(201, 168, 76, 0.2)' : '#161616',
                       borderColor: active ? '#C9A84C' : 'rgba(255, 255, 255, 0.12)',
@@ -98,6 +102,14 @@ export function AdminMobileNav() {
                   >
                     <Icon size={22} />
                     <span className="font-display font-medium text-xs text-center">{label}</span>
+                    {count > 0 && (
+                      <span
+                        className="absolute top-1.5 right-1.5 min-w-5 h-5 px-1 rounded-full font-mono-mm text-[10px] font-bold flex items-center justify-center"
+                        style={{ background: '#C9A84C', color: '#080808' }}
+                      >
+                        {count}
+                      </span>
+                    )}
                   </button>
                 )
               })}

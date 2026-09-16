@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { Play } from 'lucide-react'
+import { Play, ArrowUpRight } from 'lucide-react'
 import { SiteImage } from '@/components/site/SiteImage'
 import { PORTFOLIO_ITEMS, type PortfolioItem } from '@/lib/data'
 
@@ -111,12 +112,17 @@ export function Portfolio() {
             className="columns-1 sm:columns-2 lg:columns-3 gap-3"
           >
             {displayed.map((item, i) => (
-              <motion.div
+              <Link
                 key={item.id}
+                href={`/portfolio/${item.slug || item.id}`}
+                aria-label={`Ver detalhes de ${item.title}`}
+                className="block break-inside-avoid mb-3"
+              >
+              <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.04 }}
-                className="relative group break-inside-avoid mb-3 overflow-hidden"
+                className="relative group overflow-hidden"
                 style={{
                   height: HEIGHTS[heightFor(i)],
                   background: '#1a1a1a',
@@ -172,16 +178,25 @@ export function Portfolio() {
                   className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
                   style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.3)' }}
                 >
-                  {item.isVideo && (
+                  {item.isVideo ? (
                     <div
                       className="w-12 h-12 rounded-full flex items-center justify-center"
                       style={{ background: 'rgba(201,168,76,0.9)', color: '#0A0A0A' }}
                     >
                       <Play size={20} fill="currentColor" />
                     </div>
+                  ) : (
+                    <div
+                      className="flex items-center gap-2 px-4 py-2 font-mono-mm text-[10px] tracking-[0.14em]"
+                      style={{ background: 'rgba(10,10,10,0.8)', border: '1px solid rgba(201,168,76,0.5)', color: '#C9A84C' }}
+                    >
+                      VER DETALHES
+                      <ArrowUpRight size={14} />
+                    </div>
                   )}
                 </div>
               </motion.div>
+              </Link>
             ))}
           </motion.div>
         </AnimatePresence>

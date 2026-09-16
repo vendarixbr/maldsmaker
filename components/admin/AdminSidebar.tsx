@@ -3,6 +3,7 @@
 import { useAdmin } from '@/lib/admin-context'
 import {
   LayoutDashboard,
+  Inbox,
   Users,
   Film,
   Calendar,
@@ -15,12 +16,14 @@ import {
   Images,
   LayoutGrid,
   MessageSquareQuote,
+  Search,
 } from 'lucide-react'
 import { SiteImage } from '@/components/site/SiteImage'
 import { useRouter } from 'next/navigation'
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', Icon: LayoutDashboard },
+  { id: 'leads', label: 'Leads', Icon: Inbox, badge: true },
   { id: 'clientes', label: 'Clientes / CRM', Icon: Users },
   { id: 'projetos', label: 'Projetos', Icon: Film },
   { id: 'agenda', label: 'Agenda', Icon: Calendar },
@@ -33,8 +36,9 @@ const navItems = [
 ]
 
 export function AdminSidebar() {
-  const { activeSection, setActiveSection, sidebarOpen, setSidebarOpen } = useAdmin()
+  const { state, activeSection, setActiveSection, sidebarOpen, setSidebarOpen } = useAdmin()
   const router = useRouter()
+  const pendingLeads = state.clients.filter(c => c.status === 'PROSPECT').length
 
   const handleNav = (id: string) => {
     setActiveSection(id)
@@ -119,8 +123,9 @@ export function AdminSidebar() {
 
         {/* Navigation Items */}
         <nav className="flex-1 py-4 overflow-y-auto" aria-label="Menu de Seções">
-          {navItems.map(({ id, label, Icon }) => {
+          {navItems.map(({ id, label, Icon, badge }) => {
             const active = activeSection === id
+            const count = badge ? pendingLeads : 0
             return (
               <button
                 key={id}
@@ -140,10 +145,34 @@ export function AdminSidebar() {
                 }}
               >
                 <Icon size={19} aria-hidden="true" style={{ color: active ? '#E5C158' : '#CBD5E1' }} />
-                <span className="font-display font-medium text-sm">{label}</span>
+                <span className="font-display font-medium text-sm flex-1">{label}</span>
+                {count > 0 && (
+                  <span
+                    className="min-w-5 h-5 px-1.5 rounded-full font-mono-mm text-[10px] font-bold flex items-center justify-center"
+                    style={{ background: '#C9A84C', color: '#080808' }}
+                  >
+                    {count}
+                  </span>
+                )}
               </button>
             )
           })}
+          <div className="px-5 pt-3">
+            <button
+              onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+              className="w-full flex items-center justify-between px-3 h-10 rounded-lg text-[#94A3B8] hover:text-[#E5C158] hover:border-[rgba(201,168,76,0.4)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
+              style={{ border: '1px solid rgba(255,255,255,0.1)', background: '#111111' }}
+              aria-label="Abrir busca rápida"
+            >
+              <span className="flex items-center gap-2 font-mono-mm text-[10px] tracking-[0.08em]">
+                <Search size={13} />
+                BUSCA RÁPIDA
+              </span>
+              <kbd className="font-mono-mm text-[10px] px-1.5 py-0.5 rounded" style={{ border: '1px solid rgba(255,255,255,0.15)' }}>
+                ⌘K
+              </kbd>
+            </button>
+          </div>
         </nav>
 
         {/* Footer actions */}

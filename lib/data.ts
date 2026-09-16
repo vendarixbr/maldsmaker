@@ -66,15 +66,27 @@ export interface Expense {
   status: 'PAGO' | 'PENDENTE' | 'CANCELADO'
 }
 
+export interface PortfolioImage {
+  id: string
+  url: string
+  key: string
+  createdAt: string
+}
+
 export interface PortfolioItem {
   id: string
   title: string
+  slug: string
   category: string
   imageKey: string
   imageUrl?: string
   isVideo: boolean
   sortOrder: number
+  description?: string
+  images?: PortfolioImage[]
 }
+
+export const MAX_PORTFOLIO_IMAGE_BYTES = 8 * 1024 * 1024
 
 export interface Testimonial {
   id: string
@@ -84,6 +96,13 @@ export interface Testimonial {
   instagram?: string
   imageKey: string
   sortOrder: number
+}
+
+export interface ProjectImage {
+  id: string
+  url: string
+  key: string
+  createdAt: string
 }
 
 export interface Project {
@@ -98,7 +117,14 @@ export interface Project {
   status: ProjectStatus
   checklist: { text: string; done: boolean }[]
   comments: string[]
+  description?: string
+  startDate?: string
+  location?: string
+  coverImageUrl?: string
+  images?: ProjectImage[]
 }
+
+export const MAX_PROJECT_IMAGE_BYTES = 8 * 1024 * 1024
 
 export interface CalendarEvent {
   id: string
@@ -761,14 +787,14 @@ export const GLOBAL_NOTES: GlobalNote[] = [
 export const EXPENSES: Expense[] = []
 
 export const PORTFOLIO_ITEMS: PortfolioItem[] = [
-  { id: 'pf1', title: 'Território — MC Vitão', category: 'CLIPES', imageKey: 'portfolio-territorio-mc-vitao', isVideo: true, sortOrder: 1 },
-  { id: 'pf2', title: 'Adega São Roque Institucional', category: 'INSTITUCIONAL', imageKey: 'portfolio-adega-sao-roque', isVideo: false, sortOrder: 2 },
-  { id: 'pf3', title: 'Ensaio Rafael Moreno', category: 'ENSAIOS', imageKey: 'portfolio-ensaio-rafael', isVideo: false, sortOrder: 3 },
-  { id: 'pf4', title: 'Show Kaizen Music Festival', category: 'AO VIVO', imageKey: 'portfolio-show-kaizen', isVideo: true, sortOrder: 4 },
-  { id: 'pf5', title: 'Campanha Verão Kaizen', category: 'EMPRESAS', imageKey: 'portfolio-campanha-kaizen', isVideo: false, sortOrder: 5 },
-  { id: 'pf6', title: 'EP Visual Ana Beatriz Lima', category: 'MÚSICA', imageKey: 'portfolio-ep-ana-beatriz', isVideo: true, sortOrder: 6 },
-  { id: 'pf7', title: 'Lançamento Horizonte', category: 'INSTITUCIONAL', imageKey: 'portfolio-lancamento-horizonte', isVideo: false, sortOrder: 7 },
-  { id: 'pf8', title: 'Madrugada — Rafael Moreno', category: 'CLIPES', imageKey: 'portfolio-madrugada-rafael', isVideo: true, sortOrder: 8 },
+  { id: 'pf1', title: 'Território — MC Vitão', slug: 'territorio-mc-vitao', category: 'CLIPES', imageKey: 'portfolio-territorio-mc-vitao', isVideo: true, sortOrder: 1 },
+  { id: 'pf2', title: 'Adega São Roque Institucional', slug: 'adega-sao-roque-institucional', category: 'INSTITUCIONAL', imageKey: 'portfolio-adega-sao-roque', isVideo: false, sortOrder: 2 },
+  { id: 'pf3', title: 'Ensaio Rafael Moreno', slug: 'ensaio-rafael-moreno', category: 'ENSAIOS', imageKey: 'portfolio-ensaio-rafael', isVideo: false, sortOrder: 3 },
+  { id: 'pf4', title: 'Show Kaizen Music Festival', slug: 'show-kaizen-music-festival', category: 'AO VIVO', imageKey: 'portfolio-show-kaizen', isVideo: true, sortOrder: 4 },
+  { id: 'pf5', title: 'Campanha Verão Kaizen', slug: 'campanha-verao-kaizen', category: 'EMPRESAS', imageKey: 'portfolio-campanha-kaizen', isVideo: false, sortOrder: 5 },
+  { id: 'pf6', title: 'EP Visual Ana Beatriz Lima', slug: 'ep-visual-ana-beatriz-lima', category: 'MÚSICA', imageKey: 'portfolio-ep-ana-beatriz', isVideo: true, sortOrder: 6 },
+  { id: 'pf7', title: 'Lançamento Horizonte', slug: 'lancamento-horizonte', category: 'INSTITUCIONAL', imageKey: 'portfolio-lancamento-horizonte', isVideo: false, sortOrder: 7 },
+  { id: 'pf8', title: 'Madrugada — Rafael Moreno', slug: 'madrugada-rafael-moreno', category: 'CLIPES', imageKey: 'portfolio-madrugada-rafael', isVideo: true, sortOrder: 8 },
 ]
 
 export const TESTIMONIALS: Testimonial[] = [

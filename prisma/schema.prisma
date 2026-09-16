@@ -30,19 +30,24 @@ model Client {
 }
 
 model Project {
-  id          String   @id
-  clientId    String
-  clientName  String
-  title       String
-  serviceType String
-  dueDate     String
-  priority    String
-  value       Float    @default(0)
-  status      String
-  checklist   Json
-  comments    Json
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id
+  clientId      String
+  clientName    String
+  title         String
+  serviceType   String
+  dueDate       String
+  priority      String
+  value         Float    @default(0)
+  status        String
+  checklist     Json
+  comments      Json
+  description   String   @default("")
+  startDate     String   @default("")
+  location      String   @default("")
+  coverImageUrl String?
+  images        Json     @default("[]")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model CalendarEvent {
@@ -91,15 +96,18 @@ model Expense {
 }
 
 model PortfolioItem {
-  id        String   @id
-  title     String
-  category  String
-  imageKey  String   @default("")
-  imageUrl  String?
-  isVideo   Boolean  @default(false)
-  sortOrder Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id
+  title       String
+  slug        String   @default("")
+  category    String
+  imageKey    String   @default("")
+  imageUrl    String?
+  isVideo     Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  description String   @default("")
+  images      Json     @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Testimonial {

@@ -1,7 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { prisma } from './prisma'
 import {
-  adminReducer,
   type AdminAction,
   type AdminState,
 } from './admin-store'
@@ -47,6 +46,11 @@ function toProject(row: DbProject): Project {
     status: row.status as Project['status'],
     checklist: row.checklist as unknown as Project['checklist'],
     comments: row.comments as unknown as Project['comments'],
+    description: row.description ?? '',
+    startDate: row.startDate ?? '',
+    location: row.location ?? '',
+    coverImageUrl: row.coverImageUrl ?? undefined,
+    images: (row.images as unknown as Project['images']) ?? [],
   }
 }
 
@@ -89,15 +93,18 @@ function toExpense(row: { id: string; description: string; category: string; dat
   }
 }
 
-function toPortfolio(row: { id: string; title: string; category: string; imageKey: string; imageUrl: string | null; isVideo: boolean; sortOrder: number }): PortfolioItem {
+function toPortfolio(row: { id: string; title: string; slug: string; category: string; imageKey: string; imageUrl: string | null; isVideo: boolean; sortOrder: number; description: string; images: unknown }): PortfolioItem {
   return {
     id: row.id,
     title: row.title,
+    slug: row.slug ?? '',
     category: row.category,
     imageKey: row.imageKey,
     imageUrl: row.imageUrl ?? undefined,
     isVideo: row.isVideo,
     sortOrder: row.sortOrder,
+    description: row.description ?? '',
+    images: (row.images as unknown as PortfolioItem['images']) ?? [],
   }
 }
 
@@ -172,63 +179,228 @@ export async function getPublicTestimonials(): Promise<Testimonial[]> {
   return TESTIMONIALS
 }
 
-export async function applyAdminAction(action: AdminAction): Promise<AdminState> {
-  const current = await getAdminState()
-  const next = adminReducer(current, action)
-  await replaceAdminState(next)
-  return next
+export async function getPublicPortfolioItem(slugOrId: string): Promise<PortfolioItem | null> {
+  const items = await getPublicPortfolio()
+  return items.find(item => item.slug === slugOrId || item.id === slugOrId) ?? null
 }
 
-export async function replaceAdminState(state: AdminState) {
-  const writes: Prisma.PrismaPromise<unknown>[] = [
-    prisma.globalNote.deleteMany(),
-    prisma.calendarEvent.deleteMany(),
-    prisma.project.deleteMany(),
-    prisma.client.deleteMany(),
-  ]
+/**
+ * Persiste UMA ação por vez, direto na entidade afetada.
+ * Nunca apaga/recria o banco inteiro (evita perda de dados com edições concorrentes).
+ */
+export async function applyAdminAction(action: AdminAction): Promise<AdminState> {
+  switch (action.type) {
+    case 'HYDRATE':
+      return getAdminState()
 
-  if (state.clients.length) {
-    writes.push(prisma.client.createMany({ data: state.clients.map(clientToDb) }))
-  }
-  if (state.projects.length) {
-    writes.push(prisma.project.createMany({ data: state.projects.map(projectToDb) }))
-  }
-  if (state.events.length) {
-    writes.push(prisma.calendarEvent.createMany({ data: state.events.map(eventToDb) }))
-  }
-  if (state.notes.length) {
-    writes.push(prisma.globalNote.createMany({ data: state.notes.map(noteToDb) }))
-  }
+    case 'RESET_ALL':
+      await prisma.$transaction([
+        prisma.globalNote.deleteMany(),
+        prisma.calendarEvent.deleteMany(),
+        prisma.project.deleteMany(),
+        prisma.client.deleteMany(),
+        prisma.expense.deleteMany(),
+        prisma.portfolioItem.deleteMany(),
+        prisma.testimonial.deleteMany(),
+      ])
+      return getAdminState()
 
-  await prisma.$transaction(writes)
-
-  // Tabelas novas — separadas para não quebrar se a migração ainda não rodou
-  try {
-    await prisma.expense.deleteMany()
-    if (state.expenses.length) {
-      await prisma.expense.createMany({ data: state.expenses.map(expenseToDb) })
+    // --- Clientes ---
+    case 'ADD_CLIENT':
+      await prisma.client.create({ data: clientToDb(action.payload) })
+      break
+    case 'UPDATE_CLIENT': {
+      const data = clientToDb(action.payload)
+      await prisma.client.upsert({
+        where: { id: action.payload.id },
+        update: data,
+        create: data,
+      })
+      break
     }
-  } catch (error) {
-    console.warn('Skip expenses persist (tabela ausente). Rode `prisma db push`.', error)
+    case 'DELETE_CLIENT':
+      await prisma.$transaction([
+        prisma.project.deleteMany({ where: { clientId: action.id } }),
+        prisma.client.deleteMany({ where: { id: action.id } }),
+      ])
+      break
+
+    // --- Projetos ---
+    case 'ADD_PROJECT':
+      await prisma.project.create({ data: projectToDb(action.payload) })
+      break
+    case 'UPDATE_PROJECT': {
+      const data = projectToDb(action.payload)
+      await prisma.project.upsert({
+        where: { id: action.payload.id },
+        update: data,
+        create: data,
+      })
+      break
+    }
+    case 'MOVE_PROJECT':
+      await prisma.project.updateMany({
+        where: { id: action.id },
+        data: { status: action.status },
+      })
+      break
+    case 'DELETE_PROJECT':
+      await prisma.project.deleteMany({ where: { id: action.id } })
+      break
+
+    // --- Agenda ---
+    case 'ADD_EVENT':
+      await prisma.calendarEvent.create({ data: eventToDb(action.payload) })
+      break
+    case 'UPDATE_EVENT': {
+      const data = eventToDb(action.payload)
+      await prisma.calendarEvent.upsert({
+        where: { id: action.payload.id },
+        update: data,
+        create: data,
+      })
+      break
+    }
+    case 'DELETE_EVENT':
+      await prisma.calendarEvent.deleteMany({ where: { id: action.id } })
+      break
+
+    // --- Notas globais ---
+    case 'ADD_NOTE':
+      await prisma.globalNote.create({ data: noteToDb(action.payload) })
+      break
+    case 'UPDATE_NOTE': {
+      const data = noteToDb(action.payload)
+      await prisma.globalNote.upsert({
+        where: { id: action.payload.id },
+        update: data,
+        create: data,
+      })
+      break
+    }
+    case 'DELETE_NOTE':
+      await prisma.globalNote.deleteMany({ where: { id: action.id } })
+      break
+    case 'PIN_NOTE': {
+      const row = await prisma.globalNote.findUnique({ where: { id: action.id } })
+      if (row) {
+        await prisma.globalNote.update({
+          where: { id: action.id },
+          data: { pinned: !row.pinned },
+        })
+      }
+      break
+    }
+
+    // --- Notas e faturas do cliente (JSON dentro do Client) ---
+    case 'ADD_CLIENT_NOTE':
+      await mutateClient(action.clientId, client => ({
+        ...client,
+        notes: [action.note, ...client.notes],
+      }))
+      break
+    case 'DELETE_CLIENT_NOTE':
+      await mutateClient(action.clientId, client => ({
+        ...client,
+        notes: client.notes.filter(n => n.id !== action.noteId),
+      }))
+      break
+    case 'ADD_INVOICE':
+      await mutateClient(action.clientId, client =>
+        withRecalculatedTotal({ ...client, invoices: [action.invoice, ...client.invoices] })
+      )
+      break
+    case 'UPDATE_INVOICE':
+      await mutateClient(action.clientId, client =>
+        withRecalculatedTotal({
+          ...client,
+          invoices: client.invoices.map(inv => (inv.id === action.invoice.id ? action.invoice : inv)),
+        })
+      )
+      break
+    case 'DELETE_INVOICE':
+      await mutateClient(action.clientId, client =>
+        withRecalculatedTotal({
+          ...client,
+          invoices: client.invoices.filter(inv => inv.id !== action.invoiceId),
+        })
+      )
+      break
+
+    // --- Financeiro ---
+    case 'ADD_EXPENSE':
+      await prisma.expense.create({ data: expenseToDb(action.payload) })
+      break
+    case 'UPDATE_EXPENSE': {
+      const data = expenseToDb(action.payload)
+      await prisma.expense.upsert({
+        where: { id: action.payload.id },
+        update: data,
+        create: data,
+      })
+      break
+    }
+    case 'DELETE_EXPENSE':
+      await prisma.expense.deleteMany({ where: { id: action.id } })
+      break
+
+    // --- Portfólio ---
+    case 'ADD_PORTFOLIO':
+      await prisma.portfolioItem.create({ data: portfolioToDb(action.payload) })
+      break
+    case 'UPDATE_PORTFOLIO': {
+      const data = portfolioToDb(action.payload)
+      await prisma.portfolioItem.upsert({
+        where: { id: action.payload.id },
+        update: data,
+        create: data,
+      })
+      break
+    }
+    case 'DELETE_PORTFOLIO':
+      await prisma.portfolioItem.deleteMany({ where: { id: action.id } })
+      break
+
+    // --- Depoimentos ---
+    case 'ADD_TESTIMONIAL':
+      await prisma.testimonial.create({ data: testimonialToDb(action.payload) })
+      break
+    case 'UPDATE_TESTIMONIAL': {
+      const data = testimonialToDb(action.payload)
+      await prisma.testimonial.upsert({
+        where: { id: action.payload.id },
+        update: data,
+        create: data,
+      })
+      break
+    }
+    case 'DELETE_TESTIMONIAL':
+      await prisma.testimonial.deleteMany({ where: { id: action.id } })
+      break
+
+    default: {
+      const _exhaustive: never = action
+      void _exhaustive
+      break
+    }
   }
 
-  try {
-    await prisma.portfolioItem.deleteMany()
-    if (state.portfolio.length) {
-      await prisma.portfolioItem.createMany({ data: state.portfolio.map(portfolioToDb) })
-    }
-  } catch (error) {
-    console.warn('Skip portfolio persist (tabela ausente).', error)
-  }
+  return getAdminState()
+}
 
-  try {
-    await prisma.testimonial.deleteMany()
-    if (state.testimonials.length) {
-      await prisma.testimonial.createMany({ data: state.testimonials.map(testimonialToDb) })
-    }
-  } catch (error) {
-    console.warn('Skip testimonials persist (tabela ausente).', error)
-  }
+/** Lê um cliente, aplica a mutação no JSON e salva de volta. */
+async function mutateClient(clientId: string, mutate: (client: Client) => Client): Promise<void> {
+  const row = await prisma.client.findUnique({ where: { id: clientId } })
+  if (!row) throw new Error('Cliente não encontrado.')
+  await prisma.client.update({
+    where: { id: clientId },
+    data: clientToDb(mutate(toClient(row))),
+  })
+}
+
+function withRecalculatedTotal(client: Client): Client {
+  const valid = client.invoices.filter(i => i.status !== 'CANCELADO')
+  return { ...client, totalValue: valid.reduce((sum, i) => sum + i.value, 0) }
 }
 
 function clientToDb(client: Client) {
@@ -266,6 +438,11 @@ function projectToDb(project: Project) {
     status: project.status,
     checklist: project.checklist as unknown as Prisma.InputJsonValue,
     comments: project.comments as unknown as Prisma.InputJsonValue,
+    description: project.description ?? '',
+    startDate: project.startDate ?? '',
+    location: project.location ?? '',
+    coverImageUrl: project.coverImageUrl ?? null,
+    images: (project.images ?? []) as unknown as Prisma.InputJsonValue,
   }
 }
 
@@ -312,11 +489,14 @@ function portfolioToDb(item: PortfolioItem) {
   return {
     id: item.id,
     title: item.title,
+    slug: item.slug ?? '',
     category: item.category,
     imageKey: item.imageKey,
     imageUrl: item.imageUrl ?? null,
     isVideo: item.isVideo,
     sortOrder: item.sortOrder ?? 0,
+    description: item.description ?? '',
+    images: (item.images ?? []) as unknown as Prisma.InputJsonValue,
   }
 }
 

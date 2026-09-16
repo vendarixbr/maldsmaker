@@ -161,15 +161,22 @@ function FloatingSelect({
 }
 
 export function Contato() {
-  const [form, setForm] = useState({ nome: '', contato: '', empresa: '', mensagem: '', servico: '' })
+  const [form, setForm] = useState({ nome: '', contato: '', empresa: '', mensagem: '', servico: '', website: '' })
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
   const ref = useRef(null)
+  const startedAt = useRef(Date.now())
   const inView = useInView(ref, { once: true, margin: '0px 0px -80px 0px' })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm(f => ({ ...f, [e.target.name]: e.target.value }))
+
+  const resetForm = () => {
+    setSent(false)
+    setForm({ nome: '', contato: '', empresa: '', mensagem: '', servico: '', website: '' })
+    startedAt.current = Date.now()
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -180,7 +187,7 @@ export function Contato() {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, startedAt: startedAt.current }),
       })
 
       if (!response.ok) throw new Error('Falha ao enviar')
@@ -294,7 +301,7 @@ export function Contato() {
                 </span>
                 <p className="font-body text-sm" style={{ color: '#A8A89A' }}>Em breve entraremos em contato.</p>
                 <button
-                  onClick={() => { setSent(false); setForm({ nome: '', contato: '', empresa: '', mensagem: '', servico: '' }) }}
+                  onClick={resetForm}
                   className="font-mono-mm text-[10px] tracking-[0.14em] uppercase mt-2 transition-colors duration-200"
                   style={{ color: '#5A5A52', borderBottom: '1px solid rgba(90,90,82,0.3)', paddingBottom: '1px' }}
                   onMouseEnter={e => (e.currentTarget.style.color = '#C9A84C')}
@@ -310,6 +317,17 @@ export function Contato() {
                 <FloatingField name="empresa" label="Empresa ou projeto"   value={form.empresa} onChange={handleChange} />
                 <FloatingSelect name="servico" label="Tipo de serviço"     value={form.servico} onChange={handleChange} />
                 <FloatingTextarea name="mensagem" label="Conte sobre o que você precisa" value={form.mensagem} onChange={handleChange} />
+                {/* Honeypot anti-spam: invisível para humanos */}
+                <input
+                  type="text"
+                  name="website"
+                  value={form.website}
+                  onChange={handleChange}
+                  autoComplete="off"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+                />
 
                 {error && (
                   <p className="font-mono-mm text-[10px] tracking-[0.08em]" style={{ color: '#F1948A' }}>

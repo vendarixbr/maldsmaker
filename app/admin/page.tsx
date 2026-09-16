@@ -1,9 +1,13 @@
 'use client'
 
+import { Suspense, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { AdminProvider, useAdmin } from '@/lib/admin-context'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { AdminMobileNav } from '@/components/admin/AdminMobileNav'
+import { AdminCommandPalette } from '@/components/admin/AdminCommandPalette'
 import { AdminDashboard } from '@/components/admin/AdminDashboard'
+import { AdminLeads } from '@/components/admin/AdminLeads'
 import { AdminCRM } from '@/components/admin/AdminCRM'
 import { AdminProjetos } from '@/components/admin/AdminProjetos'
 import { AdminAgenda } from '@/components/admin/AdminAgenda'
@@ -15,11 +19,34 @@ import { AdminDepoimentos } from '@/components/admin/AdminDepoimentos'
 import { AdminConfiguracoes } from '@/components/admin/AdminConfiguracoes'
 import { Menu } from 'lucide-react'
 
+const VALID_SECTIONS = new Set([
+  'dashboard',
+  'leads',
+  'clientes',
+  'projetos',
+  'agenda',
+  'notas',
+  'financeiro',
+  'portfolio',
+  'depoimentos',
+  'imagens',
+  'configuracoes',
+])
+
 function AdminShell() {
-  const { activeSection, setSidebarOpen, isLoading, isSaving, error } = useAdmin()
+  const { activeSection, setActiveSection, setSidebarOpen, isLoading, isSaving, error } = useAdmin()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const section = searchParams.get('section')
+    if (section && VALID_SECTIONS.has(section)) {
+      setActiveSection(section)
+    }
+  }, [searchParams, setActiveSection])
 
   const sectionMap: Record<string, React.ReactNode> = {
     dashboard: <AdminDashboard />,
+    leads: <AdminLeads />,
     clientes: <AdminCRM />,
     projetos: <AdminProjetos />,
     agenda: <AdminAgenda />,
@@ -78,6 +105,9 @@ function AdminShell() {
 
       {/* Fixed bottom navigation for mobile */}
       <AdminMobileNav />
+
+      {/* Global quick search (Ctrl/Cmd+K) */}
+      <AdminCommandPalette />
     </div>
   )
 }
@@ -85,7 +115,9 @@ function AdminShell() {
 export default function AdminPage() {
   return (
     <AdminProvider>
-      <AdminShell />
+      <Suspense fallback={null}>
+        <AdminShell />
+      </Suspense>
     </AdminProvider>
   )
 }

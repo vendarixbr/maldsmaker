@@ -225,11 +225,25 @@ function recalcClientTotals(client: Client): Client {
 function normalizeState(s: AdminState): AdminState {
   return {
     clients: s.clients ?? [],
-    projects: s.projects ?? [],
+    projects: (s.projects ?? []).map(p => ({
+      ...p,
+      description: p.description ?? '',
+      startDate: p.startDate ?? '',
+      location: p.location ?? '',
+      coverImageUrl: p.coverImageUrl ?? undefined,
+      images: p.images ?? [],
+      checklist: p.checklist ?? [],
+      comments: p.comments ?? [],
+    })),
     events: s.events ?? [],
     notes: s.notes ?? [],
     expenses: (s as Partial<AdminState>).expenses ?? [],
-    portfolio: (s as Partial<AdminState>).portfolio ?? [],
+    portfolio: ((s as Partial<AdminState>).portfolio ?? []).map(p => ({
+      ...p,
+      slug: p.slug ?? '',
+      description: p.description ?? '',
+      images: p.images ?? [],
+    })),
     testimonials: (s as Partial<AdminState>).testimonials ?? [],
   }
 }

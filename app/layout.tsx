@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Bebas_Neue, DM_Sans, DM_Mono } from 'next/font/google'
 import { SiteImageProvider } from '@/lib/site-image-context'
+import { getSiteUrl } from '@/lib/site'
 import './globals.css'
 
 const bebasNeue = Bebas_Neue({
@@ -22,6 +23,7 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: 'Malds Maker — Produção Audiovisual em Sorocaba, SP',
   description:
     'Produção audiovisual, fotografia profissional e Nauta Estúdio 480m² em Sorocaba, SP. Do clipe ao institucional, do ensaio ao evento.',

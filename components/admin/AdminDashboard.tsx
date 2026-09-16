@@ -46,7 +46,18 @@ export function AdminDashboard() {
     const shootsPrevMonth = state.events.filter(e => e.type === 'Shoot' && e.date.startsWith(prevMonthKey)).length
     const shootsDelta = shootsThisMonth - shootsPrevMonth
 
+    const newLeads = state.clients.filter(c => c.status === 'PROSPECT').length
+    const pendingInvoices = state.clients.flatMap(c => c.invoices).filter(i => i.status === 'PENDENTE')
+    const pendingTotal = pendingInvoices.reduce((s, i) => s + i.value, 0)
+    const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+    const todayEvents = state.events.filter(e => e.date === todayKey)
+
     return {
+      attention: [
+        { label: 'LEADS AGUARDANDO', value: String(newLeads), detail: newLeads === 1 ? '1 contato para triar' : `${newLeads} contatos para triar`, section: 'leads', alert: newLeads > 0 },
+        { label: 'FATURAS PENDENTES', value: `R$ ${pendingTotal.toLocaleString('pt-BR')}`, detail: pendingInvoices.length === 1 ? '1 fatura em aberto' : `${pendingInvoices.length} faturas em aberto`, section: 'clientes', alert: pendingInvoices.length > 0 },
+        { label: 'COMPROMISSOS HOJE', value: String(todayEvents.length), detail: todayEvents.length === 1 ? '1 evento hoje' : `${todayEvents.length} eventos hoje`, section: 'agenda', alert: todayEvents.length > 0 },
+      ],
       cards: [
         { label: 'CLIENTES ATIVOS',         value: String(activeClients) },
         { label: 'PROJETOS EM ANDAMENTO',    value: String(activeProjects) },
@@ -190,6 +201,32 @@ export function AdminDashboard() {
               <p className="font-mono-mm text-[10px] tracking-[0.1em] text-[#CBD5E1] font-semibold">{f.label}</p>
               <p className="font-display font-bold text-lg mt-1" style={{ color: f.color }}>{f.value}</p>
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Attention strip */}
+      <div
+        className="p-4 sm:p-5 flex flex-col gap-3"
+        style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '8px' }}
+      >
+        <p className="font-mono-mm text-xs tracking-[0.12em] font-semibold" style={{ color: '#E5C158' }}>
+          PRECISA DA SUA ATENÇÃO
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {metrics.attention.map(a => (
+            <button
+              key={a.label}
+              onClick={() => setActiveSection(a.section)}
+              className="p-4 rounded-lg text-left transition-all hover:border-[rgba(201,168,76,0.5)] outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]"
+              style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.08)' }}
+            >
+              <p className="font-mono-mm text-[10px] tracking-[0.1em] text-[#CBD5E1] font-semibold">{a.label}</p>
+              <p className="font-display font-bold text-2xl mt-1" style={{ color: a.alert ? '#E5C158' : '#4ADE80' }}>
+                {a.value}
+              </p>
+              <p className="font-mono-mm text-[10px] mt-1 text-[#94A3B8]">{a.alert ? a.detail : 'Tudo em dia ✓'}</p>
+            </button>
           ))}
         </div>
       </div>
