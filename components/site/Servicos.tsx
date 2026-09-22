@@ -3,67 +3,12 @@
 import { useState, useRef } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
-
-const services = [
-  {
-    num: '01',
-    name: 'Produção Audiovisual',
-    tag: 'CAPTAÇÃO · DIREÇÃO · EDIÇÃO',
-    description: 'Produção completa do briefing à entrega. Roteiro, direção criativa, captação em alta resolução e edição profissional — do clipe ao documentário.',
-    bullets: ['Roteiro e direção criativa', 'Captação em 4K com cinema glass', 'Edição, colorização e som', 'Entrega em múltiplos formatos'],
-  },
-  {
-    num: '02',
-    name: 'Fotografia Profissional',
-    tag: 'ENSAIOS · PRODUTOS · EVENTOS',
-    description: 'Ensaios com identidade visual forte. Fotografia de produto, cobertura de eventos e retratos editoriais que posicionam a sua marca.',
-    bullets: ['Ensaios artísticos e editoriais', 'Fotografia de produto e e-commerce', 'Cobertura de eventos ao vivo', 'Tratamento e entrega em alta resolução'],
-  },
-  {
-    num: '03',
-    name: 'Nauta Estúdio',
-    tag: 'LOCAÇÃO · WORKSHOPS · PRODUÇÕES',
-    description: '480m² de galpão profissional em Sorocaba. Cenários prontos, iluminação de estúdio, chroma key 14m, camarins e equipe de suporte.',
-    bullets: ['480m² de área total', 'Chroma key com 14m de largura', '2 camarins completos', 'Locação por turno ou diária'],
-  },
-  {
-    num: '04',
-    name: 'Conteúdo para Redes',
-    tag: 'REELS · STORIES · ESTRATÉGIA',
-    description: 'Conteúdo audiovisual e fotográfico pensado para plataformas digitais — do planejamento à publicação, com posicionamento e consistência de marca.',
-    bullets: ['Planejamento editorial mensal', 'Produção de Reels e Stories', 'Pacotes recorrentes', 'Relatório de desempenho'],
-  },
-  {
-    num: '05',
-    name: 'Tráfego Pago',
-    tag: 'META ADS · GOOGLE ADS · CONVERSÃO',
-    description: 'Gestão de mídia paga com foco em resultados reais. Campanhas para consciência de marca, geração de leads e conversão em vendas.',
-    bullets: ['Gestão Meta Ads e Google Ads', 'Criação de criativos para anúncios', 'Otimização e A/B testing', 'Relatório mensal de ROI'],
-  },
-  {
-    num: '06',
-    name: 'Rebranding & Identidade',
-    tag: 'MARCA · VISUAL · ESTRATÉGIA',
-    description: 'Redesenho estratégico de identidade visual para marcas que evoluíram além da sua imagem atual — logo, paleta, tipografia e sistema de aplicação.',
-    bullets: ['Diagnóstico e estratégia de marca', 'Redesign de logotipo e identidade', 'Manual de marca completo', 'Aplicações digitais e impressas'],
-  },
-  {
-    num: '07',
-    name: 'Transmissão ao Vivo',
-    tag: 'SHOWS · EVENTOS · CONFERÊNCIAS',
-    description: 'Produção técnica e transmissão ao vivo de eventos. Múltiplas câmeras, switch, áudio profissional e streaming simultâneo em múltiplas plataformas.',
-    bullets: ['Setup multicâmera profissional', 'Switcher e grafismo ao vivo', 'Streaming para YouTube, Instagram', 'Gravação e edição pós-evento'],
-  },
-  {
-    num: '08',
-    name: 'Estratégia Digital',
-    tag: 'PLANEJAMENTO · PRESENÇA · RESULTADO',
-    description: 'Consultoria e planejamento de presença digital integrada — do posicionamento orgânico à estratégia de conteúdo e métricas de crescimento.',
-    bullets: ['Auditoria de presença digital', 'Posicionamento e tom de voz', 'Calendário de conteúdo', 'Acompanhamento e ajustes mensais'],
-  },
-]
+import { useSiteContent, whatsappLink } from '@/lib/site-content-context'
 
 export function Servicos() {
+  const { home, settings } = useSiteContent()
+  const { eyebrow, heading, items, ctaTitle, ctaSubtitle, ctaButtonLabel, ctaWhatsappMessage } = home.servicos
+  const services = items.map((item, i) => ({ ...item, num: String(i + 1).padStart(2, '0') }))
   const [expanded, setExpanded] = useState<number | null>(null)
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '0px -100px -100px 0px' })
@@ -84,10 +29,10 @@ export function Servicos() {
           className="mb-16"
         >
           <p className="font-mono-mm text-[11px] tracking-[0.12em] mb-4" style={{ color: '#C9A84C' }}>
-            O QUE FAZEMOS
+            {eyebrow}
           </p>
           <h2 className="font-display font-bold" style={{ fontSize: 'clamp(32px, 5vw, 56px)', color: '#F2F2F2' }}>
-            Cada ideia tem um formato ideal.
+            {heading}
           </h2>
         </motion.div>
 
@@ -227,14 +172,14 @@ export function Servicos() {
         >
           <div>
             <p className="font-display font-medium text-lg" style={{ color: '#F2F2F2' }}>
-              Não encontrou o que precisa?
+              {ctaTitle}
             </p>
             <p className="font-body text-sm mt-1" style={{ color: '#888', fontWeight: 300 }}>
-              Atendemos projetos sob medida para qualquer necessidade.
+              {ctaSubtitle}
             </p>
           </div>
           <a
-            href="https://wa.me/5515997307171?text=Olá,%20tenho%20um%20projeto%20personalizado!"
+            href={whatsappLink(settings.whatsapp, ctaWhatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
             className="shrink-0 flex items-center gap-2 font-mono-mm text-[11px] tracking-[0.12em] px-5 h-10 border transition-all duration-200"
@@ -250,7 +195,7 @@ export function Servicos() {
               el.style.color = '#C9A84C'
             }}
           >
-            FALAR COM A EQUIPE →
+            {ctaButtonLabel}
           </a>
         </motion.div>
       </div>

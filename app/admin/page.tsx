@@ -16,6 +16,7 @@ import { AdminFinanceiro } from '@/components/admin/AdminFinanceiro'
 import { AdminImagens } from '@/components/admin/AdminImagens'
 import { AdminPortfolio } from '@/components/admin/AdminPortfolio'
 import { AdminDepoimentos } from '@/components/admin/AdminDepoimentos'
+import { AdminPaginaInicial } from '@/components/admin/AdminPaginaInicial'
 import { AdminConfiguracoes } from '@/components/admin/AdminConfiguracoes'
 import { Menu } from 'lucide-react'
 
@@ -30,6 +31,7 @@ const VALID_SECTIONS = new Set([
   'portfolio',
   'depoimentos',
   'imagens',
+  'pagina-inicial',
   'configuracoes',
 ])
 
@@ -55,6 +57,7 @@ function AdminShell() {
     portfolio: <AdminPortfolio />,
     depoimentos: <AdminDepoimentos />,
     imagens: <AdminImagens />,
+    'pagina-inicial': <AdminPaginaInicial />,
     configuracoes: <AdminConfiguracoes />,
   }
 

@@ -63,6 +63,8 @@ export const PROJECT_IMAGE_PREFIX = 'projects/'
 
 export const PORTFOLIO_IMAGE_PREFIX = 'portfolio/'
 
+export const TESTIMONIAL_IMAGE_PREFIX = 'testimonials/'
+
 export function portfolioImageObjectKey(itemId: string, filename: string): string {
   const safeItem = itemId.replace(/[^a-zA-Z0-9-_]/g, '_').slice(0, 80) || 'sem-id'
   const safeFile = filename.replace(/[^a-zA-Z0-9-_.]/g, '_').slice(0, 120) || 'imagem'
@@ -80,6 +82,16 @@ export function projectImageObjectKey(projectId: string, filename: string): stri
 }
 
 export function projectImagePublicUrl(objectKey: string): string {
+  return `${PUBLIC_URL_BASE}/${objectKey}`
+}
+
+export function testimonialImageObjectKey(itemId: string, filename: string): string {
+  const safeItem = itemId.replace(/[^a-zA-Z0-9-_]/g, '_').slice(0, 80) || 'sem-id'
+  const safeFile = filename.replace(/[^a-zA-Z0-9-_.]/g, '_').slice(0, 120) || 'imagem'
+  return `${TESTIMONIAL_IMAGE_PREFIX}${safeItem}/${safeFile}`
+}
+
+export function testimonialImagePublicUrl(objectKey: string): string {
   return `${PUBLIC_URL_BASE}/${objectKey}`
 }
 

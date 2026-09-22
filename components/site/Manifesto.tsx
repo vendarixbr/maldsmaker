@@ -3,18 +3,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { SiteImage } from '@/components/site/SiteImage'
-
-const niches = [
-  'ARTISTAS', 'EMPRESAS', 'ADVOGADOS', 'EVENTOS',
-  'INFLUENCERS', 'MUSICAIS', 'INSTITUCIONAIS', 'BARES', 'RESTAURANTES',
-]
-
-const stats = [
-  { target: 300, suffix: '+', label: 'Projetos' },
-  { target: 100, suffix: '+', label: 'Clientes' },
-  { target: 15, suffix: '', label: 'Nichos' },
-  { target: 30, suffix: 'M+', label: 'Streams' },
-]
+import { useSiteContent } from '@/lib/site-content-context'
 
 function CountUp({ target, suffix, active }: { target: number; suffix: string; active: boolean }) {
   const [count, setCount] = useState(0)
@@ -45,14 +34,9 @@ function CountUp({ target, suffix, active }: { target: number; suffix: string; a
   )
 }
 
-const manifLines = [
-  'Viemos da rua.',
-  'Chegamos ao estúdio.',
-  'Nunca esquecemos de onde',
-  'a história começa.',
-]
-
 export function Manifesto() {
+  const { home, settings } = useSiteContent()
+  const { tapeLabel, headline, paragraph1, paragraph2, stats, niches } = home.sobre
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '0px 0px -80px 0px' })
 
@@ -89,13 +73,13 @@ export function Manifesto() {
               transition={{ duration: 0.55 }}
               className="mb-8"
             >
-              <div className="tape-label">NOSSA ESSÊNCIA</div>
+              <div className="tape-label">{tapeLabel}</div>
             </motion.div>
 
             {/* Headline lines — clip-path reveal */}
             <div className="flex flex-col mb-10" style={{ lineHeight: 0.9 }}>
-              {manifLines.map((line, i) => (
-                <div key={line} className="overflow-hidden">
+              {headline.map((line, i) => (
+                <div key={i} className="overflow-hidden">
                   <motion.p
                     initial={{ y: '110%' }}
                     animate={inView ? { y: 0 } : {}}
@@ -127,7 +111,7 @@ export function Manifesto() {
             >
               <SiteImage
                 imageKey="leonardo-claquete"
-                alt="Leonardo Maldonado — Diretor Criativo da Malds Maker"
+                alt={`${settings.nome} — Diretor Criativo da Malds Maker`}
                 fill
                 className="object-cover"
                 style={{ objectPosition: 'center 15%', filter: 'contrast(1.05)' }}
@@ -140,7 +124,7 @@ export function Manifesto() {
               {/* Name tag */}
               <div className="absolute bottom-4 left-4">
                 <p className="font-display uppercase text-base" style={{ color: '#F5F5F0', letterSpacing: '0.04em' }}>
-                  Leonardo Maldonado
+                  {settings.nome}
                 </p>
                 <p className="font-mono-mm text-[10px] tracking-[0.16em]" style={{ color: '#C9A84C' }}>
                   DIRETOR CRIATIVO
@@ -162,10 +146,7 @@ export function Manifesto() {
               className="font-body leading-relaxed"
               style={{ color: '#A8A89A', fontSize: '17px', fontWeight: 300, lineHeight: 1.8 }}
             >
-              A Malds Maker nasceu da necessidade de contar histórias com qualidade real —
-              não apenas a qualidade que cabe no orçamento, mas a que o projeto merece. Atuamos com
-              artistas, empresas, advogados, influencers, bares e restaurantes. O nicho muda.
-              O nível não.
+              {paragraph1}
             </motion.p>
 
             {/* Gold divider */}
@@ -183,9 +164,7 @@ export function Manifesto() {
               className="font-body leading-relaxed"
               style={{ color: '#A8A89A', fontSize: '17px', fontWeight: 300, lineHeight: 1.8 }}
             >
-              Leonardo Maldonado lidera a direção criativa com um olhar formado na cena
-              independente e aprimorado em produções de alto impacto. Roteiro, câmera,
-              edição — a visão percorre todo o processo.
+              {paragraph2}
             </motion.p>
 
             {/* Countup stats */}
@@ -197,7 +176,7 @@ export function Manifesto() {
             >
               {stats.map((stat, i) => (
                 <div
-                  key={stat.label}
+                  key={i}
                   className="flex flex-col gap-1.5"
                   style={{
                     paddingLeft: i % 2 === 1 ? '28px' : '0',
@@ -210,7 +189,7 @@ export function Manifesto() {
                     className="font-display"
                     style={{ fontSize: '64px', lineHeight: 1, color: '#C9A84C', letterSpacing: '0.01em' }}
                   >
-                    <CountUp target={stat.target} suffix={stat.suffix} active={inView} />
+                    <CountUp target={stat.value} suffix={stat.suffix} active={inView} />
                   </span>
                   <span className="font-mono-mm text-[11px] tracking-[0.16em] uppercase" style={{ color: '#5A5A52' }}>
                     {stat.label}
@@ -226,9 +205,9 @@ export function Manifesto() {
               transition={{ delay: 0.56 }}
               className="flex flex-wrap gap-2"
             >
-              {niches.map((niche) => (
+              {niches.map((niche, i) => (
                 <span
-                  key={niche}
+                  key={`${niche}-${i}`}
                   className="h-7 px-3 flex items-center font-mono-mm text-[10px] tracking-[0.1em] transition-all duration-200"
                   style={{
                     border: '1px solid rgba(201,168,76,0.25)',

@@ -1,6 +1,8 @@
 import {
   CALENDAR_EVENTS,
   CLIENTS,
+  DEFAULT_HOME_CONTENT,
+  DEFAULT_SITE_SETTINGS,
   EXPENSES,
   GLOBAL_NOTES,
   PORTFOLIO_ITEMS,
@@ -10,10 +12,12 @@ import {
   type Client,
   type Expense,
   type GlobalNote,
+  type HomeContent,
   type Invoice,
   type Note,
   type PortfolioItem,
   type Project,
+  type SiteSettings,
   type Testimonial,
 } from './data'
 
@@ -25,6 +29,8 @@ export interface AdminState {
   expenses: Expense[]
   portfolio: PortfolioItem[]
   testimonials: Testimonial[]
+  settings: SiteSettings
+  homeContent: HomeContent
 }
 
 export type AdminAction =
@@ -58,6 +64,8 @@ export type AdminAction =
   | { type: 'ADD_TESTIMONIAL'; payload: Testimonial }
   | { type: 'UPDATE_TESTIMONIAL'; payload: Testimonial }
   | { type: 'DELETE_TESTIMONIAL'; id: string }
+  | { type: 'UPDATE_SETTINGS'; payload: SiteSettings }
+  | { type: 'UPDATE_HOME_CONTENT'; payload: HomeContent }
 
 export const emptyAdminState: AdminState = {
   clients: [],
@@ -67,6 +75,8 @@ export const emptyAdminState: AdminState = {
   expenses: [],
   portfolio: [],
   testimonials: [],
+  settings: DEFAULT_SITE_SETTINGS,
+  homeContent: DEFAULT_HOME_CONTENT,
 }
 
 export const staticAdminState: AdminState = {
@@ -77,6 +87,8 @@ export const staticAdminState: AdminState = {
   expenses: EXPENSES,
   portfolio: PORTFOLIO_ITEMS,
   testimonials: TESTIMONIALS,
+  settings: DEFAULT_SITE_SETTINGS,
+  homeContent: DEFAULT_HOME_CONTENT,
 }
 
 export function adminReducer(state: AdminState, action: AdminAction): AdminState {
@@ -212,6 +224,10 @@ export function adminReducer(state: AdminState, action: AdminAction): AdminState
       }
     case 'DELETE_TESTIMONIAL':
       return { ...state, testimonials: state.testimonials.filter(t => t.id !== action.id) }
+    case 'UPDATE_SETTINGS':
+      return { ...state, settings: action.payload }
+    case 'UPDATE_HOME_CONTENT':
+      return { ...state, homeContent: action.payload }
     default:
       return state
   }
@@ -245,6 +261,22 @@ function normalizeState(s: AdminState): AdminState {
       images: p.images ?? [],
     })),
     testimonials: (s as Partial<AdminState>).testimonials ?? [],
+    settings: { ...DEFAULT_SITE_SETTINGS, ...(s as Partial<AdminState>).settings },
+    homeContent: mergeHomeContent((s as Partial<AdminState>).homeContent),
+  }
+}
+
+/** Faz merge raso por seção — evita perder seções novas quando o JSON salvo é antigo. */
+export function mergeHomeContent(saved?: Partial<HomeContent>): HomeContent {
+  if (!saved) return DEFAULT_HOME_CONTENT
+  return {
+    hero: { ...DEFAULT_HOME_CONTENT.hero, ...saved.hero },
+    sobre: { ...DEFAULT_HOME_CONTENT.sobre, ...saved.sobre },
+    servicos: { ...DEFAULT_HOME_CONTENT.servicos, ...saved.servicos },
+    nichosBanner: { ...DEFAULT_HOME_CONTENT.nichosBanner, ...saved.nichosBanner },
+    nauta: { ...DEFAULT_HOME_CONTENT.nauta, ...saved.nauta },
+    contato: { ...DEFAULT_HOME_CONTENT.contato, ...saved.contato },
+    footer: { ...DEFAULT_HOME_CONTENT.footer, ...saved.footer },
   }
 }
 

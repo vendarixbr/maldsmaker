@@ -1,17 +1,25 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { Upload, RotateCcw, AlertCircle } from 'lucide-react'
+import { Upload, RotateCcw, AlertCircle, Image as ImageIcon, Users, ArrowRight, Camera } from 'lucide-react'
 import { SiteImage } from '@/components/site/SiteImage'
 import { useSiteImageOverrides } from '@/lib/site-image-context'
-import { SITE_IMAGE_SLOTS, MAX_SITE_IMAGE_BYTES } from '@/lib/site-images'
+import { MAX_SITE_IMAGE_BYTES } from '@/lib/site-images'
+import { useAdmin } from '@/lib/admin-context'
 import { ConfirmDialog } from '@/components/admin/admin-ui'
+
+/** Imagens verdadeiramente globais do site — o resto (fotos de portfólio e de depoimentos) tem tela própria. */
+const GENERAL_SLOTS = [
+  { key: 'logo', label: 'Logotipo', description: 'Aparece no cabeçalho e no rodapé do site.' },
+  { key: 'leonardo-claquete', label: 'Foto do Diretor Criativo', description: 'Usada na seção "Nossa Essência", sobre a Malds Maker.' },
+  { key: 'nauta-studio', label: 'Nauta Estúdio — Foto Principal', description: 'Foto de destaque da seção "Nauta Estúdio".' },
+]
 
 function formatMaxSize() {
   return `${Math.round(MAX_SITE_IMAGE_BYTES / (1024 * 1024))}MB`
 }
 
-function ImageSlotCard({ slotKey, label }: { slotKey: string; label: string }) {
+function ImageSlotCard({ slotKey, label, description }: { slotKey: string; label: string; description?: string }) {
   const { overrides, setOverride, clearOverride } = useSiteImageOverrides()
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
@@ -74,9 +82,7 @@ function ImageSlotCard({ slotKey, label }: { slotKey: string; label: string }) {
   }
 
   return (
-    <div
-      className="flex flex-col gap-3 p-4 bg-[#111111] border border-[rgba(255,255,255,0.14)] rounded-xl"
-    >
+    <div className="flex flex-col gap-3 p-4 bg-[#111111] border border-[rgba(255,255,255,0.14)] rounded-xl">
       <div
         className="relative w-full overflow-hidden rounded-lg bg-[#161616]"
         style={{ aspectRatio: '4/3' }}
@@ -86,7 +92,7 @@ function ImageSlotCard({ slotKey, label }: { slotKey: string; label: string }) {
           alt={label}
           fill
           className="object-cover"
-          sizes="240px"
+          sizes="280px"
         />
         {uploading && (
           <div
@@ -99,9 +105,22 @@ function ImageSlotCard({ slotKey, label }: { slotKey: string; label: string }) {
             />
           </div>
         )}
+        {hasOverride && (
+          <span
+            className="absolute top-2 right-2 font-mono-mm text-[9px] px-2 py-0.5 rounded font-bold"
+            style={{ background: 'rgba(74,222,128,0.15)', border: '1px solid rgba(74,222,128,0.4)', color: '#4ADE80' }}
+          >
+            PERSONALIZADA
+          </span>
+        )}
       </div>
 
-      <p className="font-display font-semibold text-sm text-[#FFFFFF] leading-snug">{label}</p>
+      <div>
+        <p className="font-display font-semibold text-sm text-[#FFFFFF] leading-snug">{label}</p>
+        {description && (
+          <p className="font-mono-mm text-[10px] text-[#94A3B8] mt-1 leading-relaxed">{description}</p>
+        )}
+      </div>
 
       {error && (
         <p className="flex items-center gap-1.5 font-mono-mm text-[10px] tracking-[0.06em] text-[#F87171]">
@@ -150,22 +169,61 @@ function ImageSlotCard({ slotKey, label }: { slotKey: string; label: string }) {
 }
 
 export function AdminImagens() {
+  const { setActiveSection } = useAdmin()
+
   return (
-    <div className="flex flex-col gap-6 max-w-5xl">
+    <div className="flex flex-col gap-8 max-w-5xl">
       <div>
         <h1 className="font-display font-semibold text-2xl text-[#FFFFFF]">Imagens do Site</h1>
         <p className="font-mono-mm text-xs tracking-[0.08em] mt-1 font-semibold text-[#E5C158]">
           MALDS MAKER ADMIN
         </p>
-        <p className="font-display text-sm mt-2 text-[#CBD5E1]">
-          Troque as fotos usadas no site público. As mudanças aparecem no site assim que a imagem terminar de enviar.
+        <p className="font-display text-sm mt-2 text-[#CBD5E1]" style={{ lineHeight: 1.6 }}>
+          Aqui ficam só as imagens gerais do site — as que não pertencem a um projeto ou depoimento específico.
+          A mudança aparece no site assim que o upload terminar.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {SITE_IMAGE_SLOTS.map(slot => (
-          <ImageSlotCard key={slot.key} slotKey={slot.key} label={slot.label} />
-        ))}
+      <div className="flex flex-col gap-4">
+        <h2 className="font-mono-mm text-[11px] tracking-[0.14em] font-semibold text-[#E5C158] flex items-center gap-2">
+          <ImageIcon size={13} /> IMAGENS GERAIS
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {GENERAL_SLOTS.map(slot => (
+            <ImageSlotCard key={slot.key} slotKey={slot.key} label={slot.label} description={slot.description} />
+          ))}
+        </div>
+      </div>
+
+      <div className="p-5 flex flex-col sm:flex-row sm:items-center gap-4 bg-[#111111] border border-[rgba(255,255,255,0.12)] rounded-xl">
+        <div className="flex-1">
+          <p className="font-display font-semibold text-sm text-white">
+            Procurando a foto de um projeto ou de um depoimento?
+          </p>
+          <p className="font-mono-mm text-[10px] text-[#94A3B8] mt-1 leading-relaxed">
+            Fotos de capa/galeria do portfólio e fotos de clientes nos depoimentos são enviadas direto na página de cada item, para ficar sempre claro qual foto pertence a qual projeto ou pessoa.
+          </p>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <button
+            onClick={() => setActiveSection('portfolio')}
+            className="flex items-center gap-2 h-10 px-4 font-mono-mm text-[11px] font-semibold rounded-lg text-[#F3F4F6] hover:border-[#C9A84C] hover:text-[#E5C158] transition-colors"
+            style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.16)' }}
+          >
+            <Camera size={14} />
+            PORTFÓLIO
+            <ArrowRight size={13} />
+          </button>
+          <button
+            onClick={() => setActiveSection('depoimentos')}
+            className="flex items-center gap-2 h-10 px-4 font-mono-mm text-[11px] font-semibold rounded-lg text-[#F3F4F6] hover:border-[#C9A84C] hover:text-[#E5C158] transition-colors"
+            style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.16)' }}
+          >
+            <Users size={14} />
+            DEPOIMENTOS
+            <ArrowRight size={13} />
+          </button>
+        </div>
       </div>
     </div>
   )

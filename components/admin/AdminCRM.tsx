@@ -34,6 +34,17 @@ const STATUS_CONFIG: Record<ClientStatus, { color: string; bg: string }> = {
 
 const ALL_STATUSES_CLIENT: ClientStatus[] = ['ATIVO', 'EM PAUSA', 'CONCLUÍDO', 'PROSPECT']
 
+const MONTH_ABBR = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+
+/** Últimos 6 meses (mais antigo → atual), a partir de hoje — sem faturamento ainda. */
+function lastSixMonthsRevenue(): { month: string; value: number }[] {
+  const now = new Date()
+  return Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1)
+    return { month: MONTH_ABBR[d.getMonth()], value: 0 }
+  })
+}
+
 const HISTORY_ICONS: Record<string, React.ElementType> = {
   camera: Camera, video: Video, phone: PhoneCall, file: FileText,
 }
@@ -82,10 +93,7 @@ function ClientForm({ initial, onSave, onClose }: ClientFormProps) {
           services: [],
           history: [],
           invoices: [],
-          monthlyRevenue: [
-            { month: 'Ago', value: 0 }, { month: 'Set', value: 0 }, { month: 'Out', value: 0 },
-            { month: 'Nov', value: 0 }, { month: 'Dez', value: 0 }, { month: 'Jan', value: 0 },
-          ],
+          monthlyRevenue: lastSixMonthsRevenue(),
         }
     onSave(payload)
   }

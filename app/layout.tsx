@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Bebas_Neue, DM_Sans, DM_Mono } from 'next/font/google'
 import { SiteImageProvider } from '@/lib/site-image-context'
+import { SiteContentProvider } from '@/lib/site-content-context'
 import { getSiteUrl } from '@/lib/site'
 import './globals.css'
 
@@ -53,7 +54,9 @@ export default function RootLayout({
       className={`${bebasNeue.variable} ${dmSans.variable} ${dmMono.variable} bg-[#0A0A0A]`}
     >
       <body className="antialiased bg-[#0A0A0A] text-[#F5F5F0]" style={{ fontFamily: 'var(--font-dm-sans), DM Sans, sans-serif' }} suppressHydrationWarning>
-        <SiteImageProvider>{children}</SiteImageProvider>
+        <SiteImageProvider>
+          <SiteContentProvider>{children}</SiteContentProvider>
+        </SiteImageProvider>
       </body>
     </html>
   )

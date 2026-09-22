@@ -1,3 +1,209 @@
+export interface SiteSettings {
+  nome: string
+  email: string
+  whatsapp: string
+  empresa: string
+  cidade: string
+  instagram: string
+  youtube: string
+  nautaCapacidade: string
+  nautaValorDiaria: string
+  nautaValorMeio: string
+  nautaLocacaoAvulsa: boolean
+  notifLead: boolean
+  notifShoot: boolean
+  notifPagamento: boolean
+  notifResumo: boolean
+  drprExibir: boolean
+  drprInscricoes: boolean
+  drprVagas: string
+}
+
+export const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  nome: 'Leonardo Maldonado',
+  email: 'malldsmaker@gmail.com',
+  whatsapp: '+55 (15) 99730-7171',
+  empresa: 'Malds Maker',
+  cidade: 'Sorocaba, SP',
+  instagram: '@maldsmaker',
+  youtube: 'https://youtube.com/@maldsmaker',
+  nautaCapacidade: '20',
+  nautaValorDiaria: 'R$ 2.800',
+  nautaValorMeio: 'R$ 1.600',
+  nautaLocacaoAvulsa: true,
+  notifLead: true,
+  notifShoot: true,
+  notifPagamento: false,
+  notifResumo: true,
+  drprExibir: true,
+  drprInscricoes: true,
+  drprVagas: '3',
+}
+
+/* ------------------------------------------------------------------ */
+/*  Conteúdo editável da página inicial                                */
+/* ------------------------------------------------------------------ */
+
+export interface HomeContent {
+  hero: {
+    badge: string
+    subtitle: string
+    ctaPortfolioLabel: string
+    ctaWhatsappLabel: string
+    marquee: string
+  }
+  sobre: {
+    tapeLabel: string
+    headline: string[]
+    paragraph1: string
+    paragraph2: string
+    stats: { value: number; suffix: string; label: string }[]
+    niches: string[]
+  }
+  servicos: {
+    eyebrow: string
+    heading: string
+    items: { name: string; tag: string; description: string; bullets: string[] }[]
+    ctaTitle: string
+    ctaSubtitle: string
+    ctaButtonLabel: string
+    ctaWhatsappMessage: string
+  }
+  nichosBanner: {
+    eyebrow: string
+    headingLine1: string
+    headingLine2: string
+    nichos: string[]
+  }
+  nauta: {
+    eyebrow: string
+    specs: { label: string; value: string }[]
+    capabilities: string[]
+    ctaLabel: string
+    ctaWhatsappMessage: string
+  }
+  contato: {
+    eyebrow: string
+    heading: string
+    intro: string
+    whatsappCtaLabel: string
+    whatsappMessage: string
+  }
+  footer: {
+    tagline: string
+  }
+}
+
+export const DEFAULT_HOME_CONTENT: HomeContent = {
+  hero: {
+    badge: 'Produção Audiovisual · Sorocaba, SP',
+    subtitle: 'Transformamos visões em imagem. Do clipe ao institucional, do ensaio ao evento — cada produção carrega a nossa assinatura.',
+    ctaPortfolioLabel: 'VER PORTFÓLIO',
+    ctaWhatsappLabel: 'WhatsApp',
+    marquee: 'PRODUÇÃO AUDIOVISUAL ◆ FOTOGRAFIA PROFISSIONAL ◆ NAUTA ESTÚDIO 480M² ◆ VÍDEOS PARA EMPRESAS ◆ TRÁFEGO PAGO ◆ REBRANDING ◆ EVENTOS AO VIVO ◆ ARTISTAS INDEPENDENTES ◆ ',
+  },
+  sobre: {
+    tapeLabel: 'NOSSA ESSÊNCIA',
+    headline: ['Viemos da rua.', 'Chegamos ao estúdio.', 'Nunca esquecemos de onde', 'a história começa.'],
+    paragraph1: 'A Malds Maker nasceu da necessidade de contar histórias com qualidade real — não apenas a qualidade que cabe no orçamento, mas a que o projeto merece. Atuamos com artistas, empresas, advogados, influencers, bares e restaurantes. O nicho muda. O nível não.',
+    paragraph2: 'Leonardo Maldonado lidera a direção criativa com um olhar formado na cena independente e aprimorado em produções de alto impacto. Roteiro, câmera, edição — a visão percorre todo o processo.',
+    stats: [
+      { value: 300, suffix: '+', label: 'Projetos' },
+      { value: 100, suffix: '+', label: 'Clientes' },
+      { value: 15, suffix: '', label: 'Nichos' },
+      { value: 30, suffix: 'M+', label: 'Streams' },
+    ],
+    niches: ['ARTISTAS', 'EMPRESAS', 'ADVOGADOS', 'EVENTOS', 'INFLUENCERS', 'MUSICAIS', 'INSTITUCIONAIS', 'BARES', 'RESTAURANTES'],
+  },
+  servicos: {
+    eyebrow: 'O QUE FAZEMOS',
+    heading: 'Cada ideia tem um formato ideal.',
+    items: [
+      {
+        name: 'Produção Audiovisual',
+        tag: 'CAPTAÇÃO · DIREÇÃO · EDIÇÃO',
+        description: 'Produção completa do briefing à entrega. Roteiro, direção criativa, captação em alta resolução e edição profissional — do clipe ao documentário.',
+        bullets: ['Roteiro e direção criativa', 'Captação em 4K com cinema glass', 'Edição, colorização e som', 'Entrega em múltiplos formatos'],
+      },
+      {
+        name: 'Fotografia Profissional',
+        tag: 'ENSAIOS · PRODUTOS · EVENTOS',
+        description: 'Ensaios com identidade visual forte. Fotografia de produto, cobertura de eventos e retratos editoriais que posicionam a sua marca.',
+        bullets: ['Ensaios artísticos e editoriais', 'Fotografia de produto e e-commerce', 'Cobertura de eventos ao vivo', 'Tratamento e entrega em alta resolução'],
+      },
+      {
+        name: 'Nauta Estúdio',
+        tag: 'LOCAÇÃO · WORKSHOPS · PRODUÇÕES',
+        description: '480m² de galpão profissional em Sorocaba. Cenários prontos, iluminação de estúdio, chroma key 14m, camarins e equipe de suporte.',
+        bullets: ['480m² de área total', 'Chroma key com 14m de largura', '2 camarins completos', 'Locação por turno ou diária'],
+      },
+      {
+        name: 'Conteúdo para Redes',
+        tag: 'REELS · STORIES · ESTRATÉGIA',
+        description: 'Conteúdo audiovisual e fotográfico pensado para plataformas digitais — do planejamento à publicação, com posicionamento e consistência de marca.',
+        bullets: ['Planejamento editorial mensal', 'Produção de Reels e Stories', 'Pacotes recorrentes', 'Relatório de desempenho'],
+      },
+      {
+        name: 'Tráfego Pago',
+        tag: 'META ADS · GOOGLE ADS · CONVERSÃO',
+        description: 'Gestão de mídia paga com foco em resultados reais. Campanhas para consciência de marca, geração de leads e conversão em vendas.',
+        bullets: ['Gestão Meta Ads e Google Ads', 'Criação de criativos para anúncios', 'Otimização e A/B testing', 'Relatório mensal de ROI'],
+      },
+      {
+        name: 'Rebranding & Identidade',
+        tag: 'MARCA · VISUAL · ESTRATÉGIA',
+        description: 'Redesenho estratégico de identidade visual para marcas que evoluíram além da sua imagem atual — logo, paleta, tipografia e sistema de aplicação.',
+        bullets: ['Diagnóstico e estratégia de marca', 'Redesign de logotipo e identidade', 'Manual de marca completo', 'Aplicações digitais e impressas'],
+      },
+      {
+        name: 'Transmissão ao Vivo',
+        tag: 'SHOWS · EVENTOS · CONFERÊNCIAS',
+        description: 'Produção técnica e transmissão ao vivo de eventos. Múltiplas câmeras, switch, áudio profissional e streaming simultâneo em múltiplas plataformas.',
+        bullets: ['Setup multicâmera profissional', 'Switcher e grafismo ao vivo', 'Streaming para YouTube, Instagram', 'Gravação e edição pós-evento'],
+      },
+      {
+        name: 'Estratégia Digital',
+        tag: 'PLANEJAMENTO · PRESENÇA · RESULTADO',
+        description: 'Consultoria e planejamento de presença digital integrada — do posicionamento orgânico à estratégia de conteúdo e métricas de crescimento.',
+        bullets: ['Auditoria de presença digital', 'Posicionamento e tom de voz', 'Calendário de conteúdo', 'Acompanhamento e ajustes mensais'],
+      },
+    ],
+    ctaTitle: 'Não encontrou o que precisa?',
+    ctaSubtitle: 'Atendemos projetos sob medida para qualquer necessidade.',
+    ctaButtonLabel: 'FALAR COM A EQUIPE →',
+    ctaWhatsappMessage: 'Olá, tenho um projeto personalizado!',
+  },
+  nichosBanner: {
+    eyebrow: '— do artista ao executivo',
+    headingLine1: 'Um formato pra',
+    headingLine2: 'cada história.',
+    nichos: ['MÚSICA', 'GASTRONOMIA', 'MODA', 'CORPORATIVO', 'EVENTOS', 'IMÓVEIS', 'FITNESS', 'ADVOCACIA'],
+  },
+  nauta: {
+    eyebrow: 'NOSSO ESPAÇO',
+    specs: [
+      { label: 'ÁREA TOTAL', value: '480 m²' },
+      { label: 'TETO', value: '6 metros' },
+      { label: 'CHROMAKEY', value: '14 metros' },
+      { label: 'CAMARINS', value: '2 unidades' },
+      { label: 'LOCALIZAÇÃO', value: 'Sorocaba, SP' },
+    ],
+    capabilities: ['PRODUÇÕES AUDIOVISUAIS', 'ENSAIOS FOTOGRÁFICOS', 'LOCAÇÃO DE ESPAÇO', 'WORKSHOPS & ENSAIOS'],
+    ctaLabel: 'RESERVAR O ESTÚDIO →',
+    ctaWhatsappMessage: 'Quero reservar o Nauta Estúdio!',
+  },
+  contato: {
+    eyebrow: 'CONTATO',
+    heading: 'Reserve seu horário.',
+    intro: 'Seja para um clipe, ensaio, evento ou estratégia de conteúdo — fale com a gente. Atendemos com atenção total a cada projeto, independente do tamanho.',
+    whatsappCtaLabel: 'CHAMAR NO WHATSAPP',
+    whatsappMessage: 'Olá, quero chamar no WhatsApp!',
+  },
+  footer: {
+    tagline: 'Refletindo mentes brilhantes.',
+  },
+}
+
 export type ClientStatus = 'ATIVO' | 'EM PAUSA' | 'CONCLUÍDO' | 'PROSPECT'
 export type ProjectStatus = 'BRIEFING' | 'PRÉ-PRODUÇÃO' | 'PRODUÇÃO' | 'ENTREGA'
 export type Priority = 'urgent' | 'normal' | 'low'
@@ -80,6 +286,11 @@ export interface PortfolioItem {
   category: string
   imageKey: string
   imageUrl?: string
+  videoUrl?: string
+  client?: string
+  year?: string
+  featured?: boolean
+  tags?: string[]
   isVideo: boolean
   sortOrder: number
   description?: string
@@ -95,8 +306,11 @@ export interface Testimonial {
   quote: string
   instagram?: string
   imageKey: string
+  imageUrl?: string
   sortOrder: number
 }
+
+export const MAX_TESTIMONIAL_IMAGE_BYTES = 4 * 1024 * 1024
 
 export interface ProjectImage {
   id: string
@@ -787,14 +1001,114 @@ export const GLOBAL_NOTES: GlobalNote[] = [
 export const EXPENSES: Expense[] = []
 
 export const PORTFOLIO_ITEMS: PortfolioItem[] = [
-  { id: 'pf1', title: 'Território — MC Vitão', slug: 'territorio-mc-vitao', category: 'CLIPES', imageKey: 'portfolio-territorio-mc-vitao', isVideo: true, sortOrder: 1 },
-  { id: 'pf2', title: 'Adega São Roque Institucional', slug: 'adega-sao-roque-institucional', category: 'INSTITUCIONAL', imageKey: 'portfolio-adega-sao-roque', isVideo: false, sortOrder: 2 },
-  { id: 'pf3', title: 'Ensaio Rafael Moreno', slug: 'ensaio-rafael-moreno', category: 'ENSAIOS', imageKey: 'portfolio-ensaio-rafael', isVideo: false, sortOrder: 3 },
-  { id: 'pf4', title: 'Show Kaizen Music Festival', slug: 'show-kaizen-music-festival', category: 'AO VIVO', imageKey: 'portfolio-show-kaizen', isVideo: true, sortOrder: 4 },
-  { id: 'pf5', title: 'Campanha Verão Kaizen', slug: 'campanha-verao-kaizen', category: 'EMPRESAS', imageKey: 'portfolio-campanha-kaizen', isVideo: false, sortOrder: 5 },
-  { id: 'pf6', title: 'EP Visual Ana Beatriz Lima', slug: 'ep-visual-ana-beatriz-lima', category: 'MÚSICA', imageKey: 'portfolio-ep-ana-beatriz', isVideo: true, sortOrder: 6 },
-  { id: 'pf7', title: 'Lançamento Horizonte', slug: 'lancamento-horizonte', category: 'INSTITUCIONAL', imageKey: 'portfolio-lancamento-horizonte', isVideo: false, sortOrder: 7 },
-  { id: 'pf8', title: 'Madrugada — Rafael Moreno', slug: 'madrugada-rafael-moreno', category: 'CLIPES', imageKey: 'portfolio-madrugada-rafael', isVideo: true, sortOrder: 8 },
+  {
+    id: 'pf1',
+    title: 'Território — MC Vitão',
+    slug: 'territorio-mc-vitao',
+    category: 'CLIPES',
+    client: 'MC Vitão / Som Livre',
+    year: '2025',
+    featured: true,
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    imageKey: 'portfolio-territorio-mc-vitao',
+    isVideo: true,
+    sortOrder: 1,
+    description: 'Direção cinematográfica, roteiro autoral e captação em 4K anamórfica para o novo single do MC Vitão em locações urbanas e galpão Nauta.',
+  },
+  {
+    id: 'pf2',
+    title: 'Adega São Roque Institucional',
+    slug: 'adega-sao-roque-institucional',
+    category: 'INSTITUCIONAL',
+    client: 'Adega São Roque',
+    year: '2024',
+    featured: false,
+    imageKey: 'portfolio-adega-sao-roque',
+    isVideo: false,
+    sortOrder: 2,
+    description: 'Filme de marca e ensaio institucional registrando os processos artesanais e a herança familiar da vinícola centenária.',
+  },
+  {
+    id: 'pf3',
+    title: 'Ensaio Rafael Moreno',
+    slug: 'ensaio-rafael-moreno',
+    category: 'ENSAIOS',
+    client: 'Rafael Moreno',
+    year: '2025',
+    featured: false,
+    imageKey: 'portfolio-ensaio-rafael',
+    isVideo: false,
+    sortOrder: 3,
+    description: 'Sessão editorial de retratos com iluminação de cinema e styling conceitual para divulgação de turnê e redes sociais.',
+  },
+  {
+    id: 'pf4',
+    title: 'Show Kaizen Music Festival',
+    slug: 'show-kaizen-music-festival',
+    category: 'AO VIVO',
+    client: 'Kaizen Music',
+    year: '2024',
+    featured: true,
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    imageKey: 'portfolio-show-kaizen',
+    isVideo: true,
+    sortOrder: 4,
+    description: 'Cobertura multicâmera ao vivo, teaser de recap e fotos de palco com mais de 15 mil pessoas presentes.',
+  },
+  {
+    id: 'pf5',
+    title: 'Campanha Verão Kaizen',
+    slug: 'campanha-verao-kaizen',
+    category: 'EMPRESAS',
+    client: 'Kaizen Wear',
+    year: '2025',
+    featured: false,
+    imageKey: 'portfolio-campanha-kaizen',
+    isVideo: false,
+    sortOrder: 5,
+    description: 'Campanha publicitária nacional de verão com fotografia de moda, reels comerciais e peças para tráfego pago.',
+  },
+  {
+    id: 'pf6',
+    title: 'EP Visual Ana Beatriz Lima',
+    slug: 'ep-visual-ana-beatriz-lima',
+    category: 'MÚSICA',
+    client: 'Ana Beatriz Lima',
+    year: '2025',
+    featured: true,
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    imageKey: 'portfolio-ep-ana-beatriz',
+    isVideo: true,
+    sortOrder: 6,
+    description: 'Trilogia visual produzida nos estúdios Nauta com cenografia viva, iluminação imersiva e color grading cinematográfico.',
+  },
+  {
+    id: 'pf7',
+    title: 'Lançamento Horizonte',
+    slug: 'lancamento-horizonte',
+    category: 'INSTITUCIONAL',
+    client: 'Horizonte Urbanismo',
+    year: '2024',
+    featured: false,
+    imageKey: 'portfolio-lancamento-horizonte',
+    isVideo: false,
+    sortOrder: 7,
+    description: 'Vídeo conceito e ensaio aéreo com drone FPV para lançamento de condomínio fechado de alto padrão.',
+  },
+  {
+    id: 'pf8',
+    title: 'Madrugada — Rafael Moreno',
+    slug: 'madrugada-rafael-moreno',
+    category: 'CLIPES',
+    client: 'Rafael Moreno',
+    year: '2024',
+    featured: true,
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    imageKey: 'portfolio-madrugada-rafael',
+    isVideo: true,
+    sortOrder: 8,
+    description: 'Videoclipe com estética noturna noir, perseguições automotivas e narrativa cinematográfica completa.',
+  },
 ]
 
 export const TESTIMONIALS: Testimonial[] = [

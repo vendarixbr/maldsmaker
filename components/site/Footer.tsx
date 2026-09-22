@@ -2,30 +2,7 @@
 
 import { AtSign, Phone, Play } from 'lucide-react'
 import { SiteImage } from '@/components/site/SiteImage'
-
-const navLinks = [
-  { label: 'Sobre',          href: '#sobre'     },
-  { label: 'Serviços',       href: '#servicos'  },
-  { label: 'Nauta Estúdio',  href: '#nauta'     },
-  { label: 'Portfólio',      href: '#portfolio' },
-  { label: 'Contato',        href: '#contato'   },
-  { label: 'Reservar Horário', href: 'https://wa.me/5515997307171' },
-]
-
-const serviceLinks = [
-  'Produção Audiovisual',
-  'Fotografia',
-  'Nauta Estúdio',
-  'Tráfego Pago',
-  'Rebranding',
-  'Estratégia Digital',
-]
-
-const socials = [
-  { Icon: AtSign, href: 'https://instagram.com/maldsmaker', label: 'Instagram' },
-  { Icon: Phone,  href: 'https://wa.me/5515997307171',     label: 'WhatsApp'  },
-  { Icon: Play,   href: 'https://youtube.com/@maldsmaker', label: 'YouTube'   },
-]
+import { useSiteContent, whatsappLink } from '@/lib/site-content-context'
 
 const linkStyle = {
   color: '#5A5A52' as const,
@@ -34,6 +11,25 @@ const linkStyle = {
 }
 
 export function Footer() {
+  const { home, settings } = useSiteContent()
+
+  const navLinks = [
+    { label: 'Sobre',          href: '#sobre'     },
+    { label: 'Serviços',       href: '#servicos'  },
+    { label: 'Nauta Estúdio',  href: '#nauta'     },
+    { label: 'Portfólio',      href: '#portfolio' },
+    { label: 'Contato',        href: '#contato'   },
+    { label: 'Reservar Horário', href: whatsappLink(settings.whatsapp) },
+  ]
+
+  const serviceLinks = home.servicos.items.map(s => s.name)
+
+  const socials = [
+    { Icon: AtSign, href: `https://instagram.com/${settings.instagram.replace('@', '')}`, label: 'Instagram' },
+    { Icon: Phone,  href: whatsappLink(settings.whatsapp),                                label: 'WhatsApp'  },
+    { Icon: Play,   href: settings.youtube,                                               label: 'YouTube'   },
+  ]
+
   return (
     <footer style={{ background: '#050505', borderTop: '1px solid rgba(201,168,76,0.1)' }}>
       <div className="site-container py-16 lg:py-20">
@@ -58,7 +54,7 @@ export function Footer() {
               />
             </a>
             <p className="font-body italic text-sm leading-relaxed" style={{ color: '#5A5A52', fontWeight: 300 }}>
-              Refletindo mentes brilhantes.
+              {home.footer.tagline}
             </p>
             <p className="font-mono-mm text-[10px] tracking-[0.1em]" style={{ color: '#2e2e2e' }}>
               © {new Date().getFullYear()} Malds Maker.<br />Todos os direitos reservados.
@@ -158,7 +154,7 @@ export function Footer() {
               ))}
             </div>
             <p className="font-mono-mm text-[10px] tracking-[0.1em] leading-relaxed" style={{ color: '#3a3a3a' }}>
-              Nauta Estúdio<br />Sorocaba, SP — Brasil
+              Nauta Estúdio<br />{settings.cidade} — Brasil
             </p>
           </div>
         </div>
@@ -167,20 +163,20 @@ export function Footer() {
         <div className="h-px mb-6" style={{ background: 'rgba(255,255,255,0.04)' }} />
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <p className="font-mono-mm text-[10px] tracking-[0.1em]" style={{ color: '#2e2e2e' }}>
-            PRODUÇÃO AUDIOVISUAL · FOTOGRAFIA · SOROCABA, SP
+            PRODUÇÃO AUDIOVISUAL · FOTOGRAFIA · {settings.cidade.toUpperCase()}
           </p>
           <div className="flex items-center gap-4">
             <a
-              href="mailto:malldsmaker@gmail.com"
+              href={`mailto:${settings.email}`}
               className="font-mono-mm text-[10px] tracking-[0.1em] transition-colors duration-200"
               style={{ color: '#3a3a3a' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#C9A84C')}
               onMouseLeave={e => (e.currentTarget.style.color = '#3a3a3a')}
             >
-              malldsmaker@gmail.com
+              {settings.email}
             </a>
             <a
-              href="https://wa.me/5515997307171"
+              href={whatsappLink(settings.whatsapp)}
               target="_blank"
               rel="noopener noreferrer"
               className="font-mono-mm text-[10px] tracking-[0.1em] transition-colors duration-200"
@@ -188,7 +184,7 @@ export function Footer() {
               onMouseEnter={e => (e.currentTarget.style.color = '#C9A84C')}
               onMouseLeave={e => (e.currentTarget.style.color = '#3a3a3a')}
             >
-              (15) 99730-7171
+              {settings.whatsapp}
             </a>
           </div>
         </div>

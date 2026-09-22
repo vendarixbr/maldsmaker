@@ -2,19 +2,11 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
-
-const NICHOS = [
-  'MÚSICA',
-  'GASTRONOMIA',
-  'MODA',
-  'CORPORATIVO',
-  'EVENTOS',
-  'IMÓVEIS',
-  'FITNESS',
-  'ADVOCACIA',
-]
+import { useSiteContent } from '@/lib/site-content-context'
 
 export function NichosBanner() {
+  const { home } = useSiteContent()
+  const { eyebrow, headingLine1, headingLine2, nichos } = home.nichosBanner
   const ref = useRef<HTMLElement>(null)
 
   const { scrollYProgress } = useScroll({
@@ -36,7 +28,7 @@ export function NichosBanner() {
           className="font-mono-mm text-[10px] tracking-[0.18em] uppercase mb-4"
           style={{ color: '#C9A84C' }}
         >
-          — do artista ao executivo
+          {eyebrow}
         </p>
 
         <h2
@@ -47,12 +39,12 @@ export function NichosBanner() {
             letterSpacing: '-0.01em',
           }}
         >
-          Um formato pra<br />
-          <span style={{ color: '#C9A84C' }}>cada história.</span>
+          {headingLine1}<br />
+          <span style={{ color: '#C9A84C' }}>{headingLine2}</span>
         </h2>
 
         <div className="flex flex-wrap gap-2">
-          {NICHOS.map((n) => (
+          {nichos.map((n) => (
             <span
               key={n}
               className="font-mono-mm text-[9px] tracking-[0.14em] uppercase px-3 py-1.5"

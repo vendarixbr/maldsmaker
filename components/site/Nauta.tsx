@@ -4,23 +4,11 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Camera } from 'lucide-react'
 import { SiteImage } from '@/components/site/SiteImage'
-
-const specs = [
-  { label: 'ÁREA TOTAL',   value: '480 m²'       },
-  { label: 'TETO',         value: '6 metros'      },
-  { label: 'CHROMAKEY',    value: '14 metros'     },
-  { label: 'CAMARINS',     value: '2 unidades'    },
-  { label: 'LOCALIZAÇÃO',  value: 'Sorocaba, SP'  },
-]
-
-const capabilities = [
-  'PRODUÇÕES AUDIOVISUAIS',
-  'ENSAIOS FOTOGRÁFICOS',
-  'LOCAÇÃO DE ESPAÇO',
-  'WORKSHOPS & ENSAIOS',
-]
+import { useSiteContent, whatsappLink } from '@/lib/site-content-context'
 
 export function Nauta() {
+  const { home, settings } = useSiteContent()
+  const { eyebrow, specs, capabilities, ctaLabel, ctaWhatsappMessage } = home.nauta
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '0px 0px -80px 0px' })
 
@@ -42,7 +30,7 @@ export function Nauta() {
               transition={{ duration: 0.5 }}
             >
               <p className="font-mono-mm text-[11px] tracking-[0.14em] mb-5" style={{ color: '#C9A84C' }}>
-                NOSSO ESPAÇO
+                {eyebrow}
               </p>
 
               {/* Headline */}
@@ -79,7 +67,7 @@ export function Nauta() {
             >
               {specs.map((spec, i) => (
                 <motion.div
-                  key={spec.label}
+                  key={i}
                   initial={{ opacity: 0, x: -12 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ delay: 0.28 + i * 0.07 }}
@@ -110,9 +98,9 @@ export function Nauta() {
               transition={{ delay: 0.6 }}
               className="flex flex-wrap gap-2 mb-8"
             >
-              {capabilities.map((cap) => (
+              {capabilities.map((cap, i) => (
                 <span
-                  key={cap}
+                  key={`${cap}-${i}`}
                   className="h-7 px-3 flex items-center font-mono-mm text-[9px] tracking-[0.1em]"
                   style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#A8A89A' }}
                 >
@@ -121,22 +109,42 @@ export function Nauta() {
               ))}
             </motion.div>
 
-            {/* CTA */}
-            <motion.a
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ delay: 0.68 }}
-              href="https://wa.me/5515997307171?text=Quero%20reservar%20o%20Nauta%20Estúdio!"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 font-mono-mm text-[11px] tracking-[0.14em] uppercase transition-colors duration-200"
-              style={{ color: '#C9A84C' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.7' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '1' }}
+            {/* Capacidade e valores */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.64 }}
+              className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-8"
             >
-              <Camera size={16} />
-              RESERVAR O ESTÚDIO →
-            </motion.a>
+              <span className="font-mono-mm text-[10px] tracking-[0.1em]" style={{ color: '#5A5A52' }}>
+                ATÉ {settings.nautaCapacidade} PESSOAS
+              </span>
+              <span className="font-mono-mm text-[10px] tracking-[0.1em]" style={{ color: '#5A5A52' }}>
+                DIÁRIA (10H) <span style={{ color: '#C9A84C' }}>{settings.nautaValorDiaria}</span>
+              </span>
+              <span className="font-mono-mm text-[10px] tracking-[0.1em]" style={{ color: '#5A5A52' }}>
+                MEIO PERÍODO (5H) <span style={{ color: '#C9A84C' }}>{settings.nautaValorMeio}</span>
+              </span>
+            </motion.div>
+
+            {/* CTA */}
+            {settings.nautaLocacaoAvulsa && (
+              <motion.a
+                initial={{ opacity: 0 }}
+                animate={inView ? { opacity: 1 } : {}}
+                transition={{ delay: 0.68 }}
+                href={whatsappLink(settings.whatsapp, ctaWhatsappMessage)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 font-mono-mm text-[11px] tracking-[0.14em] uppercase transition-colors duration-200"
+                style={{ color: '#C9A84C' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.7' }}
+                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '1' }}
+              >
+                <Camera size={16} />
+                {ctaLabel}
+              </motion.a>
+            )}
           </div>
 
           {/* ── Right — gallery ── */}

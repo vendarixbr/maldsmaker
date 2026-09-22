@@ -8,6 +8,7 @@ import { CustomCursor } from '@/components/site/CustomCursor'
 import { getPublicPortfolio, getPublicPortfolioItem } from '@/lib/admin-db'
 import { getFallbackSrc } from '@/lib/site-images'
 import { getSiteUrl, SITE_NAME } from '@/lib/site'
+import { parseVideoUrl } from '@/lib/video'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,13 +25,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params
   const site = getSiteUrl()
   const item = await getPublicPortfolioItem(slug)
-  if (!item || !item.slug) return { title: `Trabalho não encontrado — ${SITE_NAME}` }
+  if (!item) return { title: `Trabalho não encontrado — ${SITE_NAME}` }
 
+  const slugPath = item.slug || item.id
   const title = `${item.title} — ${SITE_NAME}`
   const description =
     item.description?.trim() ||
     `${item.title} · ${item.category} · Produção audiovisual Malds Maker em Sorocaba, SP.`
-  const url = `${site}/portfolio/${item.slug}`
+  const url = `${site}/portfolio/${slugPath}`
   const image = coverUrl(item.imageUrl, item.imageKey)
 
   return {
@@ -171,6 +173,31 @@ export default async function PortfolioItemPage({ params }: PageProps) {
           {/* Detalhes */}
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 py-10 lg:py-14">
             <div>
+              {/* Player de Vídeo Embutido (se houver videoUrl) */}
+              {item.isVideo && item.videoUrl && (() => {
+                const parsed = parseVideoUrl(item.videoUrl)
+                return (
+                  <div className="mb-10">
+                    <p className="font-mono-mm text-[11px] tracking-[0.14em] mb-4 text-[#C9A84C] flex items-center gap-2">
+                      <Play size={12} fill="currentColor" /> REPRODUÇÃO DO VÍDEO
+                    </p>
+                    <div className="relative w-full overflow-hidden rounded-xl bg-black border border-[rgba(201,168,76,0.3)] shadow-2xl" style={{ aspectRatio: '16/9' }}>
+                      {parsed.embedUrl ? (
+                        <iframe
+                          src={parsed.embedUrl}
+                          title={item.title}
+                          className="absolute inset-0 w-full h-full border-0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      ) : parsed.directUrl ? (
+                        <video src={parsed.directUrl} controls className="absolute inset-0 w-full h-full object-contain" />
+                      ) : null}
+                    </div>
+                  </div>
+                )
+              })()}
+
               <p className="font-mono-mm text-[11px] tracking-[0.14em] mb-4" style={{ color: '#C9A84C' }}>
                 SOBRE O TRABALHO
               </p>
@@ -188,14 +215,14 @@ export default async function PortfolioItemPage({ params }: PageProps) {
               {gallery.length > 0 && (
                 <div className="mt-12">
                   <p className="font-mono-mm text-[11px] tracking-[0.14em] mb-6" style={{ color: '#C9A84C' }}>
-                    GALERIA ({gallery.length})
+                    GALERIA & STILLS ({gallery.length})
                   </p>
                   <div className="columns-1 sm:columns-2 gap-3">
                     {gallery.map(img => (
                       <div
                         key={img.id}
-                        className="relative break-inside-avoid mb-3 overflow-hidden"
-                        style={{ aspectRatio: '4/3', background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '2px' }}
+                        className="relative break-inside-avoid mb-3 overflow-hidden rounded-xl"
+                        style={{ aspectRatio: '4/3', background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.06)' }}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={img.url} alt={item.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
@@ -209,8 +236,8 @@ export default async function PortfolioItemPage({ params }: PageProps) {
             {/* Ficha + CTA */}
             <aside className="flex flex-col gap-6 lg:sticky lg:top-28 h-fit">
               <div
-                className="p-6"
-                style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '2px' }}
+                className="p-6 rounded-xl"
+                style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.08)' }}
               >
                 <p className="font-mono-mm text-[11px] tracking-[0.14em] mb-5" style={{ color: '#C9A84C' }}>
                   FICHA TÉCNICA
@@ -218,23 +245,31 @@ export default async function PortfolioItemPage({ params }: PageProps) {
                 <div className="flex flex-col gap-4">
                   {[
                     ['Projeto', item.title],
+                    item.client ? ['Cliente', item.client] : null,
+                    item.year ? ['Ano', item.year] : null,
                     ['Categoria', item.category],
-                    ['Formato', item.isVideo ? 'Vídeo' : 'Foto'],
-                  ].map(([label, value]) => (
-                    <div key={label} className="flex flex-col gap-1 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                      <span className="font-mono-mm text-[10px] tracking-[0.12em] uppercase" style={{ color: '#5A5A52' }}>
-                        {label}
-                      </span>
-                      <span className="font-display text-base" style={{ color: '#F5F5F0' }}>
-                        {value}
-                      </span>
-                    </div>
-                  ))}
+                    ['Formato', item.isVideo ? 'Vídeo / Cinema 4K' : 'Fotografia / Stills'],
+                    ['Produção', 'Malds Maker Studio'],
+                  ]
+                    .filter(Boolean)
+                    .map((entry) => {
+                      const [label, value] = entry as [string, string]
+                      return (
+                        <div key={label} className="flex flex-col gap-1 pb-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                          <span className="font-mono-mm text-[10px] tracking-[0.12em] uppercase text-[#64748B]">
+                            {label}
+                          </span>
+                          <span className="font-display text-sm sm:text-base text-[#F5F5F0]">
+                            {value}
+                          </span>
+                        </div>
+                      )
+                    })}
                 </div>
                 <Link
                   href="/#contato"
-                  className="mt-6 flex items-center justify-center gap-2 h-12 font-mono-mm text-[11px] tracking-[0.14em] font-semibold transition-all"
-                  style={{ background: '#C9A84C', color: '#0A0A0A', borderRadius: '1px' }}
+                  className="mt-6 flex items-center justify-center gap-2 h-12 font-mono-mm text-[11px] tracking-[0.14em] font-semibold transition-all rounded-lg"
+                  style={{ background: '#C9A84C', color: '#0A0A0A' }}
                 >
                   QUERO UM PROJETO ASSIM
                   <ArrowRight size={14} />
@@ -242,8 +277,8 @@ export default async function PortfolioItemPage({ params }: PageProps) {
               </div>
               <Link
                 href="/#portfolio"
-                className="flex items-center justify-center gap-2 h-11 font-mono-mm text-[11px] tracking-[0.14em] transition-all"
-                style={{ border: '1px solid rgba(245,245,240,0.15)', color: '#A8A89A', borderRadius: '1px' }}
+                className="flex items-center justify-center gap-2 h-11 font-mono-mm text-[11px] tracking-[0.14em] transition-all rounded-lg"
+                style={{ border: '1px solid rgba(245,245,240,0.15)', color: '#A8A89A' }}
               >
                 <ArrowLeft size={14} />
                 VOLTAR AO PORTFÓLIO

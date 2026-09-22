@@ -17,6 +17,7 @@ import {
   LayoutGrid,
   MessageSquareQuote,
   Search,
+  Home,
 } from 'lucide-react'
 import { SiteImage } from '@/components/site/SiteImage'
 import { useRouter } from 'next/navigation'
@@ -32,6 +33,7 @@ const navItems = [
   { id: 'portfolio', label: 'Portfólio Site', Icon: LayoutGrid },
   { id: 'depoimentos', label: 'Depoimentos', Icon: MessageSquareQuote },
   { id: 'imagens', label: 'Imagens do Site', Icon: Images },
+  { id: 'pagina-inicial', label: 'Página Inicial', Icon: Home },
   { id: 'configuracoes', label: 'Configurações', Icon: Settings },
 ]
 

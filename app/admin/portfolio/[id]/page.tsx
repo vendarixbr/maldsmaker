@@ -10,6 +10,7 @@ import { SITE_IMAGE_SLOTS } from '@/lib/site-images'
 import { uniqueSlug } from '@/lib/slug'
 import {
   ArrowLeft,
+  Check,
   ExternalLink,
   ImagePlus,
   Loader2,
@@ -278,6 +279,17 @@ function PortfolioDetail() {
               <p className="font-mono-mm text-[10px] text-[#64748B]">Página pública: /portfolio/{draft.slug || '...'}</p>
             </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="font-mono-mm text-[10px] font-semibold text-[#CBD5E1]">CLIENTE / ARTISTA</label>
+                <input value={draft.client ?? ''} onChange={e => patch({ client: e.target.value })} placeholder="Ex: MC Vitão / Som Livre" className="h-10 px-3 font-display text-sm outline-none focus:border-[#C9A84C]" style={inputStyle} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="font-mono-mm text-[10px] font-semibold text-[#CBD5E1]">ANO DE PRODUÇÃO</label>
+                <input value={draft.year ?? ''} onChange={e => patch({ year: e.target.value })} placeholder="Ex: 2025" className="h-10 px-3 font-display text-sm outline-none focus:border-[#C9A84C]" style={inputStyle} />
+              </div>
+            </div>
+
             <div className="flex flex-col gap-1">
               <label className="font-mono-mm text-[10px] font-semibold text-[#CBD5E1]">DESCRIÇÃO</label>
               <textarea value={draft.description ?? ''} onChange={e => patch({ description: e.target.value })} rows={4} placeholder="Resumo do trabalho, cliente, ano, formato..." className="p-3 font-display text-sm outline-none resize-y focus:border-[#C9A84C]" style={inputStyle} />
@@ -307,20 +319,54 @@ function PortfolioDetail() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1">
-                <label className="font-mono-mm text-[10px] font-semibold text-[#CBD5E1]">IMAGEM (slot do site)</label>
-                <select value={draft.imageKey} onChange={e => patch({ imageKey: e.target.value })} className="h-10 px-3 font-display text-sm outline-none focus:border-[#C9A84C]" style={inputStyle}>
-                  {SITE_IMAGE_SLOTS.filter(s => s.key.startsWith('portfolio')).map(s => (
-                    <option key={s.key} value={s.key}>{s.label}</option>
-                  ))}
-                </select>
-                <p className="font-mono-mm text-[10px] text-[#64748B]">Usado quando não há capa enviada.</p>
+            {/* Destaque */}
+            <div className="flex items-center justify-between p-3.5 rounded-lg bg-[#141414] border border-[rgba(255,255,255,0.1)]">
+              <div>
+                <p className="font-display font-medium text-xs text-white">Destaque na Página Inicial</p>
+                <p className="font-mono-mm text-[10px] text-[#94A3B8]">Dá destaque prioritário visual no grid bento do site.</p>
               </div>
-              <div className="flex flex-col gap-1">
-                <label className="font-mono-mm text-[10px] font-semibold text-[#CBD5E1]">URL EXTERNA</label>
-                <input value={draft.imageUrl ?? ''} onChange={e => patch({ imageUrl: e.target.value.trim() || undefined })} placeholder="https://... (sobrescreve o slot)" className="h-10 px-3 font-display text-sm outline-none focus:border-[#C9A84C]" style={inputStyle} />
+              <button
+                type="button"
+                onClick={() => patch({ featured: !draft.featured })}
+                className="w-12 h-6 rounded-full transition-colors relative cursor-pointer"
+                style={{ background: draft.featured ? '#C9A84C' : 'rgba(255,255,255,0.15)' }}
+              >
+                <div
+                  className="w-4 h-4 rounded-full bg-white transition-transform absolute top-1"
+                  style={{ transform: draft.featured ? 'translateX(28px)' : 'translateX(4px)' }}
+                />
+              </button>
+            </div>
+
+            {/* Vídeo URL e Preview */}
+            {draft.isVideo && (
+              <div className="flex flex-col gap-3 p-3.5 rounded-lg bg-[#141414] border border-[rgba(201,168,76,0.25)]">
+                <div className="flex flex-col gap-1">
+                  <label className="font-mono-mm text-[10px] font-semibold text-[#E5C158] flex items-center gap-1.5">
+                    <Video size={12} /> URL DO VÍDEO (YOUTUBE / VIMEO / MP4)
+                  </label>
+                  <input
+                    value={draft.videoUrl ?? ''}
+                    onChange={e => patch({ videoUrl: e.target.value.trim() || undefined })}
+                    placeholder="https://www.youtube.com/watch?v=... ou https://vimeo.com/..."
+                    className="h-10 px-3 font-display text-sm outline-none focus:border-[#C9A84C]"
+                    style={inputStyle}
+                  />
+                  <p className="font-mono-mm text-[10px] text-[#94A3B8]">
+                    Habilita o Cinema Modal na página inicial e o player incorporado na página do projeto.
+                  </p>
+                </div>
               </div>
+            )}
+
+            <div className="flex flex-col gap-1">
+              <label className="font-mono-mm text-[10px] font-semibold text-[#CBD5E1]">IMAGEM (slot do site)</label>
+              <select value={draft.imageKey} onChange={e => patch({ imageKey: e.target.value })} className="h-10 px-3 font-display text-sm outline-none focus:border-[#C9A84C]" style={inputStyle}>
+                {SITE_IMAGE_SLOTS.filter(s => s.key.startsWith('portfolio')).map(s => (
+                  <option key={s.key} value={s.key}>{s.label}</option>
+                ))}
+              </select>
+              <p className="font-mono-mm text-[10px] text-[#64748B]">Usado quando não há capa enviada (veja abaixo).</p>
             </div>
           </section>
 
@@ -365,6 +411,36 @@ function PortfolioDetail() {
               {uploading === 'cover' ? <Loader2 size={15} className="animate-spin" /> : <Upload size={15} />}
               {draft.imageUrl ? 'TROCAR CAPA' : 'ENVIAR CAPA'}
             </button>
+
+            {gallery.length > 0 && (
+              <div className="flex flex-col gap-2 pt-2 border-t border-[rgba(255,255,255,0.08)]">
+                <p className="font-mono-mm text-[10px] text-[#94A3B8]">Ou use uma foto já enviada na galeria:</p>
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  {gallery.map(img => {
+                    const isCover = draft.imageUrl === img.url
+                    return (
+                      <button
+                        key={img.id}
+                        type="button"
+                        onClick={() => patch({ imageUrl: img.url })}
+                        disabled={isCover}
+                        className="relative overflow-hidden rounded-lg"
+                        style={{ aspectRatio: '4/3', border: isCover ? '2px solid #C9A84C' : '1px solid rgba(255,255,255,0.14)' }}
+                        title={isCover ? 'Já é a capa' : 'Usar como capa'}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={img.url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                        {isCover && (
+                          <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.45)' }}>
+                            <Check size={16} className="text-[#E5C158]" />
+                          </div>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </section>
 
           {/* Galeria */}
@@ -423,19 +499,31 @@ function PortfolioDetail() {
             VER PÁGINA PÚBLICA
           </a>
           <section className="p-5 rounded-xl bg-[#111111] border border-[rgba(255,255,255,0.12)] flex flex-col gap-4">
-            <h2 className="font-mono-mm text-[11px] tracking-[0.12em] font-semibold text-[#E5C158]">RESUMO</h2>
+            <h2 className="font-mono-mm text-[11px] tracking-[0.12em] font-semibold text-[#E5C158]">RESUMO DO PROJETO</h2>
             <div className="flex flex-col gap-3 font-display text-sm">
               <div className="flex justify-between gap-2">
                 <span className="text-[#94A3B8]">Categoria</span>
                 <span className="text-white text-right font-semibold">{draft.category}</span>
               </div>
               <div className="flex justify-between gap-2">
+                <span className="text-[#94A3B8]">Cliente</span>
+                <span className="text-white text-right font-semibold truncate">{draft.client || '—'}</span>
+              </div>
+              <div className="flex justify-between gap-2">
+                <span className="text-[#94A3B8]">Ano</span>
+                <span className="text-white">{draft.year || '—'}</span>
+              </div>
+              <div className="flex justify-between gap-2">
                 <span className="text-[#94A3B8]">Tipo</span>
                 <span className="text-white">{draft.isVideo ? 'VÍDEO' : 'FOTO'}</span>
               </div>
               <div className="flex justify-between gap-2">
-                <span className="text-[#94A3B8]">Ordem</span>
-                <span className="text-white">#{draft.sortOrder}</span>
+                <span className="text-[#94A3B8]">Destaque na Home</span>
+                <span className="text-white font-semibold">{draft.featured ? 'SIM (⭐)' : 'NÃO'}</span>
+              </div>
+              <div className="flex justify-between gap-2">
+                <span className="text-[#94A3B8]">Ordem no Site</span>
+                <span className="text-white font-mono-mm">#{draft.sortOrder}</span>
               </div>
               <div className="flex justify-between gap-2">
                 <span className="text-[#94A3B8]">Capa</span>

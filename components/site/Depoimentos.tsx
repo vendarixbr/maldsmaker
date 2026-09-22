@@ -4,7 +4,7 @@ import { useRef, useCallback, useEffect, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import useEmblaCarousel from 'embla-carousel-react'
-import { SiteImage } from '@/components/site/SiteImage'
+import { TestimonialAvatar } from '@/components/site/TestimonialAvatar'
 import { TESTIMONIALS, type Testimonial } from '@/lib/data'
 
 export function Depoimentos() {
@@ -136,13 +136,7 @@ export function Depoimentos() {
                       className="relative w-11 h-11 rounded-full overflow-hidden shrink-0"
                       style={{ border: '1px solid rgba(201,168,76,0.4)' }}
                     >
-                      <SiteImage
-                        imageKey={t.imageKey || 'avatar-bianca'}
-                        alt={t.name}
-                        fill
-                        className="object-cover"
-                        sizes="44px"
-                      />
+                      <TestimonialAvatar imageUrl={t.imageUrl} imageKey={t.imageKey} name={t.name} sizePx={44} />
                     </div>
                     <div>
                       <p

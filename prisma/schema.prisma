@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model SiteSettings {
+  id        String   @id @default("default")
+  data      Json     @default("{}")
+  updatedAt DateTime @updatedAt
+}
+
+model HomeContent {
+  id        String   @id @default("default")
+  data      Json     @default("{}")
+  updatedAt DateTime @updatedAt
+}
+
 model Client {
   id             String   @id
   name           String
@@ -117,6 +129,7 @@ model Testimonial {
   quote     String
   instagram String?
   imageKey  String   @default("")
+  imageUrl  String?
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

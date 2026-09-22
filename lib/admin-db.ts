@@ -4,7 +4,8 @@ import {
   type AdminAction,
   type AdminState,
 } from './admin-store'
-import { PORTFOLIO_ITEMS, TESTIMONIALS, type CalendarEvent, type Client, type Expense, type GlobalNote, type PortfolioItem, type Project, type Testimonial } from './data'
+import { DEFAULT_SITE_SETTINGS, PORTFOLIO_ITEMS, TESTIMONIALS, type CalendarEvent, type Client, type Expense, type GlobalNote, type HomeContent, type PortfolioItem, type Project, type SiteSettings, type Testimonial } from './data'
+import { mergeHomeContent } from './admin-store'
 
 type DbClient = Awaited<ReturnType<typeof prisma.client.findMany>>[number]
 type DbProject = Awaited<ReturnType<typeof prisma.project.findMany>>[number]
@@ -94,6 +95,19 @@ function toExpense(row: { id: string; description: string; category: string; dat
 }
 
 function toPortfolio(row: { id: string; title: string; slug: string; category: string; imageKey: string; imageUrl: string | null; isVideo: boolean; sortOrder: number; description: string; images: unknown }): PortfolioItem {
+  let imagesList: PortfolioItem['images'] = []
+  let extraMeta: Partial<PortfolioItem> = {}
+
+  if (Array.isArray(row.images)) {
+    for (const entry of row.images) {
+      if (entry && typeof entry === 'object' && '_meta' in entry) {
+        extraMeta = { ...extraMeta, ...(entry as Record<string, unknown>) }
+      } else if (entry && typeof entry === 'object' && 'url' in entry) {
+        imagesList.push(entry as any)
+      }
+    }
+  }
+
   return {
     id: row.id,
     title: row.title,
@@ -101,14 +115,19 @@ function toPortfolio(row: { id: string; title: string; slug: string; category: s
     category: row.category,
     imageKey: row.imageKey,
     imageUrl: row.imageUrl ?? undefined,
+    videoUrl: typeof extraMeta.videoUrl === 'string' ? extraMeta.videoUrl : undefined,
+    client: typeof extraMeta.client === 'string' ? extraMeta.client : undefined,
+    year: typeof extraMeta.year === 'string' ? extraMeta.year : undefined,
+    featured: typeof extraMeta.featured === 'boolean' ? extraMeta.featured : false,
+    tags: Array.isArray(extraMeta.tags) ? (extraMeta.tags as string[]) : [],
     isVideo: row.isVideo,
     sortOrder: row.sortOrder,
     description: row.description ?? '',
-    images: (row.images as unknown as PortfolioItem['images']) ?? [],
+    images: imagesList,
   }
 }
 
-function toTestimonial(row: { id: string; name: string; niche: string; quote: string; instagram: string | null; imageKey: string; sortOrder: number }): Testimonial {
+function toTestimonial(row: { id: string; name: string; niche: string; quote: string; instagram: string | null; imageKey: string; imageUrl: string | null; sortOrder: number }): Testimonial {
   return {
     id: row.id,
     name: row.name,
@@ -116,6 +135,7 @@ function toTestimonial(row: { id: string; name: string; niche: string; quote: st
     quote: row.quote,
     instagram: row.instagram ?? undefined,
     imageKey: row.imageKey,
+    imageUrl: row.imageUrl ?? undefined,
     sortOrder: row.sortOrder,
   }
 }
@@ -149,6 +169,14 @@ export async function getAdminState(): Promise<AdminState> {
     () => prisma.testimonial.findMany({ orderBy: { sortOrder: 'asc' } }),
     []
   )
+  const settingsRow = await safeFind(
+    () => prisma.siteSettings.findUnique({ where: { id: 'default' } }),
+    null
+  )
+  const homeContentRow = await safeFind(
+    () => prisma.homeContent.findUnique({ where: { id: 'default' } }),
+    null
+  )
 
   return {
     clients: clients.map(toClient),
@@ -158,7 +186,25 @@ export async function getAdminState(): Promise<AdminState> {
     expenses: expenses.map(toExpense),
     portfolio: portfolio.length ? portfolio.map(toPortfolio) : PORTFOLIO_ITEMS,
     testimonials: testimonials.length ? testimonials.map(toTestimonial) : TESTIMONIALS,
+    settings: { ...DEFAULT_SITE_SETTINGS, ...(settingsRow?.data as Partial<SiteSettings> | undefined) },
+    homeContent: mergeHomeContent(homeContentRow?.data as Partial<HomeContent> | undefined),
   }
+}
+
+export async function getPublicHomeContent(): Promise<HomeContent> {
+  const row = await safeFind(
+    () => prisma.homeContent.findUnique({ where: { id: 'default' } }),
+    null
+  )
+  return mergeHomeContent(row?.data as Partial<HomeContent> | undefined)
+}
+
+export async function getPublicSettings(): Promise<SiteSettings> {
+  const row = await safeFind(
+    () => prisma.siteSettings.findUnique({ where: { id: 'default' } }),
+    null
+  )
+  return { ...DEFAULT_SITE_SETTINGS, ...(row?.data as Partial<SiteSettings> | undefined) }
 }
 
 export async function getPublicPortfolio(): Promise<PortfolioItem[]> {
@@ -181,7 +227,14 @@ export async function getPublicTestimonials(): Promise<Testimonial[]> {
 
 export async function getPublicPortfolioItem(slugOrId: string): Promise<PortfolioItem | null> {
   const items = await getPublicPortfolio()
-  return items.find(item => item.slug === slugOrId || item.id === slugOrId) ?? null
+  const clean = decodeURIComponent(slugOrId || '').trim().toLowerCase()
+  return (
+    items.find(
+      item =>
+        (item.slug && item.slug.toLowerCase() === clean) ||
+        (item.id && item.id.toLowerCase() === clean)
+    ) ?? null
+  )
 }
 
 /**
@@ -378,6 +431,24 @@ export async function applyAdminAction(action: AdminAction): Promise<AdminState>
       await prisma.testimonial.deleteMany({ where: { id: action.id } })
       break
 
+    // --- Configurações ---
+    case 'UPDATE_SETTINGS':
+      await prisma.siteSettings.upsert({
+        where: { id: 'default' },
+        update: { data: action.payload as unknown as Prisma.InputJsonValue },
+        create: { id: 'default', data: action.payload as unknown as Prisma.InputJsonValue },
+      })
+      break
+
+    // --- Página inicial ---
+    case 'UPDATE_HOME_CONTENT':
+      await prisma.homeContent.upsert({
+        where: { id: 'default' },
+        update: { data: action.payload as unknown as Prisma.InputJsonValue },
+        create: { id: 'default', data: action.payload as unknown as Prisma.InputJsonValue },
+      })
+      break
+
     default: {
       const _exhaustive: never = action
       void _exhaustive
@@ -486,6 +557,28 @@ function expenseToDb(expense: Expense) {
 }
 
 function portfolioToDb(item: PortfolioItem) {
+  const images = (item.images ?? []).filter(img => img && typeof img === 'object' && !('_meta' in (img as any)))
+  const hasMeta = Boolean(
+    item.videoUrl ||
+    item.client ||
+    item.year ||
+    item.featured ||
+    (item.tags && item.tags.length > 0)
+  )
+  const finalImages = hasMeta
+    ? [
+        ...images,
+        {
+          _meta: true,
+          videoUrl: item.videoUrl || undefined,
+          client: item.client || undefined,
+          year: item.year || undefined,
+          featured: Boolean(item.featured),
+          tags: item.tags || [],
+        },
+      ]
+    : images
+
   return {
     id: item.id,
     title: item.title,
@@ -496,7 +589,7 @@ function portfolioToDb(item: PortfolioItem) {
     isVideo: item.isVideo,
     sortOrder: item.sortOrder ?? 0,
     description: item.description ?? '',
-    images: (item.images ?? []) as unknown as Prisma.InputJsonValue,
+    images: finalImages as unknown as Prisma.InputJsonValue,
   }
 }
 
@@ -508,6 +601,7 @@ function testimonialToDb(item: Testimonial) {
     quote: item.quote,
     instagram: item.instagram ?? null,
     imageKey: item.imageKey,
+    imageUrl: item.imageUrl ?? null,
     sortOrder: item.sortOrder ?? 0,
   }
 }

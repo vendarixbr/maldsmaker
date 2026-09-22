@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Save, Check, Download } from 'lucide-react'
 import { useAdmin } from '@/lib/admin-context'
+import type { SiteSettings } from '@/lib/data'
 import { SettingsSection, ConfirmDialog } from '@/components/admin/admin-ui'
 
 function Field({ label, description, children }: { label: string; description?: string; children: React.ReactNode }) {
@@ -54,37 +55,26 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
 /* ------------------------------------------------------------------ */
 
 export function AdminConfiguracoes() {
-  const { state, dispatch } = useAdmin()
+  const { state, dispatch, isLoading } = useAdmin()
   const [saved, setSaved] = useState(false)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [cleared, setCleared] = useState(false)
 
-  // Editable profile fields
-  const [nome, setNome] = useState('Leonardo Maldonado')
-  const [email, setEmail] = useState('malldsmaker@gmail.com')
-  const [whatsapp, setWhatsapp] = useState('+55 (15) 99730-7171')
-  const [empresa, setEmpresa] = useState('Malds Maker')
-  const [cidade, setCidade] = useState('Sorocaba, SP')
-  const [instagram, setInstagram] = useState('@maldsmaker')
+  const [draft, setDraft] = useState<SiteSettings>(state.settings)
+  const syncedRef = useRef(false)
 
-  // Nauta
-  const [capacidade, setCapacidade] = useState('20')
-  const [valorDiaria, setValorDiaria] = useState('R$ 2.800')
-  const [valorMeio, setValorMeio] = useState('R$ 1.600')
-  const [locacaoAvulsa, setLocacaoAvulsa] = useState(true)
+  // Assim que o carregamento inicial termina, sincroniza o rascunho com os dados reais do banco.
+  useEffect(() => {
+    if (!isLoading && !syncedRef.current) {
+      setDraft(state.settings)
+      syncedRef.current = true
+    }
+  }, [isLoading, state.settings])
 
-  // Notificações
-  const [notifLead, setNotifLead] = useState(true)
-  const [notifShoot, setNotifShoot] = useState(true)
-  const [notifPagamento, setNotifPagamento] = useState(false)
-  const [notifResumo, setNotifResumo] = useState(true)
-
-  // Da Rua pra Rua
-  const [drprExibir, setDrprExibir] = useState(true)
-  const [drprInscrições, setDrprInscrições] = useState(true)
-  const [drprVagas, setDrprVagas] = useState('3')
+  const patch = (p: Partial<SiteSettings>) => setDraft(d => ({ ...d, ...p }))
 
   const handleSave = () => {
+    dispatch({ type: 'UPDATE_SETTINGS', payload: draft })
     setSaved(true)
     setTimeout(() => setSaved(false), 2500)
   }
@@ -144,67 +134,67 @@ export function AdminConfiguracoes() {
       {/* Perfil */}
       <SettingsSection title="PERFIL DO PRODUTOR">
         <Field label="Nome Completo">
-          <TextInput value={nome} onChange={setNome} />
+          <TextInput value={draft.nome} onChange={v => patch({ nome: v })} />
         </Field>
         <Field label="E-mail de Contato">
-          <TextInput value={email} onChange={setEmail} />
+          <TextInput value={draft.email} onChange={v => patch({ email: v })} />
         </Field>
         <Field label="WhatsApp Profissional">
-          <TextInput value={whatsapp} onChange={setWhatsapp} />
+          <TextInput value={draft.whatsapp} onChange={v => patch({ whatsapp: v })} />
         </Field>
         <Field label="Nome Comercial / Produtora">
-          <TextInput value={empresa} onChange={setEmpresa} />
+          <TextInput value={draft.empresa} onChange={v => patch({ empresa: v })} />
         </Field>
         <Field label="Cidade / Base">
-          <TextInput value={cidade} onChange={setCidade} />
+          <TextInput value={draft.cidade} onChange={v => patch({ cidade: v })} />
         </Field>
         <Field label="Instagram Profissional">
-          <TextInput value={instagram} onChange={setInstagram} />
+          <TextInput value={draft.instagram} onChange={v => patch({ instagram: v })} />
         </Field>
       </SettingsSection>
 
       {/* Nauta Estúdio */}
       <SettingsSection title="PARÂMETROS NAUTA ESTÚDIO">
         <Field label="Capacidade Máxima de Pessoas" description="Recomendado para segurança do espaço">
-          <TextInput value={capacidade} onChange={setCapacidade} />
+          <TextInput value={draft.nautaCapacidade} onChange={v => patch({ nautaCapacidade: v })} />
         </Field>
         <Field label="Valor Diária Completa (10h)" description="Preço base para locações avulsas">
-          <TextInput value={valorDiaria} onChange={setValorDiaria} />
+          <TextInput value={draft.nautaValorDiaria} onChange={v => patch({ nautaValorDiaria: v })} />
         </Field>
         <Field label="Valor Meio Período (5h)">
-          <TextInput value={valorMeio} onChange={setValorMeio} />
+          <TextInput value={draft.nautaValorMeio} onChange={v => patch({ nautaValorMeio: v })} />
         </Field>
         <Field label="Aceitar Locação Avulsa" description="Permite reservas externas no calendário">
-          <Toggle value={locacaoAvulsa} onChange={setLocacaoAvulsa} />
+          <Toggle value={draft.nautaLocacaoAvulsa} onChange={v => patch({ nautaLocacaoAvulsa: v })} />
         </Field>
       </SettingsSection>
 
       {/* Da Rua pra Rua */}
       <SettingsSection title="PROJETO DA RUA PRA RUA">
         <Field label="Exibir Seção no Site Público" description="Mostra a área de iniciativa periférica">
-          <Toggle value={drprExibir} onChange={setDrprExibir} />
+          <Toggle value={draft.drprExibir} onChange={v => patch({ drprExibir: v })} />
         </Field>
         <Field label="Inscrições Abertas" description="Permite envio de novos briefs por artistas">
-          <Toggle value={drprInscrições} onChange={setDrprInscrições} />
+          <Toggle value={draft.drprInscricoes} onChange={v => patch({ drprInscricoes: v })} />
         </Field>
         <Field label="Vagas Disponíveis este Mês">
-          <TextInput value={drprVagas} onChange={setDrprVagas} />
+          <TextInput value={draft.drprVagas} onChange={v => patch({ drprVagas: v })} />
         </Field>
       </SettingsSection>
 
       {/* Notificações */}
       <SettingsSection title="PREFERÊNCIAS DE NOTIFICAÇÃO">
         <Field label="Novo Lead / Formulário Contato">
-          <Toggle value={notifLead} onChange={setNotifLead} />
+          <Toggle value={draft.notifLead} onChange={v => patch({ notifLead: v })} />
         </Field>
         <Field label="Lembrete de Shoot (24h antes)">
-          <Toggle value={notifShoot} onChange={setNotifShoot} />
+          <Toggle value={draft.notifShoot} onChange={v => patch({ notifShoot: v })} />
         </Field>
         <Field label="Confirmação de Pagamento">
-          <Toggle value={notifPagamento} onChange={setNotifPagamento} />
+          <Toggle value={draft.notifPagamento} onChange={v => patch({ notifPagamento: v })} />
         </Field>
         <Field label="Resumo Semanal no E-mail">
-          <Toggle value={notifResumo} onChange={setNotifResumo} />
+          <Toggle value={draft.notifResumo} onChange={v => patch({ notifResumo: v })} />
         </Field>
       </SettingsSection>
 

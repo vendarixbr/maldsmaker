@@ -17,6 +17,7 @@ import {
   Images,
   LayoutGrid,
   MessageSquareQuote,
+  Home,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -34,6 +35,7 @@ const extraTabs = [
   { id: 'portfolio', label: 'Portfólio', Icon: LayoutGrid },
   { id: 'depoimentos', label: 'Depoimentos', Icon: MessageSquareQuote },
   { id: 'imagens', label: 'Imagens', Icon: Images },
+  { id: 'pagina-inicial', label: 'Página Inicial', Icon: Home },
   { id: 'configuracoes', label: 'Configurações', Icon: Settings },
 ]
 
