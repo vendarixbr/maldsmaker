@@ -149,6 +149,31 @@ async function safeFind<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   }
 }
 
+const TESTIMONIALS_SEEDED_KEY = 'testimonials_seeded'
+
+/**
+ * Os depoimentos padrão só existiam em memória (fallback), então não dava para excluir/reordenar.
+ * Na primeira leitura eles são gravados no banco; depois disso, lista vazia continua vazia.
+ */
+async function loadTestimonials(): Promise<Testimonial[]> {
+  return safeFind(async () => {
+    let rows = await prisma.testimonial.findMany({ orderBy: { sortOrder: 'asc' } })
+    const seeded = await prisma.adminMeta.findUnique({ where: { key: TESTIMONIALS_SEEDED_KEY } })
+    if (!seeded) {
+      if (rows.length === 0) {
+        await prisma.testimonial.createMany({ data: TESTIMONIALS.map(testimonialToDb), skipDuplicates: true })
+        rows = await prisma.testimonial.findMany({ orderBy: { sortOrder: 'asc' } })
+      }
+      await prisma.adminMeta.upsert({
+        where: { key: TESTIMONIALS_SEEDED_KEY },
+        update: { value: '1' },
+        create: { key: TESTIMONIALS_SEEDED_KEY, value: '1' },
+      })
+    }
+    return rows.map(toTestimonial)
+  }, [] as Testimonial[])
+}
+
 export async function getAdminState(): Promise<AdminState> {
   const [clients, projects, events, notes] = await Promise.all([
     prisma.client.findMany({ orderBy: { createdAt: 'desc' } }),
@@ -165,10 +190,7 @@ export async function getAdminState(): Promise<AdminState> {
     () => prisma.portfolioItem.findMany({ orderBy: { sortOrder: 'asc' } }),
     []
   )
-  const testimonials = await safeFind(
-    () => prisma.testimonial.findMany({ orderBy: { sortOrder: 'asc' } }),
-    []
-  )
+  const testimonials = await loadTestimonials()
   const settingsRow = await safeFind(
     () => prisma.siteSettings.findUnique({ where: { id: 'default' } }),
     null
@@ -185,7 +207,7 @@ export async function getAdminState(): Promise<AdminState> {
     notes: notes.map(toNote),
     expenses: expenses.map(toExpense),
     portfolio: portfolio.length ? portfolio.map(toPortfolio) : PORTFOLIO_ITEMS,
-    testimonials: testimonials.length ? testimonials.map(toTestimonial) : TESTIMONIALS,
+    testimonials,
     settings: { ...DEFAULT_SITE_SETTINGS, ...(settingsRow?.data as Partial<SiteSettings> | undefined) },
     homeContent: mergeHomeContent(homeContentRow?.data as Partial<HomeContent> | undefined),
   }
@@ -217,12 +239,7 @@ export async function getPublicPortfolio(): Promise<PortfolioItem[]> {
 }
 
 export async function getPublicTestimonials(): Promise<Testimonial[]> {
-  const items = await safeFind(
-    () => prisma.testimonial.findMany({ orderBy: { sortOrder: 'asc' } }),
-    []
-  )
-  if (items.length) return items.map(toTestimonial)
-  return TESTIMONIALS
+  return loadTestimonials()
 }
 
 export async function getPublicPortfolioItem(slugOrId: string): Promise<PortfolioItem | null> {
@@ -413,6 +430,13 @@ export async function applyAdminAction(action: AdminAction): Promise<AdminState>
     case 'DELETE_PORTFOLIO':
       await prisma.portfolioItem.deleteMany({ where: { id: action.id } })
       break
+    case 'REORDER_PORTFOLIO':
+      await prisma.$transaction(
+        action.ids.map((id, i) =>
+          prisma.portfolioItem.updateMany({ where: { id }, data: { sortOrder: i + 1 } })
+        )
+      )
+      break
 
     // --- Depoimentos ---
     case 'ADD_TESTIMONIAL':
@@ -429,6 +453,11 @@ export async function applyAdminAction(action: AdminAction): Promise<AdminState>
     }
     case 'DELETE_TESTIMONIAL':
       await prisma.testimonial.deleteMany({ where: { id: action.id } })
+      break
+    case 'REORDER_TESTIMONIALS':
+      await prisma.$transaction(
+        action.ids.map((id, i) => prisma.testimonial.updateMany({ where: { id }, data: { sortOrder: i + 1 } }))
+      )
       break
 
     // --- Configurações ---

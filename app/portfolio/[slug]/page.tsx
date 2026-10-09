@@ -4,6 +4,9 @@ import { notFound, redirect } from 'next/navigation'
 import { ArrowLeft, ArrowRight, Play } from 'lucide-react'
 import { SiteImage } from '@/components/site/SiteImage'
 import { Footer } from '@/components/site/Footer'
+import { WhatsAppFloat } from '@/components/site/WhatsAppFloat'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { breadcrumbJsonLd } from '@/lib/seo'
 import { CustomCursor } from '@/components/site/CustomCursor'
 import { getPublicPortfolio, getPublicPortfolioItem } from '@/lib/admin-db'
 import { getFallbackSrc } from '@/lib/site-images'
@@ -25,10 +28,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params
   const site = getSiteUrl()
   const item = await getPublicPortfolioItem(slug)
-  if (!item) return { title: `Trabalho não encontrado — ${SITE_NAME}` }
+  if (!item) return { title: 'Trabalho não encontrado', robots: { index: false, follow: false } }
 
   const slugPath = item.slug || item.id
-  const title = `${item.title} — ${SITE_NAME}`
+  const title = item.title
   const description =
     item.description?.trim() ||
     `${item.title} · ${item.category} · Produção audiovisual Malds Maker em Sorocaba, SP.`
@@ -92,7 +95,17 @@ export default async function PortfolioItemPage({ params }: PageProps) {
     <>
       <div id="mm-grain" aria-hidden="true" />
       <CustomCursor />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd
+        data={[
+          jsonLd,
+          breadcrumbJsonLd([
+            { name: 'Início', path: '/' },
+            { name: 'Portfólio', path: '/portfolio' },
+            { name: item.title, path: `/portfolio/${item.slug}` },
+          ]),
+        ]}
+      />
+      <WhatsAppFloat />
 
       <main style={{ background: '#0A0A0A' }}>
         {/* Topbar */}
@@ -113,7 +126,7 @@ export default async function PortfolioItemPage({ params }: PageProps) {
                 />
               </Link>
               <Link
-                href="/#portfolio"
+                href="/portfolio"
                 className="font-mono-mm text-[11px] tracking-[0.15em] uppercase transition-colors hover:text-[#C9A84C]"
                 style={{ color: '#A8A89A' }}
               >
@@ -276,7 +289,7 @@ export default async function PortfolioItemPage({ params }: PageProps) {
                 </Link>
               </div>
               <Link
-                href="/#portfolio"
+                href="/portfolio"
                 className="flex items-center justify-center gap-2 h-11 font-mono-mm text-[11px] tracking-[0.14em] transition-all rounded-lg"
                 style={{ border: '1px solid rgba(245,245,240,0.15)', color: '#A8A89A' }}
               >

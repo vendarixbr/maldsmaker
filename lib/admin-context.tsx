@@ -10,6 +10,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   adminReducer,
   emptyAdminState,
@@ -19,7 +20,8 @@ import {
 
 interface AdminContextType {
   state: AdminState
-  dispatch: (action: AdminAction) => void
+  /** Aplica local na hora e persiste; resolve `true` quando o banco confirmou. */
+  dispatch: (action: AdminAction) => Promise<boolean>
   activeSection: string
   setActiveSection: (s: string) => void
   sidebarOpen: boolean
@@ -31,9 +33,43 @@ interface AdminContextType {
 
 const AdminContext = createContext<AdminContextType | null>(null)
 
+export const ADMIN_SECTIONS = [
+  'dashboard',
+  'leads',
+  'clientes',
+  'projetos',
+  'agenda',
+  'notas',
+  'financeiro',
+  'portfolio',
+  'depoimentos',
+  'imagens',
+  'pagina-inicial',
+  'configuracoes',
+] as const
+
 export function AdminProvider({ children }: { children: ReactNode }) {
   const [state, localDispatch] = useReducer(adminReducer, emptyAdminState)
-  const [activeSection, setActiveSection] = useState('dashboard')
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const sectionParam = searchParams.get('section')
+  const activeSection =
+    sectionParam && (ADMIN_SECTIONS as readonly string[]).includes(sectionParam)
+      ? sectionParam
+      : 'dashboard'
+
+  const setActiveSection = useCallback(
+    (section: string) => {
+      if (!(ADMIN_SECTIONS as readonly string[]).includes(section)) return
+      const params = new URLSearchParams(searchParams.toString())
+      if (section === 'dashboard') params.delete('section')
+      else params.set('section', section)
+      const qs = params.toString()
+      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: true })
+    },
+    [router, pathname, searchParams],
+  )
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -63,11 +99,11 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     void loadState()
   }, [loadState])
 
-  const dispatch = useCallback((action: AdminAction) => {
+  const dispatch = useCallback(async (action: AdminAction): Promise<boolean> => {
     if (action.type === 'HYDRATE') {
       confirmedState.current = action.payload
       localDispatch(action)
-      return
+      return true
     }
 
     const rollback = confirmedState.current
@@ -75,23 +111,25 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setIsSaving(true)
     setError(null)
 
-    void fetch('/api/admin/mutate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(action),
-    })
-      .then(async response => {
-        if (!response.ok) throw new Error('Falha ao salvar dados')
-        const payload = await response.json() as AdminState
-        confirmedState.current = payload
-        localDispatch({ type: 'HYDRATE', payload })
+    try {
+      const response = await fetch('/api/admin/mutate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(action),
       })
-      .catch(err => {
-        console.error(err)
-        localDispatch({ type: 'HYDRATE', payload: rollback })
-        setError('Nao foi possivel salvar no banco. A alteracao foi desfeita.')
-      })
-      .finally(() => setIsSaving(false))
+      if (!response.ok) throw new Error('Falha ao salvar dados')
+      const payload = await response.json() as AdminState
+      confirmedState.current = payload
+      localDispatch({ type: 'HYDRATE', payload })
+      return true
+    } catch (err) {
+      console.error(err)
+      localDispatch({ type: 'HYDRATE', payload: rollback })
+      setError('Nao foi possivel salvar no banco. A alteracao foi desfeita.')
+      return false
+    } finally {
+      setIsSaving(false)
+    }
   }, [])
 
   return (

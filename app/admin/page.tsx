@@ -1,7 +1,6 @@
 'use client'
 
-import { Suspense, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import { AdminProvider, useAdmin } from '@/lib/admin-context'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { AdminMobileNav } from '@/components/admin/AdminMobileNav'
@@ -20,32 +19,8 @@ import { AdminPaginaInicial } from '@/components/admin/AdminPaginaInicial'
 import { AdminConfiguracoes } from '@/components/admin/AdminConfiguracoes'
 import { Menu } from 'lucide-react'
 
-const VALID_SECTIONS = new Set([
-  'dashboard',
-  'leads',
-  'clientes',
-  'projetos',
-  'agenda',
-  'notas',
-  'financeiro',
-  'portfolio',
-  'depoimentos',
-  'imagens',
-  'pagina-inicial',
-  'configuracoes',
-])
-
 function AdminShell() {
-  const { activeSection, setActiveSection, setSidebarOpen, isLoading, isSaving, error } = useAdmin()
-  const searchParams = useSearchParams()
-
-  useEffect(() => {
-    const section = searchParams.get('section')
-    if (section && VALID_SECTIONS.has(section)) {
-      setActiveSection(section)
-    }
-  }, [searchParams, setActiveSection])
-
+  const { activeSection, setSidebarOpen, isLoading, isSaving, error } = useAdmin()
   const sectionMap: Record<string, React.ReactNode> = {
     dashboard: <AdminDashboard />,
     leads: <AdminLeads />,
@@ -117,10 +92,10 @@ function AdminShell() {
 
 export default function AdminPage() {
   return (
-    <AdminProvider>
-      <Suspense fallback={null}>
+    <Suspense fallback={null}>
+      <AdminProvider>
         <AdminShell />
-      </Suspense>
-    </AdminProvider>
+      </AdminProvider>
+    </Suspense>
   )
 }

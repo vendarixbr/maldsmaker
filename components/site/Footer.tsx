@@ -17,7 +17,9 @@ export function Footer() {
     { label: 'Sobre',          href: '#sobre'     },
     { label: 'Serviços',       href: '#servicos'  },
     { label: 'Nauta Estúdio',  href: '#nauta'     },
-    { label: 'Portfólio',      href: '#portfolio' },
+    { label: 'Portfólio',      href: '/portfolio' },
+    { label: 'Valores',        href: '/#valores'  },
+    { label: 'Dúvidas',        href: '/#faq'      },
     { label: 'Contato',        href: '#contato'   },
     { label: 'Reservar Horário', href: whatsappLink(settings.whatsapp) },
   ]

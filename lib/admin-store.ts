@@ -61,9 +61,11 @@ export type AdminAction =
   | { type: 'ADD_PORTFOLIO'; payload: PortfolioItem }
   | { type: 'UPDATE_PORTFOLIO'; payload: PortfolioItem }
   | { type: 'DELETE_PORTFOLIO'; id: string }
+  | { type: 'REORDER_PORTFOLIO'; ids: string[] }
   | { type: 'ADD_TESTIMONIAL'; payload: Testimonial }
   | { type: 'UPDATE_TESTIMONIAL'; payload: Testimonial }
   | { type: 'DELETE_TESTIMONIAL'; id: string }
+  | { type: 'REORDER_TESTIMONIALS'; ids: string[] }
   | { type: 'UPDATE_SETTINGS'; payload: SiteSettings }
   | { type: 'UPDATE_HOME_CONTENT'; payload: HomeContent }
 
@@ -215,6 +217,13 @@ export function adminReducer(state: AdminState, action: AdminAction): AdminState
       }
     case 'DELETE_PORTFOLIO':
       return { ...state, portfolio: state.portfolio.filter(p => p.id !== action.id) }
+    case 'REORDER_PORTFOLIO': {
+      const order = new Map(action.ids.map((id, i) => [id, i + 1]))
+      return {
+        ...state,
+        portfolio: state.portfolio.map(p => (order.has(p.id) ? { ...p, sortOrder: order.get(p.id)! } : p)),
+      }
+    }
     case 'ADD_TESTIMONIAL':
       return { ...state, testimonials: [...state.testimonials, action.payload] }
     case 'UPDATE_TESTIMONIAL':
@@ -224,6 +233,13 @@ export function adminReducer(state: AdminState, action: AdminAction): AdminState
       }
     case 'DELETE_TESTIMONIAL':
       return { ...state, testimonials: state.testimonials.filter(t => t.id !== action.id) }
+    case 'REORDER_TESTIMONIALS': {
+      const order = new Map(action.ids.map((id, i) => [id, i + 1]))
+      return {
+        ...state,
+        testimonials: state.testimonials.map(t => (order.has(t.id) ? { ...t, sortOrder: order.get(t.id)! } : t)),
+      }
+    }
     case 'UPDATE_SETTINGS':
       return { ...state, settings: action.payload }
     case 'UPDATE_HOME_CONTENT':
@@ -276,6 +292,8 @@ export function mergeHomeContent(saved?: Partial<HomeContent>): HomeContent {
     nichosBanner: { ...DEFAULT_HOME_CONTENT.nichosBanner, ...saved.nichosBanner },
     nauta: { ...DEFAULT_HOME_CONTENT.nauta, ...saved.nauta },
     contato: { ...DEFAULT_HOME_CONTENT.contato, ...saved.contato },
+    precos: { ...DEFAULT_HOME_CONTENT.precos, ...saved.precos },
+    faq: { ...DEFAULT_HOME_CONTENT.faq, ...saved.faq },
     footer: { ...DEFAULT_HOME_CONTENT.footer, ...saved.footer },
   }
 }

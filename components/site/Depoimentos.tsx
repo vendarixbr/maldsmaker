@@ -5,30 +5,17 @@ import { motion, useInView } from 'framer-motion'
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import useEmblaCarousel from 'embla-carousel-react'
 import { TestimonialAvatar } from '@/components/site/TestimonialAvatar'
-import { TESTIMONIALS, type Testimonial } from '@/lib/data'
+import type { Testimonial } from '@/lib/data'
 
-export function Depoimentos() {
+function DepoimentosCarousel({ testimonials }: { testimonials: Testimonial[] }) {
   const sectionRef = useRef(null)
   const inView = useInView(sectionRef, { once: true, margin: '0px 0px -80px 0px' })
 
   const [selectedIndex, setSelectedIndex] = useState(0)
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(TESTIMONIALS)
-
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' })
 
   const prev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
   const next = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
-
-  useEffect(() => {
-    let cancelled = false
-    fetch('/api/testimonials', { cache: 'no-store' })
-      .then(res => (res.ok ? res.json() : null))
-      .then((data: Testimonial[] | null) => {
-        if (!cancelled && Array.isArray(data) && data.length) setTestimonials(data)
-      })
-      .catch(() => {})
-    return () => { cancelled = true }
-  }, [])
 
   useEffect(() => {
     if (!emblaApi) return
@@ -194,4 +181,23 @@ export function Depoimentos() {
       </div>
     </section>
   )
+}
+
+/** Busca os depoimentos do banco; sem nenhum cadastrado (ou enquanto carrega) a seção não aparece. */
+export function Depoimentos() {
+  const [testimonials, setTestimonials] = useState<Testimonial[] | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/testimonials', { cache: 'no-store' })
+      .then(res => (res.ok ? res.json() : null))
+      .then((data: Testimonial[] | null) => {
+        if (!cancelled && Array.isArray(data)) setTestimonials(data)
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
+
+  if (!testimonials || testimonials.length === 0) return null
+  return <DepoimentosCarousel testimonials={testimonials} />
 }

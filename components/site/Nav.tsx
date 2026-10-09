@@ -10,6 +10,7 @@ const navLinks = [
   { label: 'Serviços', href: '#servicos' },
   { label: 'Nauta Estúdio', href: '#nauta' },
   { label: 'Portfólio', href: '#portfolio' },
+  { label: 'Valores', href: '#valores' },
   { label: 'Contato', href: '#contato' },
 ]
 

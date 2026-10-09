@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Save, Check, Plus, Trash2, ChevronUp, ChevronDown, ExternalLink } from 'lucide-react'
 import { useAdmin } from '@/lib/admin-context'
-import type { HomeContent } from '@/lib/data'
+import type { HomeContent, PricingPlan, PricingPriceSource } from '@/lib/data'
 
 const inputStyle = {
   background: '#161616',
@@ -18,6 +18,8 @@ const TABS = [
   { id: 'servicos', label: 'SERVIÇOS' },
   { id: 'nichos', label: 'NICHOS' },
   { id: 'nauta', label: 'NAUTA' },
+  { id: 'precos', label: 'VALORES' },
+  { id: 'faq', label: 'FAQ' },
   { id: 'contato', label: 'CONTATO' },
   { id: 'footer', label: 'RODAPÉ' },
 ] as const
@@ -332,6 +334,140 @@ function NautaTab({ draft, patch }: { draft: HomeContent; patch: (p: Partial<Hom
   )
 }
 
+
+const PRICE_SOURCES: { value: PricingPriceSource; label: string }[] = [
+  { value: 'custom', label: 'Texto livre (ex: Sob orçamento)' },
+  { value: 'nauta-meio', label: 'Valor do meio período (Configurações → Nauta)' },
+  { value: 'nauta-diaria', label: 'Valor da diária (Configurações → Nauta)' },
+]
+
+const iconBtnStyle = { background: '#161616', border: '1px solid rgba(255,255,255,0.14)' } as const
+
+function RowActions({ index, count, onMove, onRemove }: { index: number; count: number; onMove: (dir: -1 | 1) => void; onRemove: () => void }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <button type="button" onClick={() => onMove(-1)} disabled={index === 0} aria-label="Subir" className="h-8 w-8 flex items-center justify-center rounded text-[#94A3B8] hover:text-[#E5C158] disabled:opacity-20" style={iconBtnStyle}><ChevronUp size={13} /></button>
+      <button type="button" onClick={() => onMove(1)} disabled={index === count - 1} aria-label="Descer" className="h-8 w-8 flex items-center justify-center rounded text-[#94A3B8] hover:text-[#E5C158] disabled:opacity-20" style={iconBtnStyle}><ChevronDown size={13} /></button>
+      <button type="button" onClick={onRemove} aria-label="Remover" className="h-8 w-8 flex items-center justify-center rounded text-[#CBD5E1] hover:text-red-400" style={iconBtnStyle}><Trash2 size={13} /></button>
+    </div>
+  )
+}
+
+function PrecosTab({ draft, patch }: { draft: HomeContent; patch: (p: Partial<HomeContent>) => void }) {
+  const set = (p: Partial<HomeContent['precos']>) => patch({ precos: { ...draft.precos, ...p } })
+  const plans = draft.precos.plans
+  const updatePlan = (i: number, p: Partial<PricingPlan>) => set({ plans: plans.map((pl, idx) => (idx === i ? { ...pl, ...p } : pl)) })
+  const removePlan = (i: number) => set({ plans: plans.filter((_, idx) => idx !== i) })
+  const movePlan = (i: number, dir: -1 | 1) => {
+    const next = [...plans]
+    const j = i + dir
+    if (j < 0 || j >= next.length) return
+    ;[next[i], next[j]] = [next[j], next[i]]
+    set({ plans: next })
+  }
+  const addPlan = () =>
+    set({
+      plans: [
+        ...plans,
+        { name: 'Novo pacote', priceSource: 'custom', price: 'Sob orçamento', priceNote: '', description: '', features: [], highlight: false, ctaLabel: 'PEDIR ORÇAMENTO', ctaWhatsappMessage: 'Quero um orçamento!' },
+      ],
+    })
+
+  return (
+    <div className="flex flex-col gap-5">
+      <Field label="ETIQUETA (EYEBROW)"><TextInput value={draft.precos.eyebrow} onChange={v => set({ eyebrow: v })} /></Field>
+      <Field label="TÍTULO DA SEÇÃO"><TextInput value={draft.precos.heading} onChange={v => set({ heading: v })} /></Field>
+      <Field label="TEXTO DE INTRODUÇÃO"><TextArea value={draft.precos.intro} onChange={v => set({ intro: v })} /></Field>
+
+      <div className="flex items-center justify-between">
+        <p className="font-mono-mm text-[10px] font-semibold tracking-wider text-[#E5C158]">PACOTES ({plans.length})</p>
+        <button type="button" onClick={addPlan} className="flex items-center gap-1.5 h-9 px-3 font-mono-mm text-[10px] font-semibold rounded" style={{ background: '#C9A84C', color: '#080808' }}>
+          <Plus size={13} /> NOVO PACOTE
+        </button>
+      </div>
+
+      {plans.map((plan, i) => (
+        <div key={i} className="p-4 rounded-xl flex flex-col gap-3" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <div className="flex items-center justify-between">
+            <span className="font-mono-mm text-[10px] font-bold" style={{ color: 'rgba(201,168,76,0.6)' }}>#{i + 1}</span>
+            <RowActions index={i} count={plans.length} onMove={dir => movePlan(i, dir)} onRemove={() => removePlan(i)} />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="NOME DO PACOTE"><TextInput value={plan.name} onChange={v => updatePlan(i, { name: v })} /></Field>
+            <Field label="NOTA DO PREÇO"><TextInput value={plan.priceNote} onChange={v => updatePlan(i, { priceNote: v })} placeholder="Ex: por turno" /></Field>
+            <Field label="ORIGEM DO PREÇO">
+              <select value={plan.priceSource} onChange={e => updatePlan(i, { priceSource: e.target.value as PricingPriceSource })} className="h-10 px-3 font-display text-sm outline-none focus:border-[#C9A84C]" style={inputStyle}>
+                {PRICE_SOURCES.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </Field>
+            {plan.priceSource === 'custom' && (
+              <Field label="PREÇO / TEXTO"><TextInput value={plan.price} onChange={v => updatePlan(i, { price: v })} placeholder="Ex: A partir de R$ 1.500 ou Sob orçamento" /></Field>
+            )}
+          </div>
+          <Field label="DESCRIÇÃO"><TextArea value={plan.description} onChange={v => updatePlan(i, { description: v })} rows={2} /></Field>
+          <Field label="O QUE ESTÁ INCLUÍDO"><StringListEditor items={plan.features} onChange={v => updatePlan(i, { features: v })} placeholder="Ex: Captação em 4K" /></Field>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="TEXTO DO BOTÃO"><TextInput value={plan.ctaLabel} onChange={v => updatePlan(i, { ctaLabel: v })} /></Field>
+            <Field label="MENSAGEM NO WHATSAPP"><TextInput value={plan.ctaWhatsappMessage} onChange={v => updatePlan(i, { ctaWhatsappMessage: v })} /></Field>
+          </div>
+          <label className="flex items-center gap-2 font-mono-mm text-[11px] text-[#CBD5E1] cursor-pointer">
+            <input type="checkbox" checked={plan.highlight} onChange={e => updatePlan(i, { highlight: e.target.checked })} />
+            Destacar como “Mais procurado”
+          </label>
+        </div>
+      ))}
+
+      <Field label="OBSERVAÇÃO ABAIXO DOS PACOTES"><TextInput value={draft.precos.note} onChange={v => set({ note: v })} /></Field>
+      <p className="font-mono-mm text-[10px] text-[#64748B]">
+        Os valores de meio período e diária vêm de Configurações → Nauta Estúdio e também alimentam os dados estruturados do Google.
+      </p>
+    </div>
+  )
+}
+
+function FaqTab({ draft, patch }: { draft: HomeContent; patch: (p: Partial<HomeContent>) => void }) {
+  const set = (p: Partial<HomeContent['faq']>) => patch({ faq: { ...draft.faq, ...p } })
+  const items = draft.faq.items
+  const update = (i: number, p: Partial<(typeof items)[number]>) => set({ items: items.map((it, idx) => (idx === i ? { ...it, ...p } : it)) })
+  const remove = (i: number) => set({ items: items.filter((_, idx) => idx !== i) })
+  const move = (i: number, dir: -1 | 1) => {
+    const next = [...items]
+    const j = i + dir
+    if (j < 0 || j >= next.length) return
+    ;[next[i], next[j]] = [next[j], next[i]]
+    set({ items: next })
+  }
+
+  return (
+    <div className="flex flex-col gap-5">
+      <Field label="ETIQUETA (EYEBROW)"><TextInput value={draft.faq.eyebrow} onChange={v => set({ eyebrow: v })} /></Field>
+      <Field label="TÍTULO DA SEÇÃO"><TextInput value={draft.faq.heading} onChange={v => set({ heading: v })} /></Field>
+
+      <div className="flex items-center justify-between">
+        <p className="font-mono-mm text-[10px] font-semibold tracking-wider text-[#E5C158]">PERGUNTAS ({items.length})</p>
+        <button type="button" onClick={() => set({ items: [...items, { question: '', answer: '' }] })} className="flex items-center gap-1.5 h-9 px-3 font-mono-mm text-[10px] font-semibold rounded" style={{ background: '#C9A84C', color: '#080808' }}>
+          <Plus size={13} /> NOVA PERGUNTA
+        </button>
+      </div>
+
+      {items.map((item, i) => (
+        <div key={i} className="p-4 rounded-xl flex flex-col gap-3" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <div className="flex items-center justify-between">
+            <span className="font-mono-mm text-[10px] font-bold" style={{ color: 'rgba(201,168,76,0.6)' }}>#{i + 1}</span>
+            <RowActions index={i} count={items.length} onMove={dir => move(i, dir)} onRemove={() => remove(i)} />
+          </div>
+          <Field label="PERGUNTA"><TextInput value={item.question} onChange={v => update(i, { question: v })} /></Field>
+          <Field label="RESPOSTA"><TextArea value={item.answer} onChange={v => update(i, { answer: v })} rows={3} /></Field>
+        </div>
+      ))}
+      <p className="font-mono-mm text-[10px] text-[#64748B]">
+        As perguntas também são enviadas ao Google (FAQPage), o que pode gerar respostas expandidas nos resultados de busca.
+      </p>
+    </div>
+  )
+}
+
 function ContatoTab({ draft, patch }: { draft: HomeContent; patch: (p: Partial<HomeContent>) => void }) {
   const set = (p: Partial<HomeContent['contato']>) => patch({ contato: { ...draft.contato, ...p } })
   return (
@@ -444,6 +580,8 @@ export function AdminPaginaInicial() {
         {tab === 'servicos' && <ServicosTab draft={draft} patch={patch} />}
         {tab === 'nichos' && <NichosTab draft={draft} patch={patch} />}
         {tab === 'nauta' && <NautaTab draft={draft} patch={patch} />}
+        {tab === 'precos' && <PrecosTab draft={draft} patch={patch} />}
+        {tab === 'faq' && <FaqTab draft={draft} patch={patch} />}
         {tab === 'contato' && <ContatoTab draft={draft} patch={patch} />}
         {tab === 'footer' && <FooterTab draft={draft} patch={patch} />}
       </div>

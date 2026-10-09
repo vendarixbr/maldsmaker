@@ -184,11 +184,14 @@ export function Contato() {
         body: JSON.stringify({ ...form, startedAt: startedAt.current }),
       })
 
-      if (!response.ok) throw new Error('Falha ao enviar')
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}))
+        throw new Error(payload.error || 'Falha ao enviar')
+      }
       setSent(true)
     } catch (err) {
       console.error(err)
-      setError('Não foi possível enviar agora. Tente novamente em instantes.')
+      setError(err instanceof Error && err.message !== 'Falha ao enviar' ? err.message : 'Não foi possível enviar agora. Tente novamente em instantes.')
     } finally {
       setLoading(false)
     }

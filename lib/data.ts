@@ -89,9 +89,36 @@ export interface HomeContent {
     whatsappCtaLabel: string
     whatsappMessage: string
   }
+  precos: {
+    eyebrow: string
+    heading: string
+    intro: string
+    plans: PricingPlan[]
+    note: string
+  }
+  faq: {
+    eyebrow: string
+    heading: string
+    items: { question: string; answer: string }[]
+  }
   footer: {
     tagline: string
   }
+}
+
+/** `custom` usa o texto de `price`; os `nauta-*` puxam o valor de Configurações → Nauta Estúdio. */
+export type PricingPriceSource = 'custom' | 'nauta-diaria' | 'nauta-meio'
+
+export interface PricingPlan {
+  name: string
+  priceSource: PricingPriceSource
+  price: string
+  priceNote: string
+  description: string
+  features: string[]
+  highlight: boolean
+  ctaLabel: string
+  ctaWhatsappMessage: string
 }
 
 export const DEFAULT_HOME_CONTENT: HomeContent = {
@@ -198,6 +225,96 @@ export const DEFAULT_HOME_CONTENT: HomeContent = {
     intro: 'Seja para um clipe, ensaio, evento ou estratégia de conteúdo — fale com a gente. Atendemos com atenção total a cada projeto, independente do tamanho.',
     whatsappCtaLabel: 'CHAMAR NO WHATSAPP',
     whatsappMessage: 'Olá, quero chamar no WhatsApp!',
+  },
+  precos: {
+    eyebrow: 'VALORES',
+    heading: 'Investimento claro, sem surpresa.',
+    intro: 'A locação do Nauta Estúdio tem valores fixos. Produções e conteúdo variam com o escopo, por isso fazemos um orçamento sob medida depois de entender o seu projeto.',
+    plans: [
+      {
+        name: 'Nauta — Meio período',
+        priceSource: 'nauta-meio',
+        price: '',
+        priceNote: 'por turno',
+        description: 'Ideal para ensaios, gravações curtas e workshops.',
+        features: ['480 m² de galpão profissional', 'Chroma key com 14 m', '2 camarins completos', 'Iluminação de estúdio'],
+        highlight: false,
+        ctaLabel: 'RESERVAR TURNO',
+        ctaWhatsappMessage: 'Quero reservar o Nauta Estúdio (meio período)!',
+      },
+      {
+        name: 'Nauta — Diária',
+        priceSource: 'nauta-diaria',
+        price: '',
+        priceNote: 'dia inteiro',
+        description: 'Para produções maiores, clipes e campanhas com mais de um cenário.',
+        features: ['Tudo do meio período', 'Dia inteiro de uso do espaço', 'Equipe de suporte', 'Locação avulsa ou com nossa produção'],
+        highlight: true,
+        ctaLabel: 'RESERVAR DIÁRIA',
+        ctaWhatsappMessage: 'Quero reservar o Nauta Estúdio (diária)!',
+      },
+      {
+        name: 'Produção audiovisual',
+        priceSource: 'custom',
+        price: 'Sob orçamento',
+        priceNote: 'conforme o escopo',
+        description: 'Clipes, institucionais, eventos e campanhas, do briefing à entrega.',
+        features: ['Roteiro e direção criativa', 'Captação em 4K', 'Edição, cor e som', 'Entrega em múltiplos formatos'],
+        highlight: false,
+        ctaLabel: 'PEDIR ORÇAMENTO',
+        ctaWhatsappMessage: 'Quero um orçamento de produção audiovisual!',
+      },
+      {
+        name: 'Conteúdo para redes',
+        priceSource: 'custom',
+        price: 'Sob orçamento',
+        priceNote: 'pacotes recorrentes',
+        description: 'Reels, Stories e planejamento editorial para manter a marca presente.',
+        features: ['Planejamento editorial mensal', 'Produção de Reels e Stories', 'Pacotes recorrentes', 'Relatório de desempenho'],
+        highlight: false,
+        ctaLabel: 'PEDIR ORÇAMENTO',
+        ctaWhatsappMessage: 'Quero um orçamento de conteúdo para redes!',
+      },
+    ],
+    note: 'Valores de referência. O orçamento final considera duração, equipe, locações e entregas.',
+  },
+  faq: {
+    eyebrow: 'DÚVIDAS',
+    heading: 'Perguntas frequentes.',
+    items: [
+      {
+        question: 'Quais serviços a Malds Maker oferece?',
+        answer: 'Produção audiovisual, fotografia profissional, locação do Nauta Estúdio, conteúdo para redes sociais, tráfego pago, rebranding, transmissão ao vivo e estratégia digital. Tudo pode ser contratado separado ou em conjunto.',
+      },
+      {
+        question: 'Quanto custa um vídeo, ensaio ou campanha?',
+        answer: 'Depende de duração, equipe, locações e entregas. Por isso trabalhamos com orçamento sob medida: você conta a ideia pelo WhatsApp ou pelo formulário e respondemos com uma proposta. A locação do Nauta Estúdio tem valores fixos, listados na seção de valores.',
+      },
+      {
+        question: 'Como funciona a locação do Nauta Estúdio?',
+        answer: 'O Nauta tem 480 m², teto de 6 metros, chroma key de 14 metros e 2 camarins. A locação pode ser por turno ou por diária, e também é possível alugar o espaço sem contratar a nossa produção.',
+      },
+      {
+        question: 'Como começa um projeto?',
+        answer: 'Começamos com uma conversa para entender o objetivo e o público. Depois vêm a proposta, o roteiro e a direção criativa, a captação, a edição e a entrega nos formatos que você precisa.',
+      },
+      {
+        question: 'Em quais formatos recebo o material final?',
+        answer: 'Entregamos em múltiplos formatos, ajustados para cada uso: vertical para Reels e Stories, horizontal para YouTube e site, e fotos tratadas em alta resolução.',
+      },
+      {
+        question: 'Vocês atendem fora de Sorocaba?',
+        answer: 'Nossa base é em Sorocaba, SP. Para projetos em outras cidades, chame no WhatsApp e avaliamos a logística juntos.',
+      },
+      {
+        question: 'Para quais tipos de cliente vocês trabalham?',
+        answer: 'Artistas, empresas, advogados, influenciadores, bares e restaurantes, eventos e marcas em geral. O nicho muda, o nível de cuidado não.',
+      },
+      {
+        question: 'Como faço para reservar ou pedir um orçamento?',
+        answer: 'Pelo botão de WhatsApp aqui no site ou pelo formulário de contato. Respondemos assim que possível para alinhar data e detalhes.',
+      },
+    ],
   },
   footer: {
     tagline: 'Refletindo mentes brilhantes.',

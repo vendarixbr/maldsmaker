@@ -361,9 +361,20 @@ export function Portfolio() {
           </motion.div>
         </AnimatePresence>
 
+        <div className="flex justify-center mt-12">
+          <Link
+            href="/portfolio"
+            className="font-mono-mm text-xs tracking-[0.16em] h-12 px-10 flex items-center gap-2"
+            style={{ background: '#C9A84C', color: '#0A0A0A' }}
+          >
+            VER PORTFÓLIO COMPLETO
+            <ArrowUpRight size={14} />
+          </Link>
+        </div>
+
         {/* Load More Button */}
         {visibleCount < filtered.length && (
-          <div className="flex flex-col items-center justify-center mt-12 gap-3">
+          <div className="flex flex-col items-center justify-center mt-6 gap-3">
             <button
               onClick={() => setVisibleCount(v => v + 6)}
               className="font-mono-mm text-xs tracking-[0.16em] h-12 px-10 rounded-xl transition-all duration-300 flex items-center gap-2 cursor-pointer"
